@@ -29,16 +29,16 @@ yarn add vuejs-validators --save
 All available methods
 
 
-- [accepted](#accepted)
-- [boolean](#boolean)
-- [email](#email)
-- [max](#max)
-- [min](#min)
-- [numeric](#numeric)
-- [phone](#phone)
-- [required](#required)
-- [same](#same)
-- [within](#within)
+- [accepted](#accepted-rule)
+- [boolean](#boolean-rule)
+- [email](#email-rule)
+- [max](#max-rule)
+- [min](#min-rule)
+- [numeric](#numeric-rule)
+- [phone](#phone-rule)
+- [required](#required-rule)
+- [same](#same-rule)
+- [within](#within-rule)
 
 ##### Accepted Rule
 
@@ -94,8 +94,8 @@ let truthy = [
 ```js
 import validator from 'vuejs-validators';
 
-let form = { selected: 'Yes' }
-let rules = { selected: ['boolean'] }
+let form = { selected: 'Yes' };
+let rules = { selected: ['boolean'] };
 
 validator(form, rules).validate();
 ```
@@ -105,9 +105,9 @@ validator(form, rules).validate();
 import validator from 'vuejs-validators';
 
 form = { selected: null };
-rules = { selected: ['boolean'] }
+rules = { selected: ['boolean'] };
 
-validator(form, rules).validate()
+validator(form, rules).validate();
 
 ##### Email Rule
 
@@ -117,8 +117,8 @@ validator(form, rules).validate()
 ```js
 import validator from 'vuejs-validators';
 
-let form = { email: 'example@cleancode.studio' }
-let rules = { email: ['email'] }
+let form = { email: 'example@cleancode.studio' };
+let rules = { email: ['email'] };
 
 validator(form, rules).validate();
 ```

@@ -21,7 +21,7 @@ const methods = readdirSync('docs/api', 'utf-8');
 const tableOfContents = methods.map((file) => {
 	const methodName = file.replace('.md', '');
 
-	return `- [${methodName}](#${methodName.toLowerCase()})`;
+	return `- [${methodName}](#${methodName.toLowerCase()}-rule)`;
 }).join('\n');
 
 // Build methods "readme"
