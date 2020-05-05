@@ -2,7 +2,13 @@
 
 function _toArray(arr) { return _arrayWithHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableRest(); }
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
@@ -55,8 +61,17 @@ var resolveMessage = function resolveMessage(_ref3) {
       parameters = _ref3.parameters;
   var custom = validator.customMessages,
       global = validator.messages;
-  var message = custom["".concat(attribute, ".").concat(name)] ? custom["".concat(attribute, ".").concat(name)].replace(/:attribute/gi, attribute) : global[name].replace(/:attribute/gi, attribute);
-  return parameters[0] ? message.replace(":".concat(name), parameters[0]) : message;
+  /**
+   * Example: Replacers
+   * ~~~~~~~~~~~~~~~~~~
+   * ":attribute must not be greater than :max characters"
+   * let replacers = ['field_name', '8']
+   * "field_name must not be greater than 8 characters"
+   */
+
+  return [attribute].concat(_toConsumableArray(parameters[0] ? parameters[0].split(',') : [])).reduce(function (message, replace) {
+    return message.replace(/:[a-z]{1,}/i, replace);
+  }, custom["".concat(attribute, ".").concat(name)] ? custom["".concat(attribute, ".").concat(name)] : global[name]);
 };
 
 var pipe = function pipe(field, validator, rules) {
