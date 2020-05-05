@@ -148,7 +148,7 @@ validation.validate()
 
 #### Extend Validators
 
-# `extend Validator`
+## `extend Validator`
 
 > Simple set up to add your own Validation Rules
 
@@ -169,14 +169,13 @@ validation.extend('uppercase', [
 ]);
 ```
 
-**TIP:**
+**TIP: Console.Log Context Validation**
 --------
 > _For more advanced fields (Ex: "Required If", "Same As Fields")_
 > _you may need the entire validation "context" object._
-
 > _To see the entirety of our provided validation context, hook into_
 > _a rule validator method, pass through a single; non-deconstructed parameter,_
-> _and console.log it (the validation context object being it)_
+> _and console.log it (Checkout the example directly below)_
 
 
 **Console Log The Validation Context**

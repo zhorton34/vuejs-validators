@@ -30,6 +30,15 @@ All available methods
 
 
 - [accepted](#accepted)
+- [boolean](#boolean)
+- [email](#email)
+- [max](#max)
+- [min](#min)
+- [numeric](#numeric)
+- [phone](#phone)
+- [required](#required)
+- [same](#same)
+- [within](#within)
 
 #### `accepted`
 
@@ -41,6 +50,188 @@ import validator from 'vuejs-validators';
 let form = { terms_of_service: 'no' }
 let rules = { terms_of_service: 'accepted' }
 
+validator(form, rules).validate();
+
+#### `boolean`
+
+- Boolish validation, not strict boolean check
+- Validates that field value is _"truthy"_ or _"falsy"_
+
+> _Accepted "Falsy" values_
+``` js
+let falsy = [
+    0, '0',
+    'no', 'No', 'NO',
+    'off', 'Off', 'OFF',
+    false, 'false', 'False', 'FALSE',
+];
+```
+
+> _Accepted "Truthy" values_
+``` js
+let truthy = [
+    1, '1',
+    'on', 'On', 'ON',
+    'yes', 'Yes', 'YES',
+    true, 'true', 'True', 'TRUE',
+];
+```
+
+```js bash
+import validator from 'vuejs-validators';
+
+// Passes Boolean Rule
+let form = { selected: 'Yes' }
+let rules = { selected: ['boolean'] }
+validator(form, rules).validate();
+
+// Fails Boolean Rule
+form = { selected: null };
+rules = { selected: ['boolean'] }
+validator(form, rules).validate()
+
+#### `email`
+
+> The given field value must be an email
+
+```js bash
+import validator from 'vuejs-validators';
+
+// Passes "email" rule
+let form = { email: 'example@cleancode.studio' }
+let rules = { email: ['email'] }
+validator(form, rules).validate();
+
+// Fails "email" Rule
+let form = { email: 'asdfsdaf@.net'}
+let rules = { email: ['email'] }
+validator(form, rules).validate();
+
+#### `max:{limit}`
+
+> The given field must not be more than the defined maximum limit
+
+```js bash
+import validator from 'vuejs-validators';
+
+// Passes "max:{limit}" rule
+let form = { password: 'secret' }
+let rules = { password: 'max:10' }
+validator(form, rules).validate();
+
+// Fails "max:{limit}" Rule
+let form = { password: 'secret'}
+let rules = { password: 'max:4' }
+validator(form, rules).validate();
+
+#### `min:{limit}`
+
+> The given field must not be less than the defined minimum limit
+
+```js bash
+import validator from 'vuejs-validators';
+
+// Passes "min:{limit}" rule
+let form = { name: 'Johnny' }
+let rules = { name: 'min:6' }
+validator(form, rules).validate();
+
+// Fails "min:{limit}" Rule
+let form = { name: 'jake'}
+let rules = { name: 'min:5' }
+validator(form, rules).validate();
+
+#### `numeric`
+
+> Determine if a value is numeric, or is a string that can properly represent a numeric
+
+- Numerical value, not strict number check
+- Automatically attempts to cast value to numerical value.
+- Validates that field value an integer, decimal, or bigInt.
+
+```js bash
+import validator from 'vuejs-validators';
+
+// Passes numeric rule
+let form = { members: '25' }
+let rules = { member: ['numeric'] }
+validator(form, rules).validate();
+
+#### `phone`
+
+> The given field value must be a phone number
+
+```js bash
+import validator from 'vuejs-validators';
+
+// Passes "phone" rule
+let form = { send_sms: ['555-555-5555'] }
+let rules = { send_sms: ['phone'] }
+validator(form, rules).validate();
+
+// Fails "phone" Rule
+let form = { send_sms: '+(3) - 4 32'}
+let rules = { send_sms: ['phone'] }
+validator(form, rules).validate();
+```
+
+### Phone number formats this projects currently has tests for
+(Any contributions welcome for improving regex validation patterns for current rules as well as adding new rules)
+- +61 1 2345 6789
+- +61 01 2345 6789
+- 01 2345 6789
+- 01-2345-6789
+- (01) 2345 6789
+- (01) 2345-6789
+- 5555555555
+- (555) 555 5555
+- 555 555 5555
+- +15555555555
+
+#### `required`
+
+> The field is required
+
+```js bash
+import validator from 'vuejs-validators';
+
+let form = { name: '' }
+let rules = { name: ['required'] }
+
+validator(form, rules).validate();
+
+#### `same`
+
+> The given field value is the same as another field value
+
+```js bash
+import validator from 'vuejs-validators';
+
+// Passes "Same" Validation Rule
+let form = { password: 'secret', confirm_password: 'secret' }
+let rules = { password: 'same:confirm_password' }
+validator(form, rules).validate();
+
+// Fails "Same" Validation Rule
+let form = { password: 'asdfasdfasdf', confirm_password: 'secret' }
+let rules = { password: 'same:confirm_password' }
+validator(form, rules).validate();
+
+#### `within:{one},{two},{three},{four}`
+
+> The given field must be "within" the comma delimited list of items
+
+```js bash
+import validator from 'vuejs-validators';
+
+// Passes "within:{one},{two},etc..." rule
+let form = { name: 'Sam' }
+let rules = { name: 'within:James,Boronica,Sam,Steve,Lenny' }
+validator(form, rules).validate();
+
+// Fails "within:{one},{two},etc..." rule
+let form = { name: 'jake'}
+let rules = { name: 'within:patricia,veronica,samuel,jeviah' }
 validator(form, rules).validate();
 
 #### Utilization
@@ -193,7 +384,7 @@ validation.validate()
 
 #### Extend Validators
 
-# `extend Validator`
+## `extend Validator`
 
 > Simple set up to add your own Validation Rules
 
@@ -214,14 +405,13 @@ validation.extend('uppercase', [
 ]);
 ```
 
-**TIP:**
+**TIP: Console.Log Context Validation**
 --------
 > _For more advanced fields (Ex: "Required If", "Same As Fields")_
 > _you may need the entire validation "context" object._
-
 > _To see the entirety of our provided validation context, hook into_
 > _a rule validator method, pass through a single; non-deconstructed parameter,_
-> _and console.log it (the validation context object being it)_
+> _and console.log it (Checkout the example directly below)_
 
 
 **Console Log The Validation Context**
