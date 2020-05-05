@@ -30,7 +30,7 @@ const methodDocumentation = methods.map((file) => {
 
 	const lines = content.split('\n');
 
-	lines[0] = `###${lines[0]}`;
+	lines[0] = `#${lines[0]}`;
 	lines.pop();
 	lines.pop();
 

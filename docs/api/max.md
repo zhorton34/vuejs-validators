@@ -1,4 +1,4 @@
-## max:{limit} Rule
+## Max Rule
 
 > The given field must not be more than the defined maximum limit
 

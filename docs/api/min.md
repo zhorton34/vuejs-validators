@@ -1,4 +1,4 @@
-## min:{limit} Rule
+## Min Rule
 
 > The given field must not be less than the defined minimum limit
 

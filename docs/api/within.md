@@ -1,4 +1,4 @@
-## Within:{a},{b},{c},{etc...} Validation Rule
+## Within Rule
 
 > The given field must be "within" the comma delimited list of items
 

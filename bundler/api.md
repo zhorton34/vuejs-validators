@@ -1,3 +1,3 @@
-### Validation Rules
+### Available Validation Rules
 
-All available methods
+Below is a list of all available validation rules and their function:

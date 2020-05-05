@@ -24,9 +24,9 @@ yarn add vuejs-validators --save
 ```
 
 
-### Validation Rules
+### Available Validation Rules
 
-All available methods
+Below is a list of all available validation rules and their function:
 
 
 - [accepted](#accepted-rule)
@@ -109,8 +109,6 @@ rules = { selected: ['boolean'] };
 
 validator(form, rules).validate();
 
-```
-
 ### Email Rule
 
 > The given field value must be an email
@@ -133,7 +131,6 @@ let form = { email: 'asdfsdaf@.net'}
 let rules = { email: ['email'] }
 
 validator(form, rules).validate();
-```
 
 ### Max Rule
 
@@ -158,8 +155,6 @@ let rules = { password: 'max:4' }
 
 validator(form, rules).validate();
 
-```
-
 ### Min Rule
 
 > The given field must not be less than the defined minimum limit
@@ -182,7 +177,6 @@ let form = { password: 'secret'}
 let rules = { password: 'min:8' }
 
 validator(form, rules).validate();
-```
 
 ### Numeric Rule
 
@@ -210,7 +204,6 @@ let form = { members: 'yes' }
 let rules = { member: ['numeric'] }
 
 validator(form, rules).validate();
-```
 
 ### Phone Rule
 
@@ -271,9 +264,8 @@ let form = {};
 let rules = { name: ['required'] };
 
 validator(form, rules).validate();
-```
 
-### Same Rule
+### Same Validation Rule
 
 > The given field value is the same as another field value
 
@@ -295,7 +287,7 @@ let form = { password: 'asdfasdfasdf', confirm_password: 'secret' };
 let rules = { password: 'same:confirm_password' };
 
 validator(form, rules).validate();
-```
+
 ### Within Rule
 
 > The given field must be "within" the comma delimited list of items
@@ -318,7 +310,6 @@ let form = { name: 'jake'};
 let rules = { name: 'within:patricia,veronica,samuel,jeviah' };
 
 validator(form, rules).validate();
-```
 
 ### Utilization
 
@@ -364,7 +355,7 @@ let messages = {
 
 let validation = validator(form, rules, messages);
 
- /**
+ /***
  *********************************
  ** Validation Life Cycle Hooks **
  *********************************
@@ -517,7 +508,7 @@ validation.extend('uppercase', [
 ```
 
 
-#### Extend Option Two: Add Multiple Rules And Messages
+### Extend Option Two: Add Multiple Rules And Messages
 ``` js
 validation.extend({
     uppercase: [

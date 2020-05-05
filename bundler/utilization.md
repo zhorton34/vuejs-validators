@@ -1,4 +1,4 @@
-#### Utilization
+### Utilization
 
 ```js
 
@@ -195,7 +195,7 @@ validation.extend('uppercase', [
 ```
 
 
-#### Extend Option Two: Add Multiple Rules And Messages
+### Extend Option Two: Add Multiple Rules And Messages
 ``` js
 validation.extend({
     uppercase: [
