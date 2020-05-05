@@ -40,7 +40,7 @@ All available methods
 - [same](#same-rule)
 - [within](#within-rule)
 
-##### Accepted Rule
+### Accepted Rule
 
 > The field under validation must be yes, on, 1, or true. This is useful for validating "Terms of Service" acceptance.
 
@@ -65,7 +65,7 @@ validator(form, rules).validate();
 ```
 
 
-##### Boolean Rule
+### Boolean Rule
 
 > Boolish validation, not strict boolean check
 > Validates that field value is "truthy" or "falsy"
@@ -111,7 +111,7 @@ validator(form, rules).validate();
 
 ```
 
-##### Email Rule
+### Email Rule
 
 > The given field value must be an email
 
@@ -135,7 +135,7 @@ let rules = { email: ['email'] }
 validator(form, rules).validate();
 ```
 
-### max:{limit} Rule
+### Max Rule
 
 > The given field must not be more than the defined maximum limit
 
@@ -160,7 +160,7 @@ validator(form, rules).validate();
 
 ```
 
-### min:{limit} Rule
+### Min Rule
 
 > The given field must not be less than the defined minimum limit
 
@@ -273,7 +273,7 @@ let rules = { name: ['required'] };
 validator(form, rules).validate();
 ```
 
-### Same Validation Rule
+### Same Rule
 
 > The given field value is the same as another field value
 
@@ -296,7 +296,7 @@ let rules = { password: 'same:confirm_password' };
 
 validator(form, rules).validate();
 ```
-### Within:{a},{b},{c},{etc...} Validation Rule
+### Within Rule
 
 > The given field must be "within" the comma delimited list of items
 
