@@ -1,3 +1,6 @@
+const isArray = require('./helpers/isArray');
+const isObject = require('./helpers/isObject');
+
 module.exports = function ParseRule (validator, field, rules) {
 
 	return pipe(field, validator, rules).into(([
@@ -21,7 +24,6 @@ module.exports = function ParseRule (validator, field, rules) {
 const resolveMessage = ({ attribute, name, validator,  parameters }) => {
 	const { customMessages: custom, messages: global } = validator;
 
-	console.log({ attribute, name, parameters });
 	const message = custom[`${attribute}.${name}`]
 		? custom[`${attribute}.${name}`].replace(/:attribute/gi, attribute)
 		: global[name].replace(/:attribute/gi, attribute);

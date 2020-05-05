@@ -27,7 +27,7 @@ Factory.prototype.make = function () {
   var rules = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var messages = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var translator = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-  return new Validator(data, rules, messages, translator);
+  return new Validator().make(data, rules, messages, translator);
 };
 
 Factory.prototype.validate = function () {

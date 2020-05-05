@@ -16,6 +16,10 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
+var isArray = require('./helpers/isArray');
+
+var isObject = require('./helpers/isObject');
+
 module.exports = function ParseRule(validator, field, rules) {
   return pipe(field, validator, rules).into(function (_ref) {
     var _ref2 = _slicedToArray(_ref, 5),
@@ -51,11 +55,6 @@ var resolveMessage = function resolveMessage(_ref3) {
       parameters = _ref3.parameters;
   var custom = validator.customMessages,
       global = validator.messages;
-  console.log({
-    attribute: attribute,
-    name: name,
-    parameters: parameters
-  });
   var message = custom["".concat(attribute, ".").concat(name)] ? custom["".concat(attribute, ".").concat(name)].replace(/:attribute/gi, attribute) : global[name].replace(/:attribute/gi, attribute);
   return parameters[0] ? message.replace(":".concat(name), parameters[0]) : message;
 };

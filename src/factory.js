@@ -10,7 +10,7 @@ Factory.prototype.make = function (
 	messages = {},
 	translator = {}
 ) {
-	return new Validator(data, rules, messages, translator);
+	return (new Validator()).make(data, rules, messages, translator);
 };
 
 Factory.prototype.validate = function ()

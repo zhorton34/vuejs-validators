@@ -4,7 +4,6 @@ module.exports = (it, expect, { rules }) => {
 
 	it('should return true if "on", 1, "1", "yes", "true", or true,', () =>
 	{
-
 		expect(accepted({ value: 'yes' })).to.eql(true);
 		expect(accepted({ value: 'on' })).to.eql(true);
 		expect(accepted({ value: 1 })).to.eql(true);

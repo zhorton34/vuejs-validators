@@ -1,21 +1,53 @@
 const RULES = require('./rules');
 const MESSAGES = require('./messages');
 const ParseRule = require('./parseRule');
+const variadic = require('./helpers/variadic');
 
-const Validator = function (data = {}, rules = {}, messages = {}, translator = {}) {
-	this.errors = {};
+const Validator = function () {
 	this.translator = {};
-	this.parseRules = rules;
+
+	this.data = {};
+	this.errors = {};
 	this.rules = { ...RULES };
-	this.customMessages = messages;
 	this.messages = { ...MESSAGES };
-	this.data = this.parseData(data);
+
 	this.beforeValidationCallbacks = [];
 	this.failedValidationCallbacks = [];
 	this.passedValidationCallbacks = [];
 };
 
 Validator.prototype.parseData = require('./methods/parseData');
+
+Validator.prototype.make = function (data = {}, rules = {}, messages = {}, translator = {}) {
+	this.parseRules = rules;
+	this.customMessages = messages;
+	this.data = this.parseData(data);
+
+	return this;
+};
+
+/**
+ * Extend Validator With Custom Rules
+ * @param parameters
+ * @returns {Validator}
+ */
+Validator.prototype.extend = function (...parameters) {
+	parameters = variadic(...parameters);
+
+	if (typeof parameters[0] === 'string') {
+		let [key, message, rule] = parameters;
+
+		this.rules = { ...this.rules, [key]: rule };
+		this.messages = { ...this.messages, [key]: message };
+	} else if (typeof parameters === 'object') {
+		Object.entries(parameters).forEach(([key, [message, rule]]) => {
+			this.rules = { ...this.rules, [key]: rule };
+			this.messages = { ...this.messages, [key]: message };
+		})
+	}
+
+	return this;
+};
 
 /**
  * Add prepare for validation hook/callback

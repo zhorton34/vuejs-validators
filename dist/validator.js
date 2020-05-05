@@ -1,24 +1,26 @@
 "use strict";
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -32,30 +34,78 @@ var MESSAGES = require('./messages');
 
 var ParseRule = require('./parseRule');
 
+var variadic = require('./helpers/variadic');
+
 var Validator = function Validator() {
-  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var rules = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var messages = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  var translator = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-  this.errors = {};
   this.translator = {};
-  this.parseRules = rules;
+  this.data = {};
+  this.errors = {};
   this.rules = _objectSpread({}, RULES);
-  this.customMessages = messages;
   this.messages = _objectSpread({}, MESSAGES);
-  this.data = this.parseData(data);
   this.beforeValidationCallbacks = [];
   this.failedValidationCallbacks = [];
   this.passedValidationCallbacks = [];
 };
 
 Validator.prototype.parseData = require('./methods/parseData');
+
+Validator.prototype.make = function () {
+  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var rules = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var messages = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  var translator = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+  this.parseRules = rules;
+  this.customMessages = messages;
+  this.data = this.parseData(data);
+  return this;
+};
+/**
+ * Extend Validator With Custom Rules
+ * @param parameters
+ * @returns {Validator}
+ */
+
+
+Validator.prototype.extend = function () {
+  var _this = this;
+
+  for (var _len = arguments.length, parameters = new Array(_len), _key = 0; _key < _len; _key++) {
+    parameters[_key] = arguments[_key];
+  }
+
+  parameters = variadic.apply(void 0, _toConsumableArray(parameters));
+
+  if (typeof parameters[0] === 'string') {
+    var _parameters = parameters,
+        _parameters2 = _slicedToArray(_parameters, 3),
+        key = _parameters2[0],
+        message = _parameters2[1],
+        rule = _parameters2[2];
+
+    this.rules = _objectSpread(_objectSpread({}, this.rules), {}, _defineProperty({}, key, rule));
+    this.messages = _objectSpread(_objectSpread({}, this.messages), {}, _defineProperty({}, key, message));
+  } else if (_typeof(parameters) === 'object') {
+    Object.entries(parameters).forEach(function (_ref) {
+      var _ref2 = _slicedToArray(_ref, 2),
+          key = _ref2[0],
+          _ref2$ = _slicedToArray(_ref2[1], 2),
+          message = _ref2$[0],
+          rule = _ref2$[1];
+
+      _this.rules = _objectSpread(_objectSpread({}, _this.rules), {}, _defineProperty({}, key, rule));
+      _this.messages = _objectSpread(_objectSpread({}, _this.messages), {}, _defineProperty({}, key, message));
+    });
+  }
+
+  return this;
+};
 /**
  * Add prepare for validation hook/callback
  *
  * @param callback
  * @returns {Validator}
  */
+
 
 Validator.prototype.prepare = function (callback) {
   this.beforeValidationCallbacks.push(callback);
@@ -93,17 +143,17 @@ Validator.prototype.passed = function (callback) {
 
 
 Validator.prototype.prepareToValidate = function () {
-  var _this = this;
+  var _this2 = this;
 
-  this.checks = Object.entries(this.parseRules).reduce(function (completed, _ref) {
-    var _ref2 = _slicedToArray(_ref, 2),
-        field = _ref2[0],
-        rules = _ref2[1];
+  this.checks = Object.entries(this.parseRules).reduce(function (completed, _ref3) {
+    var _ref4 = _slicedToArray(_ref3, 2),
+        field = _ref4[0],
+        rules = _ref4[1];
 
-    return [].concat(_toConsumableArray(completed), _toConsumableArray(ParseRule(_this, field, rules)));
+    return [].concat(_toConsumableArray(completed), _toConsumableArray(ParseRule(_this2, field, rules)));
   }, []);
   this.beforeValidationCallbacks.forEach(function (callback) {
-    return callback(_this);
+    return callback(_this2);
   });
 };
 /**
@@ -131,16 +181,16 @@ Validator.prototype.validate = function () {
 
 
 Validator.prototype.afterValidation = function () {
-  var _this2 = this;
+  var _this3 = this;
 
   if (this.hasErrors()) {
     this.failedValidationCallbacks.forEach(function (callback) {
-      return callback(_this2);
+      return callback(_this3);
     });
     this.failedValidationCallbacks = [];
   } else {
     this.passedValidationCallbacks.forEach(function (callback) {
-      return callback(_this2);
+      return callback(_this3);
     });
     this.passedValidationCallbacks = [];
   }
