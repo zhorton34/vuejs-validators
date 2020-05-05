@@ -30,14 +30,26 @@ Below is a list of all available validation rules and their function:
 
 
 - [accepted](#accepted-rule)
+- [alpha](#alpha-rule)
+- [alpha_dash](#alpha_dash-rule)
+- [alpha_num](#alpha_num-rule)
+- [array](#array-rule)
+- [between](#between-rule)
 - [boolean](#boolean-rule)
 - [email](#email-rule)
+- [json](#json-rule)
 - [max](#max-rule)
 - [min](#min-rule)
+- [not_regex](#not_regex-rule)
+- [not_within](#not_within-rule)
+- [number](#number-rule)
 - [numeric](#numeric-rule)
 - [phone](#phone-rule)
+- [regex](#regex-rule)
 - [required](#required-rule)
 - [same](#same-rule)
+- [string](#string-rule)
+- [url](#url-rule)
 - [within](#within-rule)
 
 ### Accepted Rule
@@ -60,6 +72,131 @@ import validator from 'vuejs-validators';
 
 let form = { terms_of_service: null }
 let rules = { terms_of_service: 'accepted' }
+
+validator(form, rules).validate();
+```
+
+
+### Alpha Rule
+
+> The field under validation must be entirely alphabetic characters.
+
+> `Passing Alpha Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { letters: 'asdeddadfjkkdjfasdf' };
+let rules = { letters: ['alpha'] };
+
+validator(form, rules).validate();
+```
+
+> `Failing Alpha Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { letters: '5-@'}
+let rules = { letters: ['alpha'] }
+
+validator(form, rules).validate();
+```
+
+
+### Alpha Dash Rule
+
+> The field under validation may have alpha-numeric characters, as well as dashes and underscores.
+
+> `Passing Alpha Dash Rule`
+
+```js
+import validator from 'vuejs-validators';
+
+let form = { slug: 'user_name' };
+let rules = { slug: ['alpha_dash'] };
+
+validator(form, rules).validate();
+```
+
+> `Failing Alpha Dash Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { words: 'hello world'}
+let rules = { words: ['alpha_dash'] }
+
+validator(form, rules).validate();
+```
+
+### Alpha Num Rule
+
+> The field under validation must be entirely alpha-numeric characters.
+
+> `Passing Alpha Num Rule`
+
+```js
+import validator from 'vuejs-validators';
+
+let form = { key: '4asdasdfe4d23545w634adf' };
+let rules = { key: ['alpha_num'] };
+
+validator(form, rules).validate();
+```
+
+> `Failing Alpha Num Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { identifier: '1-asdf4adf_d_42'}
+let rules = { identifier: ['alpha_num'] }
+
+validator(form, rules).validate();
+```
+
+### Array Rule
+
+> The field under validation must be a JS array.
+
+> `Passing Array Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { list: ['banana', 'broccoli', 'carrot'] };
+let rules = { list: 'array' };
+
+validator(form, rules).validate();
+```
+
+> `Failing Array Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { options: { name: 'hey world' } }
+let rules = { options: 'array' }
+
+validator(form, rules).validate();
+```
+
+
+### Email Rule
+
+> The given field value must be an email
+
+> `Passing Email Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { email: 'example@cleancode.studio' };
+let rules = { email: ['email'] };
+
+validator(form, rules).validate();
+```
+
+> `Failing Email Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { email: 'asdfsdaf@.net'}
+let rules = { email: ['email'] }
 
 validator(form, rules).validate();
 ```
@@ -136,6 +273,29 @@ validator(form, rules).validate();
 ```
 
 
+### Json Rule
+
+> The given field value must be a Json String
+
+> `Passing Json Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { content: JSON.stringify({ inspire: 'love' }) };
+let rules = { content: 'json' };
+
+validator(form, rules).validate();
+```
+
+> `Failing Json Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { content: 'fasdf' }
+let rules = { content: 'json' }
+
+validator(form, rules).validate();
+
 ### Max Rule
 
 > The given field must not be more than the defined maximum limit
@@ -181,6 +341,81 @@ import validator from 'vuejs-validator'
 
 let form = { password: 'secret'}
 let rules = { password: 'min:8' }
+
+validator(form, rules).validate();
+```
+
+
+### Not Regex Rule
+
+> The given field value must NOT match the regular expression pattern
+
+> `Passing Not Regex Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { email: 'ex.-fn' };
+let rules = { email: ['regex:/^.+@.+$/i'] };
+
+validator(form, rules).validate();
+```
+
+> `Failing Not Regex Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { email: 'example@gmail.com'}
+let rules = { email: ['regex:/^.+@.+$/i'] }
+
+validator(form, rules).validate();
+```
+
+
+### Not Within Rule
+
+> The given field must NOT be "within" the comma delimited list of items
+
+> `Passing Not Within Rule`
+```js bash
+import validator from 'vuejs-validators';
+
+let form = { language: 'PigLatin' }
+let rules = { language: 'not_within:German,Spanish,English,Latin' }
+
+validator(form, rules).validate();
+```
+
+> `Failing Not Within Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { pencil: '2a'};
+let rules = { pencil: 'not_within:notebook,pencil,marker,sharpie,whiteboard' };
+
+validator(form, rules).validate();
+```
+
+
+### Number Rule
+
+> The given field must be a Number (Strict Typed Check). See Numeric For Looser Type Checking
+
+> `Passing Number Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { id: 15 };
+let rules = { id: ['number'] };
+
+validator(form, rules).validate();
+```
+
+> `Failing Number Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { id: '15'}
+let rules = { id: ['number'] }
 
 validator(form, rules).validate();
 ```
@@ -254,6 +489,31 @@ validator(form, rules).validate();
 > _(Any contributions welcome for improving regex validation patterns for current rules as well as adding new rules)_
 
 
+### Regex Rule
+
+> The given field value must match the regular expression pattern
+
+> `Passing Regex Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { email: 'example@gmail.com' };
+let rules = { email: ['regex:/^.+@.+$/i'] };
+
+validator(form, rules).validate();
+```
+
+> `Failing Regex Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { email: 'ex.-fn'}
+let rules = { email: ['regex:/^.+@.+$/i'] }
+
+validator(form, rules).validate();
+```
+
+
 ### Required Rule
 
 > Validates that a given field exists and its value is set
@@ -299,6 +559,56 @@ import validator from 'vuejs-validators';
 
 let form = { password: 'asdfasdfasdf', confirm_password: 'secret' };
 let rules = { password: 'same:confirm_password' };
+
+validator(form, rules).validate();
+```
+
+
+### String Rule
+
+> The given field value must be a String
+
+> `Passing String Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { name: 'sammie' };
+let rules = { name: 'string' };
+
+validator(form, rules).validate();
+```
+
+> `Failing String Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { name: 54345  }
+let rules = { name: 'string' }
+
+validator(form, rules).validate();
+```
+
+
+### Url Rule
+
+> The given field value must be an http(s) url
+
+> `Passing Url Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { link: 'https://cleancode.studio' };
+let rules = { link: 'url' };
+
+validator(form, rules).validate();
+```
+
+> `Failing Url Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { link: 'httP/ope_type@.net'}
+let rules = { link: 'url' }
 
 validator(form, rules).validate();
 ```
