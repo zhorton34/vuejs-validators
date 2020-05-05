@@ -6,8 +6,8 @@
 ```js
 import validator from 'vuejs-validators';
 
-let form = { email: 'example@cleancode.studio' }
-let rules = { email: ['email'] }
+let form = { email: 'example@cleancode.studio' };
+let rules = { email: ['email'] };
 
 validator(form, rules).validate();
 ```

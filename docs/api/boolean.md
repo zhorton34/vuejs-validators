@@ -27,8 +27,8 @@ let truthy = [
 ```js
 import validator from 'vuejs-validators';
 
-let form = { selected: 'Yes' }
-let rules = { selected: ['boolean'] }
+let form = { selected: 'Yes' };
+let rules = { selected: ['boolean'] };
 
 validator(form, rules).validate();
 ```
@@ -38,7 +38,7 @@ validator(form, rules).validate();
 import validator from 'vuejs-validators';
 
 form = { selected: null };
-rules = { selected: ['boolean'] }
+rules = { selected: ['boolean'] };
 
-validator(form, rules).validate()
+validator(form, rules).validate();
 ```
