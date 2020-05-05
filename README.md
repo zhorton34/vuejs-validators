@@ -109,6 +109,8 @@ rules = { selected: ['boolean'] };
 
 validator(form, rules).validate();
 
+```
+
 ##### Email Rule
 
 > The given field value must be an email
@@ -131,8 +133,9 @@ let form = { email: 'asdfsdaf@.net'}
 let rules = { email: ['email'] }
 
 validator(form, rules).validate();
+```
 
-##### max:{limit} Rule
+### max:{limit} Rule
 
 > The given field must not be more than the defined maximum limit
 
@@ -155,7 +158,9 @@ let rules = { password: 'max:4' }
 
 validator(form, rules).validate();
 
-##### min:{limit} Rule
+```
+
+### min:{limit} Rule
 
 > The given field must not be less than the defined minimum limit
 
@@ -177,8 +182,9 @@ let form = { password: 'secret'}
 let rules = { password: 'min:8' }
 
 validator(form, rules).validate();
+```
 
-##### Numeric Rule
+### Numeric Rule
 
 > Determine if a value is numeric, or is a string that can properly represent a numeric
 
@@ -204,8 +210,9 @@ let form = { members: 'yes' }
 let rules = { member: ['numeric'] }
 
 validator(form, rules).validate();
+```
 
-##### Phone Rule
+### Phone Rule
 
 > The given field value must be a phone number
 
@@ -242,7 +249,7 @@ validator(form, rules).validate();
 - 555-555-5555
 
 
-##### Required Rule
+### Required Rule
 
 > Validates that a given field exists and its value is set
 
@@ -264,8 +271,9 @@ let form = {};
 let rules = { name: ['required'] };
 
 validator(form, rules).validate();
+```
 
-##### Same Validation Rule
+### Same Validation Rule
 
 > The given field value is the same as another field value
 
@@ -287,8 +295,8 @@ let form = { password: 'asdfasdfasdf', confirm_password: 'secret' };
 let rules = { password: 'same:confirm_password' };
 
 validator(form, rules).validate();
-
-##### Within:{a},{b},{c},{etc...} Validation Rule
+```
+### Within:{a},{b},{c},{etc...} Validation Rule
 
 > The given field must be "within" the comma delimited list of items
 
@@ -310,8 +318,9 @@ let form = { name: 'jake'};
 let rules = { name: 'within:patricia,veronica,samuel,jeviah' };
 
 validator(form, rules).validate();
+```
 
-#### Utilization
+### Utilization
 
 ```js
 
@@ -355,7 +364,7 @@ let messages = {
 
 let validation = validator(form, rules, messages);
 
- /***
+ /**
  *********************************
  ** Validation Life Cycle Hooks **
  *********************************
