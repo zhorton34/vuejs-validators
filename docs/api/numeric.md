@@ -1,4 +1,4 @@
-#### Numeric Rule
+## Numeric Rule
 
 > Determine if a value is numeric, or is a string that can properly represent a numeric
 
@@ -6,7 +6,7 @@
 - Automatically attempts to cast value to numerical value.
 - Validates that field value an integer, decimal, or bigInt.
 
-# `Passing Numeric Rule`
+> `Passing Numeric Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -16,7 +16,7 @@ let rules = { member: ['numeric'] }
 validator(form, rules).validate();
 ```
 
-# `Failing Numeric Rule`
+> `Failing Numeric Rule`
 ```js
 import validator from 'vuejs-validators';
 

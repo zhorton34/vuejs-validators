@@ -1,8 +1,8 @@
-#### Required Rule
+## Required Rule
 
 > Validates that a given field exists and its value is set
 
-# `Passing Required Rule`
+> `Passing Required Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -12,7 +12,7 @@ let rules = { name: ['required'] };
 validator(form, rules).validate();
 ```
 
-# `Failing Required Rule`
+> `Failing Required Rule`
 ```js
 import validator from 'vuejs-validators';
 

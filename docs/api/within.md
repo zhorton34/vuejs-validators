@@ -1,8 +1,8 @@
-#### Within:{a},{b},{c},{etc...} Validation Rule
+## Within:{a},{b},{c},{etc...} Validation Rule
 
 > The given field must be "within" the comma delimited list of items
 
-# `Passing Within Rule`
+> `Passing Within Rule`
 ```js bash
 import validator from 'vuejs-validators';
 
@@ -12,7 +12,7 @@ let rules = { name: 'within:James,Boronica,Sam,Steve,Lenny' }
 validator(form, rules).validate();
 ```
 
-# `Failing Within Rule`
+> `Failing Within Rule`
 ```js
 import validator from 'vuejs-validators';
 

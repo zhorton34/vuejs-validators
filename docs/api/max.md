@@ -1,9 +1,9 @@
-#### max:{limit} Rule
+## max:{limit} Rule
 
 > The given field must not be more than the defined maximum limit
 
 
-# `Passing Max Limit Rule`
+> `Passing Max Limit Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -13,7 +13,7 @@ let rules = { password: 'max:10' }
 validator(form, rules).validate();
 ```
 
-# `Failing Max Limit Rule`
+> `Failing Max Limit Rule`
 ```js
 import validator from 'vuejs-validator'
 

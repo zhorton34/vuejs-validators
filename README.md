@@ -132,11 +132,11 @@ let rules = { email: ['email'] }
 
 validator(form, rules).validate();
 
-####### max:{limit} Rule
+##### max:{limit} Rule
 
 > The given field must not be more than the defined maximum limit
 
-# `Passing Max Limit Rule`
+> `Passing Max Limit Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -146,7 +146,7 @@ let rules = { password: 'max:10' }
 validator(form, rules).validate();
 ```
 
-# `Failing Max Limit Rule`
+> `Failing Max Limit Rule`
 ```js
 import validator from 'vuejs-validator'
 
@@ -155,11 +155,11 @@ let rules = { password: 'max:4' }
 
 validator(form, rules).validate();
 
-####### min:{limit} Rule
+##### min:{limit} Rule
 
 > The given field must not be less than the defined minimum limit
 
-# `Passing Min Limit Rule`
+> `Passing Min Limit Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -169,7 +169,7 @@ let rules = { password: 'min:6' }
 validator(form, rules).validate();
 ```
 
-# `Failing Min Limit Rule`
+> `Failing Min Limit Rule`
 ```js
 import validator from 'vuejs-validator'
 
@@ -178,7 +178,7 @@ let rules = { password: 'min:8' }
 
 validator(form, rules).validate();
 
-####### Numeric Rule
+##### Numeric Rule
 
 > Determine if a value is numeric, or is a string that can properly represent a numeric
 
@@ -186,7 +186,7 @@ validator(form, rules).validate();
 - Automatically attempts to cast value to numerical value.
 - Validates that field value an integer, decimal, or bigInt.
 
-# `Passing Numeric Rule`
+> `Passing Numeric Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -196,7 +196,7 @@ let rules = { member: ['numeric'] }
 validator(form, rules).validate();
 ```
 
-# `Failing Numeric Rule`
+> `Failing Numeric Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -205,11 +205,11 @@ let rules = { member: ['numeric'] }
 
 validator(form, rules).validate();
 
-####### Phone Rule
+##### Phone Rule
 
 > The given field value must be a phone number
 
-# `Passing Phone Rule`
+> `Passing Phone Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -218,7 +218,7 @@ let rules = { send_sms: ['phone'] }
 validator(form, rules).validate();
 ```
 
-# `Failing Phone Rule`
+> `Failing Phone Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -228,10 +228,7 @@ let rules = { send_sms: ['phone'] }
 validator(form, rules).validate();
 ```
 
-# `Phone Number Formats Within Testing Coverage`
-> _(Any contributions welcome for improving regex validation patterns for current rules as well as adding new rules)_
-
-# `Phone Number Formats`
+> `Phone Number Formats Within Testing Coverage`
 - +61 1 2345 6789
 - +61 01 2345 6789
 - 01 2345 6789
@@ -242,12 +239,14 @@ validator(form, rules).validate();
 - (555) 555 5555
 - 555 555 5555
 - +15555555555
+- 555-555-5555
 
-####### Required Rule
+
+##### Required Rule
 
 > Validates that a given field exists and its value is set
 
-# `Passing Required Rule`
+> `Passing Required Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -257,7 +256,7 @@ let rules = { name: ['required'] };
 validator(form, rules).validate();
 ```
 
-# `Failing Required Rule`
+> `Failing Required Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -266,20 +265,21 @@ let rules = { name: ['required'] };
 
 validator(form, rules).validate();
 
-####### Same Validation Rule
+##### Same Validation Rule
 
 > The given field value is the same as another field value
 
-# `Passing Same Rule`
+> `Passing Same Rule`
 ```js bash
 import validator from 'vuejs-validators';
 
 let form = { password: 'secret', confirm_password: 'secret' }
 let rules = { password: 'same:confirm_password' }
+
 validator(form, rules).validate();
 ```
 
-# `Failing Same Rule`
+> `Failing Same Rule`
 ```js bash
 import validator from 'vuejs-validators';
 
@@ -288,11 +288,11 @@ let rules = { password: 'same:confirm_password' };
 
 validator(form, rules).validate();
 
-####### Within:{a},{b},{c},{etc...} Validation Rule
+##### Within:{a},{b},{c},{etc...} Validation Rule
 
 > The given field must be "within" the comma delimited list of items
 
-# `Passing Within Rule`
+> `Passing Within Rule`
 ```js bash
 import validator from 'vuejs-validators';
 
@@ -302,7 +302,7 @@ let rules = { name: 'within:James,Boronica,Sam,Steve,Lenny' }
 validator(form, rules).validate();
 ```
 
-# `Failing Within Rule`
+> `Failing Within Rule`
 ```js
 import validator from 'vuejs-validators';
 
