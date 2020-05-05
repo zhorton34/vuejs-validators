@@ -44,21 +44,23 @@ All available methods
 
 > The field under validation must be yes, on, 1, or true. This is useful for validating "Terms of Service" acceptance.
 
-```js bash
+``` js
 import validator from 'vuejs-validators';
 
 let form = { terms_of_service: 'no' }
 let rules = { terms_of_service: 'accepted' }
 
 validator(form, rules).validate();
+```
+
 
 #### `boolean`
 
-- Boolish validation, not strict boolean check
-- Validates that field value is _"truthy"_ or _"falsy"_
+> Boolish validation, not strict boolean check
+> Validates that field value is "truthy" or "falsy"
 
-> _Accepted "Falsy" values_
-``` js
+### Falsy Values
+```js
 let falsy = [
     0, '0',
     'no', 'No', 'NO',
@@ -67,8 +69,8 @@ let falsy = [
 ];
 ```
 
-> _Accepted "Truthy" values_
-``` js
+### Truthy values
+```js
 let truthy = [
     1, '1',
     'on', 'On', 'ON',
@@ -77,17 +79,21 @@ let truthy = [
 ];
 ```
 
-```js bash
+```js
 import validator from 'vuejs-validators';
 
-// Passes Boolean Rule
 let form = { selected: 'Yes' }
 let rules = { selected: ['boolean'] }
-validator(form, rules).validate();
 
-// Fails Boolean Rule
+validator(form, rules).validate();
+```
+
+```js
+import validator from 'vuejs-validators';
+
 form = { selected: null };
 rules = { selected: ['boolean'] }
+
 validator(form, rules).validate()
 
 #### `email`
