@@ -6,7 +6,7 @@
 
 # Vuejs Validators
 
-> Validation Simplified
+> Form Validation Simplified
 
 
 ### Installation
@@ -28,17 +28,24 @@ yarn add {repo} --save
 
 All available methods
 
-- [example](#example)
+- [accepted](#accepted)
 
-#### `example(one, two, ...etc)`
+#### `accepted`
 
-The example method excepts any number of parameters and returns them as an array:
+> The field under validation must be yes, on, 1, or true. This is useful for validating "Terms of Service" acceptance.
 
-```js
-import thing from 'thing'
+```js bash
+import validator from 'vuejs-validators';
 
-thing.example('one', 'two', 'three', 'four')
-// ['one', 'two', 'three', 'four'];
+const input = {
+    terms_of_service: 'no'
+};
+
+const rules = {
+   terms_of_service: 'accepted|required',
+};
+
+validator(input, rules);
 ```
 
 #### Utilization
