@@ -100,17 +100,23 @@ validator(form, rules).validate()
 
 > The given field value must be an email
 
-```js bash
+### Passes
+```js
 import validator from 'vuejs-validators';
 
-// Passes "email" rule
 let form = { email: 'example@cleancode.studio' }
 let rules = { email: ['email'] }
-validator(form, rules).validate();
 
-// Fails "email" Rule
+validator(form, rules).validate();
+```
+
+### Fails
+```js
+import validator from 'vuejs-validators';
+
 let form = { email: 'asdfsdaf@.net'}
 let rules = { email: ['email'] }
+
 validator(form, rules).validate();
 
 #### `max:{limit}`
