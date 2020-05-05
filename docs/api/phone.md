@@ -1,23 +1,30 @@
-# `phone`
+#### Phone Rule
 
 > The given field value must be a phone number
 
-```js bash
+# `Passing Phone Rule`
+```js
 import validator from 'vuejs-validators';
 
-// Passes "phone" rule
 let form = { send_sms: ['555-555-5555'] }
-let rules = { send_sms: ['phone'] }
-validator(form, rules).validate();
-
-// Fails "phone" Rule
-let form = { send_sms: '+(3) - 4 32'}
 let rules = { send_sms: ['phone'] }
 validator(form, rules).validate();
 ```
 
-### Phone number formats this projects currently has tests for
-(Any contributions welcome for improving regex validation patterns for current rules as well as adding new rules)
+# `Failing Phone Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { send_sms: '+(3) - 4 32'}
+let rules = { send_sms: ['phone'] }
+
+validator(form, rules).validate();
+```
+
+# `Phone Number Formats Within Testing Coverage`
+> _(Any contributions welcome for improving regex validation patterns for current rules as well as adding new rules)_
+
+# `Phone Number Formats`
 - +61 1 2345 6789
 - +61 01 2345 6789
 - 01 2345 6789

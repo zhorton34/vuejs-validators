@@ -1,9 +1,9 @@
-# `boolean`
+#### Boolean Rule
 
 > Boolish validation, not strict boolean check
 > Validates that field value is "truthy" or "falsy"
 
-### Falsy Values
+# `Falsy Values`
 ```js
 let falsy = [
     0, '0',
@@ -13,7 +13,7 @@ let falsy = [
 ];
 ```
 
-### Truthy values
+# `Truthy values`
 ```js
 let truthy = [
     1, '1',
@@ -23,7 +23,7 @@ let truthy = [
 ];
 ```
 
-
+# `Passing Boolean Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -33,6 +33,7 @@ let rules = { selected: ['boolean'] }
 validator(form, rules).validate();
 ```
 
+# `Failing Boolean Rule`
 ```js
 import validator from 'vuejs-validators';
 

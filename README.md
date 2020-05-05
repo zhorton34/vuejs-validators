@@ -40,11 +40,12 @@ All available methods
 - [same](#same)
 - [within](#within)
 
-#### `accepted`
+####### Accepted Rule
 
 > The field under validation must be yes, on, 1, or true. This is useful for validating "Terms of Service" acceptance.
 
-``` js
+# `Passing Accepted Rule`
+```js
 import validator from 'vuejs-validators';
 
 let form = { terms_of_service: 'no' }
@@ -53,13 +54,23 @@ let rules = { terms_of_service: 'accepted' }
 validator(form, rules).validate();
 ```
 
+# `Failing Accepted Rule`
+```js
+import validator from 'vuejs-validators';
 
-#### `boolean`
+let form = { terms_of_service: null }
+let rules = { terms_of_service: 'accepted' }
+
+validator(form, rules).validate();
+```
+
+
+####### Boolean Rule
 
 > Boolish validation, not strict boolean check
 > Validates that field value is "truthy" or "falsy"
 
-### Falsy Values
+# `Falsy Values`
 ```js
 let falsy = [
     0, '0',
@@ -69,7 +80,7 @@ let falsy = [
 ];
 ```
 
-### Truthy values
+# `Truthy values`
 ```js
 let truthy = [
     1, '1',
@@ -79,6 +90,7 @@ let truthy = [
 ];
 ```
 
+# `Passing Boolean Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -88,6 +100,7 @@ let rules = { selected: ['boolean'] }
 validator(form, rules).validate();
 ```
 
+# `Failing Boolean Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -96,11 +109,11 @@ rules = { selected: ['boolean'] }
 
 validator(form, rules).validate()
 
-#### `email`
+####### Email Rule
 
 > The given field value must be an email
 
-### Passes
+# `Passing Email Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -110,7 +123,7 @@ let rules = { email: ['email'] }
 validator(form, rules).validate();
 ```
 
-### Fails
+# `Failing Email Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -119,41 +132,53 @@ let rules = { email: ['email'] }
 
 validator(form, rules).validate();
 
-#### `max:{limit}`
+####### max:{limit} Rule
 
 > The given field must not be more than the defined maximum limit
 
-```js bash
+# `Passing Max Limit Rule`
+```js
 import validator from 'vuejs-validators';
 
-// Passes "max:{limit}" rule
 let form = { password: 'secret' }
 let rules = { password: 'max:10' }
-validator(form, rules).validate();
 
-// Fails "max:{limit}" Rule
+validator(form, rules).validate();
+```
+
+# `Failing Max Limit Rule`
+```js
+import validator from 'vuejs-validator'
+
 let form = { password: 'secret'}
 let rules = { password: 'max:4' }
+
 validator(form, rules).validate();
 
-#### `min:{limit}`
+####### min:{limit} Rule
 
 > The given field must not be less than the defined minimum limit
 
-```js bash
+# `Passing Min Limit Rule`
+```js
 import validator from 'vuejs-validators';
 
-// Passes "min:{limit}" rule
-let form = { name: 'Johnny' }
-let rules = { name: 'min:6' }
+let form = { password: 'secret' }
+let rules = { password: 'min:6' }
+
+validator(form, rules).validate();
+```
+
+# `Failing Min Limit Rule`
+```js
+import validator from 'vuejs-validator'
+
+let form = { password: 'secret'}
+let rules = { password: 'min:8' }
+
 validator(form, rules).validate();
 
-// Fails "min:{limit}" Rule
-let form = { name: 'jake'}
-let rules = { name: 'min:5' }
-validator(form, rules).validate();
-
-#### `numeric`
+####### Numeric Rule
 
 > Determine if a value is numeric, or is a string that can properly represent a numeric
 
@@ -161,34 +186,52 @@ validator(form, rules).validate();
 - Automatically attempts to cast value to numerical value.
 - Validates that field value an integer, decimal, or bigInt.
 
-```js bash
+# `Passing Numeric Rule`
+```js
 import validator from 'vuejs-validators';
 
-// Passes numeric rule
 let form = { members: '25' }
 let rules = { member: ['numeric'] }
+
+validator(form, rules).validate();
+```
+
+# `Failing Numeric Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { members: 'yes' }
+let rules = { member: ['numeric'] }
+
 validator(form, rules).validate();
 
-#### `phone`
+####### Phone Rule
 
 > The given field value must be a phone number
 
-```js bash
+# `Passing Phone Rule`
+```js
 import validator from 'vuejs-validators';
 
-// Passes "phone" rule
 let form = { send_sms: ['555-555-5555'] }
-let rules = { send_sms: ['phone'] }
-validator(form, rules).validate();
-
-// Fails "phone" Rule
-let form = { send_sms: '+(3) - 4 32'}
 let rules = { send_sms: ['phone'] }
 validator(form, rules).validate();
 ```
 
-### Phone number formats this projects currently has tests for
-(Any contributions welcome for improving regex validation patterns for current rules as well as adding new rules)
+# `Failing Phone Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { send_sms: '+(3) - 4 32'}
+let rules = { send_sms: ['phone'] }
+
+validator(form, rules).validate();
+```
+
+# `Phone Number Formats Within Testing Coverage`
+> _(Any contributions welcome for improving regex validation patterns for current rules as well as adding new rules)_
+
+# `Phone Number Formats`
 - +61 1 2345 6789
 - +61 01 2345 6789
 - 01 2345 6789
@@ -200,50 +243,72 @@ validator(form, rules).validate();
 - 555 555 5555
 - +15555555555
 
-#### `required`
+####### Required Rule
 
-> The field is required
+> Validates that a given field exists and its value is set
 
-```js bash
+# `Passing Required Rule`
+```js
 import validator from 'vuejs-validators';
 
-let form = { name: '' }
-let rules = { name: ['required'] }
+let form = { name: 'jules' };
+let rules = { name: ['required'] };
+
+validator(form, rules).validate();
+```
+
+# `Failing Required Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = {};
+let rules = { name: ['required'] };
 
 validator(form, rules).validate();
 
-#### `same`
+####### Same Validation Rule
 
 > The given field value is the same as another field value
 
+# `Passing Same Rule`
 ```js bash
 import validator from 'vuejs-validators';
 
-// Passes "Same" Validation Rule
 let form = { password: 'secret', confirm_password: 'secret' }
 let rules = { password: 'same:confirm_password' }
 validator(form, rules).validate();
+```
 
-// Fails "Same" Validation Rule
-let form = { password: 'asdfasdfasdf', confirm_password: 'secret' }
-let rules = { password: 'same:confirm_password' }
-validator(form, rules).validate();
-
-#### `within:{one},{two},{three},{four}`
-
-> The given field must be "within" the comma delimited list of items
-
+# `Failing Same Rule`
 ```js bash
 import validator from 'vuejs-validators';
 
-// Passes "within:{one},{two},etc..." rule
-let form = { name: 'Sam' }
-let rules = { name: 'within:James,Boronica,Sam,Steve,Lenny' }
+let form = { password: 'asdfasdfasdf', confirm_password: 'secret' };
+let rules = { password: 'same:confirm_password' };
+
 validator(form, rules).validate();
 
-// Fails "within:{one},{two},etc..." rule
-let form = { name: 'jake'}
-let rules = { name: 'within:patricia,veronica,samuel,jeviah' }
+####### Within:{a},{b},{c},{etc...} Validation Rule
+
+> The given field must be "within" the comma delimited list of items
+
+# `Passing Within Rule`
+```js bash
+import validator from 'vuejs-validators';
+
+let form = { name: 'Sam' }
+let rules = { name: 'within:James,Boronica,Sam,Steve,Lenny' }
+
+validator(form, rules).validate();
+```
+
+# `Failing Within Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { name: 'jake'};
+let rules = { name: 'within:patricia,veronica,samuel,jeviah' };
+
 validator(form, rules).validate();
 
 #### Utilization

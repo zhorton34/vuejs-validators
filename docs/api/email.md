@@ -1,8 +1,8 @@
-# `email`
+#### Email Rule
 
 > The given field value must be an email
 
-### Passes
+# `Passing Email Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -12,7 +12,7 @@ let rules = { email: ['email'] }
 validator(form, rules).validate();
 ```
 
-### Fails
+# `Failing Email Rule`
 ```js
 import validator from 'vuejs-validators';
 

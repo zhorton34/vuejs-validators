@@ -1,17 +1,24 @@
-# `max:{limit}`
+#### max:{limit} Rule
 
 > The given field must not be more than the defined maximum limit
 
-```js bash
+
+# `Passing Max Limit Rule`
+```js
 import validator from 'vuejs-validators';
 
-// Passes "max:{limit}" rule
 let form = { password: 'secret' }
 let rules = { password: 'max:10' }
-validator(form, rules).validate();
 
-// Fails "max:{limit}" Rule
+validator(form, rules).validate();
+```
+
+# `Failing Max Limit Rule`
+```js
+import validator from 'vuejs-validator'
+
 let form = { password: 'secret'}
 let rules = { password: 'max:4' }
+
 validator(form, rules).validate();
 ```

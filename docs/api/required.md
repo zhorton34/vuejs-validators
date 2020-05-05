@@ -1,12 +1,23 @@
-# `required`
+#### Required Rule
 
-> The field is required
+> Validates that a given field exists and its value is set
 
-```js bash
+# `Passing Required Rule`
+```js
 import validator from 'vuejs-validators';
 
-let form = { name: '' }
-let rules = { name: ['required'] }
+let form = { name: 'jules' };
+let rules = { name: ['required'] };
+
+validator(form, rules).validate();
+```
+
+# `Failing Required Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = {};
+let rules = { name: ['required'] };
 
 validator(form, rules).validate();
 ```
