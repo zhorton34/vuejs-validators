@@ -2,22 +2,28 @@
 
 const Validator = require('./validator');
 
-const Factory =  function (translator = {}) {
-	this.translator = translator;
-};
+const Factory = function () {};
 
 Factory.prototype.make = function (
 	data = {},
 	rules = {},
 	messages = {},
-	customAttributes = {}
+	translator = {}
 ) {
-	this.validator = new Validator(data, rules, messages, customAttributes);
-	return this
+	return new Validator(data, rules, messages, translator);
 };
 
-Factory.prototype.validate = function () {
-	console.log('factory validates: ', this.validate);
+Factory.prototype.validate = function ()
+{
+	this.validator.errors = this.validator.checks.reduce(
+		(errors, { attribute, rule, message }) => ({
+			...errors,
+			[attribute]: rule()
+				? [...(errors[attribute] || [])]
+				: [...(errors[attribute] || []), message()],
+		}),
+	{});
 };
 
+Factory.prototype
 module.exports = Factory;
