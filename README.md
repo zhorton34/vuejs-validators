@@ -40,11 +40,11 @@ All available methods
 - [same](#same)
 - [within](#within)
 
-####### Accepted Rule
+##### Accepted Rule
 
 > The field under validation must be yes, on, 1, or true. This is useful for validating "Terms of Service" acceptance.
 
-# `Passing Accepted Rule`
+> `Passing Accepted Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -54,7 +54,7 @@ let rules = { terms_of_service: 'accepted' }
 validator(form, rules).validate();
 ```
 
-# `Failing Accepted Rule`
+> `Failing Accepted Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -65,12 +65,12 @@ validator(form, rules).validate();
 ```
 
 
-####### Boolean Rule
+##### Boolean Rule
 
 > Boolish validation, not strict boolean check
 > Validates that field value is "truthy" or "falsy"
 
-# `Falsy Values`
+> `Falsy Values`
 ```js
 let falsy = [
     0, '0',
@@ -80,7 +80,7 @@ let falsy = [
 ];
 ```
 
-# `Truthy values`
+> `Truthy values`
 ```js
 let truthy = [
     1, '1',
@@ -90,7 +90,7 @@ let truthy = [
 ];
 ```
 
-# `Passing Boolean Rule`
+> `Passing Boolean Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -100,7 +100,7 @@ let rules = { selected: ['boolean'] }
 validator(form, rules).validate();
 ```
 
-# `Failing Boolean Rule`
+> `Failing Boolean Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -109,11 +109,11 @@ rules = { selected: ['boolean'] }
 
 validator(form, rules).validate()
 
-####### Email Rule
+##### Email Rule
 
 > The given field value must be an email
 
-# `Passing Email Rule`
+> `Passing Email Rule`
 ```js
 import validator from 'vuejs-validators';
 
@@ -123,7 +123,7 @@ let rules = { email: ['email'] }
 validator(form, rules).validate();
 ```
 
-# `Failing Email Rule`
+> `Failing Email Rule`
 ```js
 import validator from 'vuejs-validators';
 
