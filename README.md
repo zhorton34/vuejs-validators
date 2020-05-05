@@ -186,6 +186,8 @@ validation.failed(validator => {
 **/
 validation.validate()
 
+```
+
 
 ### Contribute
 

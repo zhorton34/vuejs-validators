@@ -142,3 +142,5 @@ validation.failed(validator => {
 *      4. Determines whether to trigger the "passed" callbacks or the "failed" callbacks
 **/
 validation.validate()
+
+```
