@@ -1,3 +1,3 @@
 # Vuejs Validators
 
-> Validation Simplified
+> Form Validation Simplified
