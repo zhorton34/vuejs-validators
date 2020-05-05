@@ -35,3 +35,5 @@ validator(form, rules).validate();
 - 555-555-5555
 
 > _(Any contributions welcome for improving regex validation patterns for current rules as well as adding new rules)_
+
+

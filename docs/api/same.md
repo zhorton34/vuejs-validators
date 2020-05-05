@@ -21,3 +21,5 @@ let rules = { password: 'same:confirm_password' };
 
 validator(form, rules).validate();
 ```
+
+

@@ -21,3 +21,5 @@ let rules = { password: 'min:8' }
 
 validator(form, rules).validate();
 ```
+
+

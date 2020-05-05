@@ -108,6 +108,8 @@ form = { selected: null };
 rules = { selected: ['boolean'] };
 
 validator(form, rules).validate();
+```
+
 
 ### Email Rule
 
@@ -131,6 +133,8 @@ let form = { email: 'asdfsdaf@.net'}
 let rules = { email: ['email'] }
 
 validator(form, rules).validate();
+```
+
 
 ### Max Rule
 
@@ -154,6 +158,8 @@ let form = { password: 'secret'}
 let rules = { password: 'max:4' }
 
 validator(form, rules).validate();
+```
+
 
 ### Min Rule
 
@@ -177,6 +183,8 @@ let form = { password: 'secret'}
 let rules = { password: 'min:8' }
 
 validator(form, rules).validate();
+```
+
 
 ### Numeric Rule
 
@@ -204,6 +212,8 @@ let form = { members: 'yes' }
 let rules = { member: ['numeric'] }
 
 validator(form, rules).validate();
+```
+
 
 ### Phone Rule
 
@@ -241,6 +251,8 @@ validator(form, rules).validate();
 - +15555555555
 - 555-555-5555
 
+> _(Any contributions welcome for improving regex validation patterns for current rules as well as adding new rules)_
+
 
 ### Required Rule
 
@@ -264,6 +276,8 @@ let form = {};
 let rules = { name: ['required'] };
 
 validator(form, rules).validate();
+```
+
 
 ### Same Validation Rule
 
@@ -287,6 +301,8 @@ let form = { password: 'asdfasdfasdf', confirm_password: 'secret' };
 let rules = { password: 'same:confirm_password' };
 
 validator(form, rules).validate();
+```
+
 
 ### Within Rule
 
@@ -310,6 +326,8 @@ let form = { name: 'jake'};
 let rules = { name: 'within:patricia,veronica,samuel,jeviah' };
 
 validator(form, rules).validate();
+```
+
 
 ### Utilization
 

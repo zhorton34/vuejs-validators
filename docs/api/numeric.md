@@ -25,3 +25,5 @@ let rules = { member: ['numeric'] }
 
 validator(form, rules).validate();
 ```
+
+

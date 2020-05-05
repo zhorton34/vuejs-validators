@@ -21,3 +21,5 @@ let rules = { email: ['email'] }
 
 validator(form, rules).validate();
 ```
+
+

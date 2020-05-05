@@ -21,3 +21,5 @@ let rules = { name: ['required'] };
 
 validator(form, rules).validate();
 ```
+
+

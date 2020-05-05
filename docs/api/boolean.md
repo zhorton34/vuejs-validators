@@ -42,3 +42,5 @@ rules = { selected: ['boolean'] };
 
 validator(form, rules).validate();
 ```
+
+

@@ -21,3 +21,5 @@ let rules = { name: 'within:patricia,veronica,samuel,jeviah' };
 
 validator(form, rules).validate();
 ```
+
+

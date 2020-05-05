@@ -22,3 +22,5 @@ let rules = { password: 'max:4' }
 
 validator(form, rules).validate();
 ```
+
+
