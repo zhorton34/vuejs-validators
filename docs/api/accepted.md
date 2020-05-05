@@ -6,14 +6,8 @@
 import validator from 'vuejs-validators';
 
 
-const input = {
-    terms_of_service: 'no'
-};
+let form = { terms_of_service: 'no' }
+let rules = { terms_of_service: 'accepted' }
 
-const rules = {
-   terms_of_service: 'accepted|required',
-};
-
-validator(input, rules);
+validator(form, rules).validate();
 ```
-[View source on GitHub](https://github.com/{user}/{repo}/blob/master/src/methods/example.js)

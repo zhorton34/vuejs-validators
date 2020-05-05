@@ -1,3 +1,3 @@
-### API
+### Validation Rules
 
 All available methods

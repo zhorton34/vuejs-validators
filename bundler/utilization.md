@@ -144,3 +144,76 @@ validation.failed(validator => {
 validation.validate()
 
 ```
+
+
+#### Extend Validators
+
+# `extend Validator`
+
+> Simple set up to add your own Validation Rules
+
+```js bash
+import validator from 'vuejs-validators';
+
+let input = {};
+let rules = {};
+let messages = {};
+let validation = validator(input, rules, messages)
+```
+
+#### Extend Option 1: Single Rule/Message Pair
+```js
+validation.extend('uppercase', [
+    ':attribute must be uppercase',
+    ({ value, validator, parameters }) => value === value.toUpperCase(),
+]);
+```
+
+**TIP:**
+--------
+> _For more advanced fields (Ex: "Required If", "Same As Fields")_
+> _you may need the entire validation "context" object._
+
+> _To see the entirety of our provided validation context, hook into_
+> _a rule validator method, pass through a single; non-deconstructed parameter,_
+> _and console.log it (the validation context object being it)_
+
+
+**Console Log The Validation Context**
+-------
+> _Cool Tip Example: Log The Validation Context Object To Your Console_
+``` js
+validation.extend('uppercase', [
+    ':attribute must be uppercase',
+    // context
+    context => {
+        // console.log it to check it out
+        console.log({ context });
+
+        return context.value === context.value.toUpperCase(),
+    }
+]);
+```
+
+
+#### Extend Option Two: Add Multiple Rules And Messages
+``` js
+validation.extend({
+    uppercase: [
+       ':attribute must be uppercase',
+        ({ value }) => value === value.toUpperCase(),
+    ],
+    notuppercase: [
+        ':attribute must not be uppercase',
+        ({ value }) => value !== value.toUpperCase()
+    ],
+    required_without: [
+        ':attribute is only required when form is missing :required_without field',
+        ({ validator, parameters }) => !Object.keys(validator.data).includes(parameters[0])
+    ],
+    required_with: [
+        ':attribute is required with the :required_with field',
+        ({ validator, parameters }) => Object.keys(validator.data).includes(parameters[0])
+    ],
+});
+```

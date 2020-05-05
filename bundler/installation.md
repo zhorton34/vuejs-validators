@@ -3,11 +3,11 @@
 #### NPM
 
 ```bash
-npm install --save-dev {repo}
+npm install --save-dev vuejs-validators
 ```
 
 #### Yarn
 
 ```bash
-yarn add {repo} --save
+yarn add vuejs-validators --save
 ```
