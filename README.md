@@ -8,15 +8,26 @@
 
 > Form Validation Simplified
 
-# Vuejs Validators
+### Table Of Contents
+- [Install](#Installation)
+- [Available Validation Rules](#available-validation-rules)
+- [Error Messages Api](#error-messages-api)
+- [Life Cycle Hooks](#life-cycle-hooks)
+- [Add Custom Rules](#extending)
+- [Extending](#extending)
+- [Custom Rules](#)
+- [License](#license)
+- [Contribute](#contribute)
+- [Vuejs Form And Vuejs Validators](#vuejs-form-alongside-vuejs-validators)
 
-> Form Validation Simplified
+# Vuejs Form Alongside Vuejs Validators
+> `Recommended for good vibes & simplified development`
+- Created along side each other
+- Each repository has zero non-dev dependencies
+- Both completely separate form logic from the ui/representation of the data itself
+- Separated repositories allow for using vuejs-form's and vuejs-validations independent of each other
+[Recommended Vuejs Form Package](https://github.com/zhorton34/vuejs-form)
 
-
-# Use vuejs-validations Along Side vuejs-form
-(Created in parrallel, but seperate repos keeps validation & form logic decoupled. Both repos have zero non-dev dependencies)
-
-https://github.com/zhorton34/vuejs-form
 ```js
 <template>
     <div>
@@ -37,34 +48,35 @@ https://github.com/zhorton34/vuejs-form
 
     export default {
        data: () => ({
+            validator: validator(),
+
             form: form({
                 name: '',
                 email: '',
                 password: '',
                 confirm_password: ''
             }),
+       }),
 
-            validator: validator(form, {
+        created() {
+            this.validator.make(this.form, {
                 name: 'required|min:5',
                 email: 'email|min:5|required',
                 password: 'required|same:confirm_password',
                 confirm_password: 'min:6',
-            }),
-       }),
-
-        created() {
-            this.validator.data = this.form.all();
+          });
         },
 
         methods: {
             failed(validator) {
-                console.log('validator errors: ', validator.errors)
+                console.log('validator errors: ', validator.errors().all())
             },
             passed(validator) {
                 console.log('passed: ', validator);
             },
 
             submit() {
+
                 this.validator.passed(validator => this.passed(validator))
                 this.validator.failed(validator => this.failed(validator))
 
@@ -706,6 +718,259 @@ validator(form, rules).validate();
 ```
 
 
+# Validator Error Api
+> `Simplified Interaction With Rule Error Messages`
+
+- [any()](#any-errors)
+- [all()](#all-errors)
+- [list()](#list-errors)
+- [set(errors)](#set-errors)
+- [forget()](#forget-errors)
+- [has(field)](#has-error)
+- [get(field)](#get-error)
+- [list(field)](#list-error)
+- [add(field, message)](#add-error)
+- [set(field, messages)](#set-field-errors)
+- [forget(field)](#forget-field)
+- [getValidator()](#get-errors-validator)
+
+### Validation Errors
+> _Access validation errors bag object_
+```js
+let validation = validator(data, rules)
+
+validation.validate();
+
+validation.errors();
+```
+
+
+
+### Any Errors
+> `Determine if there are "any" errors (bool)`
+```js
+validation.errors().any(); // true
+```
+```js
+let data = { name: '' };
+let rules = { name: 'required'};
+let validation = validator(data, rules);
+
+validation.validate();
+validation.errors().any();
+```
+
+
+
+### All Errors
+> `Retrieve all errors within the errors object`
+```js
+validation.errors().all()
+/**
+ * {
+ *   name: ['name field is required' ],
+ *   email: ['email must be an email', email field is required']
+ *  }
+ */
+```
+```js
+let data = { name: '', email: '' };
+let rules = { name: 'required', email: 'email|required' };
+let validation = validator(data, rules).validate();
+
+validation.errors().all();
+```
+```
+{
+    name: [
+        'name field is required'
+    ],
+    email: [
+        'email field must be an email address',
+        'email field is required'
+    ]
+}
+```
+
+
+
+### List Errors
+> `Retrieve all errors within the errors object`
+```js
+validation.errors().list()
+// ['name field is required', 'email field is required', 'email field must be an email']
+```
+```js
+let data = { name: '', email: '' };
+let rules = { name: 'required', email: 'email|required' };
+let validation = validator(data, rules);
+
+validation.validate()
+validation.errors().list();
+```
+```
+[
+    'name field is required',
+    'email field must be an email address',
+    'email field is required'
+]
+```
+
+
+
+### Set Errors
+> `Set all errors`
+```js
+validation.errors().set({
+    name: ['this is an error message for name' ],
+    something: ['has an error']
+})
+```
+```js
+let data = { name: '' };
+let rules = { name: 'required' };
+let validation = validator(data, rules);
+
+validation.validate();
+validation.errors().list(); // ['name is a required field']
+
+validation.errors().set({
+    notice: ['set this random error message']
+});
+
+validation.errors().list(); // ['set this random error message']
+```
+
+
+
+### Forget Errors
+> `Forget errors and reset them to empty`
+```js
+validation.errors().forget()
+```
+```js
+let data = { name: '' };
+let rules = { name: 'required' };
+let validation = validator(data, rules);
+
+validation.validate();
+validation.errors().list(); // ['name is a required field']
+
+validation.errors().forget();
+validation.errors().list() // []
+```
+
+
+
+### Has Error
+> `Determine if a specific field has error messages`
+```js
+validator.errors().has('name') // true
+validator.errors().has('email') // false
+validator.errors().has('something_else') // false
+```
+```js
+let data = { name: '', email: 'example@gmail.com' };
+let rules = { name: 'required', email: 'email|required' };
+let validation = validator(data, rules);
+
+validation.validate();
+validation.errors().has('name'); // true
+validation.errors().has('email'); // false
+validation.errors().has('something_else'); // false
+```
+
+
+
+### Get Error
+> `Get _first_ error message for a specific field`
+```js
+validation.errors().get('name');
+// "name is a required field"
+```
+
+```js
+let data = { name: '' };
+let rules = { name: 'required|min:3'};
+let validation = validator(data, rules);
+
+validation.validate();
+validation.errors().get('name'); // 'name is a required field'
+```
+
+
+### List Error
+> `List errors for a specific field`
+```js
+validation.errors().list('name');
+// ["name is a required field", "name must be longer than 3 characters"]
+```
+```js
+let data = { name: '' };
+let rules = { name: 'required|min:3'};
+let validation = validator(data, rules);
+
+validation.validate();
+validation.errors().list('name'); // ['name is a required field', 'name must be longer than 3 characters']
+```
+
+
+### Add Error
+> `Add error message for a specific field`
+```js
+validation.errors().add('name', 'four failures in a row. Two more failures before your locked out');
+```
+```js
+let data = { name: '' };
+let rules = { name: 'required|min:3'};
+let validation = validator(data, rules);
+
+validation.validate();
+validation.errors().list('name'); // ['name is a required field', 'name must be longer than 3 characters']
+```
+
+
+### Set Error
+> `Set error messages for a specific field`
+```js
+validation.errors().set('name', ['random messages', 'set on', 'the name field']);
+```
+
+```js
+let data = { name: '' };
+let rules = { name: 'required' };
+let validation = validator(data, rules);
+
+validation.validate();
+validation.errors().list('name'); // ['name is a required field']
+
+validation.errors().set('name', [
+    'random messages', 'set on', 'the name field'
+]);
+validation.errors().list('name'); // ['random messages', 'set on', 'the name field']
+```
+
+
+
+### Forget Error
+> `Forget error messages for a specific field`
+```js
+validation.errors().forget('name');
+```
+
+```js
+let data = { name: '' };
+let rules = { name: 'required' };
+let validation = validator(data, rules);
+
+validation.validate();
+validation.errors().list('name'); // ['name is a required field']
+validation.errors().forget('name');
+
+validation.errors().list('name'); // []
+```
+
+
 # Life Cycle Hooks
 
 > `Hook into validation life cycle and add custom functionality`
@@ -916,9 +1181,7 @@ let messages = {
     'terms_of_service:required': ':attribute is required',
 };
 
-validator(form, rules, messages).validate().errors;
-
-
+validator(form, rules, messages).validate();
 ```
 
 

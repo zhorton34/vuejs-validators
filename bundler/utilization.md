@@ -40,9 +40,7 @@ let messages = {
     'terms_of_service:required': ':attribute is required',
 };
 
-validator(form, rules, messages).validate().errors;
-
-
+validator(form, rules, messages).validate();
 ```
 
 

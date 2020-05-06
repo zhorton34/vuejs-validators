@@ -42,7 +42,7 @@ var Validator = function Validator() {
   this.translator = {};
   this.data = {};
   this.rules = _objectSpread({}, RULES);
-  this.errors = new Errors();
+  this.errorBag = new Errors(this);
   this.messages = _objectSpread({}, MESSAGES);
   this.afterValidationCallbacks = [];
   this.beforeValidationCallbacks = [];
@@ -51,6 +51,32 @@ var Validator = function Validator() {
 };
 
 Validator.prototype.parseData = require('./methods/parseData');
+
+Validator.prototype.errors = function () {
+  return this.errorBag;
+};
+/**
+ * Register Validator (Alias of make)
+ *
+ * @param data
+ * @param rules
+ * @param messages
+ * @param translator
+ * @returns {Validator}
+ */
+
+
+Validator.prototype.register = function () {
+  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var rules = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var messages = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  var translator = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+  this.parseRules = rules;
+  this.translator = translator;
+  this.customMessages = messages;
+  this.data = this.parseData(data);
+  return this;
+};
 /**
  * Make Validator
  *
@@ -61,14 +87,46 @@ Validator.prototype.parseData = require('./methods/parseData');
  * @returns {Validator}
  */
 
+
 Validator.prototype.make = function () {
   var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var rules = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var messages = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var translator = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
   this.parseRules = rules;
+  this.translator = translator;
   this.customMessages = messages;
   this.data = this.parseData(data);
+  return this;
+};
+
+Validator.prototype.addMessage = function (field, value) {
+  try {
+    this.customMessages[field] = value;
+  } catch (_unused) {
+    console.error("Was not able to add validation customMessages[".concat(field, "]: ").concat(value));
+  }
+
+  return this;
+};
+
+Validator.prototype.addRule = function (field, value) {
+  try {
+    this.parseRules[field] = value;
+  } catch (_unused2) {
+    console.error("Was not able to add validation parseRules[".concat(field, "]: ").concat(value));
+  }
+
+  return this;
+};
+
+Validator.prototype.addData = function (field, value) {
+  try {
+    this.data[field] = value;
+  } catch (_unused3) {
+    console.error("Was not able to add validation data[".concat(field, "]: ").concat(value));
+  }
+
   return this;
 };
 /**
@@ -231,7 +289,7 @@ Validator.prototype.beforeValidation = function () {
 
 Validator.prototype.validate = function () {
   this.beforeValidation();
-  this.errors.set(this.checks.reduce(function (errors, check) {
+  this.errors().set(this.checks.reduce(function (errors, check) {
     return _objectSpread(_objectSpread({}, errors), {}, _defineProperty({}, check.attribute, check.rule(check) ? _toConsumableArray(errors[check.attribute] || []) : [].concat(_toConsumableArray(errors[check.attribute] || []), [check.message()])));
   }, {}));
   this.afterValidation();
@@ -251,7 +309,7 @@ Validator.prototype.afterValidation = function () {
     return callback(_this3);
   });
 
-  if (this.errors.exist()) {
+  if (this.errors().exist()) {
     this.failedValidationCallbacks.forEach(function (callback) {
       return callback(_this3);
     });

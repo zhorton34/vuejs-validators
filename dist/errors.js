@@ -4,13 +4,18 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 var isEmpty = require('./helpers/isEmpty.js');
 
-module.exports = function () {
+module.exports = function (validator) {
   this.messages = {};
+
+  this.getValidator = function () {
+    return validator;
+  };
   /**
    * Determine if there are any error messages.
    */
 
-  this.exist = function () {
+
+  this.any = function () {
     return !isEmpty(this.messages);
   };
   /**
@@ -22,7 +27,7 @@ module.exports = function () {
     return Object.keys(this.messages).includes(field) && this.messages[field].length > 0;
   };
   /**
-   * Get all of the raw errors for the collection.
+   * Get all of the raw messages for the errors.
    */
 
 
@@ -30,13 +35,16 @@ module.exports = function () {
     return this.messages;
   };
   /**
-   * Get all of the messages for every field
+   * Array of messages for every field
    */
 
 
-  this.list = function () {
-    var values = this.messages;
-    return Array.isArray(values) ? values.flat() : [];
+  this.list = function (field) {
+    if (typeof field === 'undefined') {
+      return Array.isArray(this.messages) ? this.messages.flat() : [];
+    } else {
+      return this.messages[field] ? this.messages[field] : [];
+    }
   };
   /**
    * Get the first message for a given field.
@@ -60,32 +68,22 @@ module.exports = function () {
     this.messages[field].push(error);
   };
   /**
-   * Add array of messages for a given field
-   * @param field
-   * @param errors
-   */
-
-
-  this.fill = function (field) {
-    var errors = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-    this.messages[field] = errors;
-  };
-  /**
    * Set the raw errors for the collection.
    */
 
 
   this.set = function (errors) {
+    var value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
     if (_typeof(errors) === 'object') {
       this.messages = errors;
     } else {
-      this.messages = {
-        form: ["Uh oh something's not right"]
-      };
+      this.messages[errors] = value;
     }
   };
   /**
-   * Remove errors from the collection.
+   * Remove messages from all errors or
+   * optionally for errors on a specific field.
    */
 
 

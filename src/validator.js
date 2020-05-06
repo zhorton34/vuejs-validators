@@ -9,7 +9,7 @@ const Validator = function () {
 
 	this.data = {};
 	this.rules = { ...RULES };
-	this.errors = new Errors();
+	this.errorBag = new Errors(this);
 	this.messages = { ...MESSAGES };
 
 	this.afterValidationCallbacks = [];
@@ -19,6 +19,28 @@ const Validator = function () {
 };
 
 Validator.prototype.parseData = require('./methods/parseData');
+
+Validator.prototype.errors = function() {
+	return this.errorBag;
+};
+
+/**
+ * Register Validator (Alias of make)
+ *
+ * @param data
+ * @param rules
+ * @param messages
+ * @param translator
+ * @returns {Validator}
+ */
+Validator.prototype.register = function (data = {}, rules = {}, messages = {}, translator = {}) {
+	this.parseRules = rules;
+	this.translator = translator;
+	this.customMessages = messages;
+	this.data = this.parseData(data);
+
+	return this;
+};
 
 /**
  * Make Validator
@@ -31,12 +53,42 @@ Validator.prototype.parseData = require('./methods/parseData');
  */
 Validator.prototype.make = function (data = {}, rules = {}, messages = {}, translator = {}) {
 	this.parseRules = rules;
+	this.translator = translator;
 	this.customMessages = messages;
 	this.data = this.parseData(data);
 
 	return this;
 };
 
+Validator.prototype.addMessage = function(field, value) {
+	try {
+		this.customMessages[field] = value;
+	} catch {
+		console.error(`Was not able to add validation customMessages[${field}]: ${value}`);
+	}
+
+	return this;
+};
+
+Validator.prototype.addRule = function(field, value) {
+	try {
+		this.parseRules[field] = value;
+	} catch {
+		console.error(`Was not able to add validation parseRules[${field}]: ${value}`);
+	}
+
+	return this;
+};
+
+Validator.prototype.addData = function(field, value) {
+	try {
+		this.data[field] = value;
+	} catch {
+		console.error(`Was not able to add validation data[${field}]: ${value}`);
+	}
+
+	return this;
+};
 /**
  * Set Data Being Validated
  *
@@ -171,7 +223,7 @@ Validator.prototype.beforeValidation = function () {
 Validator.prototype.validate = function () {
 	this.beforeValidation();
 
-	this.errors.set(
+	this.errors().set(
 		this.checks.reduce(
 			(errors, check) => ({
 				...errors,
@@ -195,7 +247,7 @@ Validator.prototype.validate = function () {
 Validator.prototype.afterValidation = function () {
 	this.afterValidationCallbacks.forEach(callback => callback(this));
 
-	if (this.errors.exist()) {
+	if (this.errors().exist()) {
 		this.failedValidationCallbacks.forEach(callback => callback(this));
 
 		this.failedValidationCallbacks = [];
