@@ -12,6 +12,7 @@ const Validator = function () {
 	this.errors = new Errors();
 	this.messages = { ...MESSAGES };
 
+	this.afterValidationCallbacks = [];
 	this.beforeValidationCallbacks = [];
 	this.failedValidationCallbacks = [];
 	this.passedValidationCallbacks = [];
@@ -19,10 +20,55 @@ const Validator = function () {
 
 Validator.prototype.parseData = require('./methods/parseData');
 
+/**
+ * Make Validator
+ *
+ * @param data
+ * @param rules
+ * @param messages
+ * @param translator
+ * @returns {Validator}
+ */
 Validator.prototype.make = function (data = {}, rules = {}, messages = {}, translator = {}) {
 	this.parseRules = rules;
 	this.customMessages = messages;
 	this.data = this.parseData(data);
+
+	return this;
+};
+
+/**
+ * Set Data Being Validated
+ *
+ * @param data
+ * @returns {Validator}
+ */
+Validator.prototype.setData = function (data = {}) {
+	this.data = data;
+
+	return this;
+};
+
+/**
+ * Set Validation Rules
+ *
+ * @param rules
+ * @returns {Validator}
+ */
+Validator.prototype.setRules = function (rules = {}) {
+	this.rules = rules;
+
+	return this;
+};
+
+/**
+ * Set Validation Messages
+ *
+ * @param messages
+ * @returns {Validator}
+ */
+Validator.prototype.setMessages = function (messages = {}) {
+	this.messages = messages;
 
 	return this;
 };
@@ -51,13 +97,25 @@ Validator.prototype.extend = function (...parameters) {
 };
 
 /**
- * Add prepare for validation hook/callback
+ * Add before for validation hook/callback
  *
  * @param callback
  * @returns {Validator}
  */
-Validator.prototype.prepare = function (callback) {
+Validator.prototype.before = function (callback) {
 	this.beforeValidationCallbacks.push(callback);
+
+	return this;
+};
+
+/**
+ * Add after validation hook/callback
+ *
+ * @param callback
+ * @returns {Validator}
+ */
+Validator.prototype.after = function (callback) {
+	this.afterValidationCallbacks.push(callback);
 
 	return this;
 };
@@ -91,8 +149,7 @@ Validator.prototype.passed = function (callback) {
  *
  * @returns {Validator}
  */
-Validator.prototype.prepareToValidate = function () {
-
+Validator.prototype.beforeValidation = function () {
 	this.checks = Object.entries(this.parseRules).reduce(
 		(completed, [field, rules]) => [
 			...completed,
@@ -112,7 +169,7 @@ Validator.prototype.prepareToValidate = function () {
  * Trigger AfterValidation Hooks
  */
 Validator.prototype.validate = function () {
-	this.prepareToValidate();
+	this.beforeValidation();
 
 	this.errors.set(
 		this.checks.reduce(
@@ -136,6 +193,8 @@ Validator.prototype.validate = function () {
  * @returns {Validator}
  */
 Validator.prototype.afterValidation = function () {
+	this.afterValidationCallbacks.forEach(callback => callback(this));
+
 	if (this.errors.exist()) {
 		this.failedValidationCallbacks.forEach(callback => callback(this));
 

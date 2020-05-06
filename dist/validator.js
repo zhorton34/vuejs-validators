@@ -44,12 +44,22 @@ var Validator = function Validator() {
   this.rules = _objectSpread({}, RULES);
   this.errors = new Errors();
   this.messages = _objectSpread({}, MESSAGES);
+  this.afterValidationCallbacks = [];
   this.beforeValidationCallbacks = [];
   this.failedValidationCallbacks = [];
   this.passedValidationCallbacks = [];
 };
 
 Validator.prototype.parseData = require('./methods/parseData');
+/**
+ * Make Validator
+ *
+ * @param data
+ * @param rules
+ * @param messages
+ * @param translator
+ * @returns {Validator}
+ */
 
 Validator.prototype.make = function () {
   var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -59,6 +69,45 @@ Validator.prototype.make = function () {
   this.parseRules = rules;
   this.customMessages = messages;
   this.data = this.parseData(data);
+  return this;
+};
+/**
+ * Set Data Being Validated
+ *
+ * @param data
+ * @returns {Validator}
+ */
+
+
+Validator.prototype.setData = function () {
+  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  this.data = data;
+  return this;
+};
+/**
+ * Set Validation Rules
+ *
+ * @param rules
+ * @returns {Validator}
+ */
+
+
+Validator.prototype.setRules = function () {
+  var rules = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  this.rules = rules;
+  return this;
+};
+/**
+ * Set Validation Messages
+ *
+ * @param messages
+ * @returns {Validator}
+ */
+
+
+Validator.prototype.setMessages = function () {
+  var messages = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  this.messages = messages;
   return this;
 };
 /**
@@ -102,15 +151,27 @@ Validator.prototype.extend = function () {
   return this;
 };
 /**
- * Add prepare for validation hook/callback
+ * Add before for validation hook/callback
  *
  * @param callback
  * @returns {Validator}
  */
 
 
-Validator.prototype.prepare = function (callback) {
+Validator.prototype.before = function (callback) {
   this.beforeValidationCallbacks.push(callback);
+  return this;
+};
+/**
+ * Add after validation hook/callback
+ *
+ * @param callback
+ * @returns {Validator}
+ */
+
+
+Validator.prototype.after = function (callback) {
+  this.afterValidationCallbacks.push(callback);
   return this;
 };
 /**
@@ -144,7 +205,7 @@ Validator.prototype.passed = function (callback) {
  */
 
 
-Validator.prototype.prepareToValidate = function () {
+Validator.prototype.beforeValidation = function () {
   var _this2 = this;
 
   this.checks = Object.entries(this.parseRules).reduce(function (completed, _ref3) {
@@ -169,7 +230,7 @@ Validator.prototype.prepareToValidate = function () {
 
 
 Validator.prototype.validate = function () {
-  this.prepareToValidate();
+  this.beforeValidation();
   this.errors.set(this.checks.reduce(function (errors, check) {
     return _objectSpread(_objectSpread({}, errors), {}, _defineProperty({}, check.attribute, check.rule(check) ? _toConsumableArray(errors[check.attribute] || []) : [].concat(_toConsumableArray(errors[check.attribute] || []), [check.message()])));
   }, {}));
@@ -185,6 +246,10 @@ Validator.prototype.validate = function () {
 
 Validator.prototype.afterValidation = function () {
   var _this3 = this;
+
+  this.afterValidationCallbacks.forEach(function (callback) {
+    return callback(_this3);
+  });
 
   if (this.errors.exist()) {
     this.failedValidationCallbacks.forEach(function (callback) {

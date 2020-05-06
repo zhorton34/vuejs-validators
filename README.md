@@ -706,6 +706,174 @@ validator(form, rules).validate();
 ```
 
 
+# Life Cycle Hooks
+
+> `Hook into validation life cycle and add custom functionality`
+
+## Available Life Cycle Hooks
+- before
+- passed
+- failed
+- after
+
+_NOTE: The "After" hook runs prior to failed or passed_
+
+## All Life Cycle Hooks
+- May Register callbacks
+- May Register more than one callback
+- Forgets Registered callback after it's run
+- Registered callbacks accept the validator instance
+
+## Before Life Cycle Hook
+> `Before validation rules are checked`
+
+### Before Life Cycle Hook Example
+```js
+
+validator(data, rules).before(validation => {
+    validation.extend({
+        uppercase: [
+            ':attribute mst be upper case',
+            ({ value }) => value === value.toUpperCase()
+        ]
+    })
+})
+```
+
+## After Life Cycle Example
+> `After validation rules are checked`
+
+### After Life Cycle Hook Example
+```js
+// Within vue instance, you can call another method
+validator(data, rules).after(validation => {
+    validation.errors.add('custom', 'Add Custom Error Message')
+});
+```
+
+## Passed Life Cycle Hook
+> `Runs when validation data passed validation rules`
+
+### Passed Life Cycle Hook Example
+```js
+validator(data, rules).passed((validation) => {
+    axios.post('/data', data).then(response => {
+        window.location = '/home';
+    })
+    .catch(errors => console.error)
+});
+```
+
+## Failed Life Cycle Hook
+> `Runs when validation data failed validation rules`
+
+### Failed Life Cycle Hook Example
+```js
+
+validator(data, rules).failed(validation => {
+   console.log('error messages: ', validation.errors.all())
+});
+```
+
+
+# Extending
+> `extend several provided features of this package`
+
+- Custom Error Messages
+- Custom Validation Rule
+- Custom Validation Rules
+
+## Extending: Custom Error Messages
+> `Customize rule error messages`
+
+- Globally, each rule provides a default error message
+- Easily override rule's default error message
+- Simply pass 'messages' to our validator
+- Only override messages you want to
+
+```js bash
+import validator from 'vuejs-validators';
+
+let data = { name: '', email: '' };
+
+let rules = {
+    name: ['min:3', 'max:12', 'string', 'required'],
+    email: ['email', 'required']
+};
+
+let messages = {
+    'name.min': 'Whoops! :attribute is less than :min characters',
+    'name.required': 'Wha oh, doesnt look like there any value for your :attribute field',
+
+    'email.email': 'Really? Email is called Email...it has to be an email...',
+};
+
+let validation = validator(input, rules, messages)
+```
+## Extending: Custom Rules
+> `Add Your Own Validation Rules`
+
+- Easily add, or override, validation rules
+- Add a group of rules at a time
+- Add a single rule add a time
+
+### Extending: Custom Rules ~ Add Single Rule
+> `validator.extend(name, [message, rule])`
+```js
+validator(data, rules).extend('uppercase', [
+    ':attribute must be uppercase',
+    ({ value, validator, parameters }) => value === value.toUpperCase(),
+]);
+```
+
+### Extending: Custom Rules ~ Add Multiple Rules
+> `validator.extend({ first: [message, rule], second: [message, rule], etc... })`
+```js
+validation.extend({
+    uppercase: [
+       ':attribute must be uppercase',
+        ({ value }) => value === value.toUpperCase(),
+    ],
+    not_uppercase: [
+        ':attribute must not be uppercase',
+        ({ value }) => value !== value.toUpperCase()
+    ],
+    required_without: [
+        ':attribute is only required when form is missing :required_without field',
+        ({ validator, parameters }) => !Object.keys(validator.data).includes(parameters[0])
+    ],
+    required_with: [
+        ':attribute is required with the :required_with field',
+        ({ validator, parameters }) => Object.keys(validator.data).includes(parameters[0])
+    ],
+});
+```
+
+**TIP: console.log Rule Validation Context**
+--------
+> _For more advanced fields (Ex: "Required If", "Same As Fields")_
+> _you may need the entire validation "context" object._
+> _To see the entirety of our provided validation context, hook into_
+> _a rule validator method, pass through a single; non-deconstructed parameter,_
+> _and console.log it (Checkout the example directly below)_
+
+**Console Log The Validation Context**
+-------
+> _Cool Tip Example: Log The Validation Context Object To Your Console_
+``` js
+validation.extend('uppercase', [
+    ':attribute must be uppercase',
+    // context
+    context => {
+        // console.log it to check it out
+        console.log({ context });
+
+        return context.value === context.value.toUpperCase(),
+    }
+]);
+```
+
+
 ### Utilization
 
 ```js
@@ -748,182 +916,12 @@ let messages = {
     'terms_of_service:required': ':attribute is required',
 };
 
-let validation = validator(form, rules, messages);
+validator(form, rules, messages).validate().errors;
 
- /***
- *********************************
- ** Validation Life Cycle Hooks **
- *********************************
- * Hooks
- **********
- * Prepare
- * Failed
- * Passed
- *
- *******
- * 1. Pass multiple callbacks to the validator life cycle hooks
- *************
- * validator.prepare(validator => console.log('preparing to validate: ', validator);
- * validator.prepare(callbackTwo);
- *
- **
- * Validator.failed(validator => console.log('errors', validator.getErrors());
- * Validator.failed(validator => validator.errors.name.push('Add/append custom error message')
- *
- **
- * validator.passed(validator => { console.log(validator});
- * validator.passed(successTwo);
- * validator.passed(successThreeCallback);
- *
- *********
- * 2. Accept the validator instance as their callback parameter
- ****************
- *   A: Callback being passed to the prepare life cycle hook:
- *     ~ validator.prepare(callback);
- *   B: It except an instance of the validator Or
- *      ~ validator.prepare(validator => console.log(
- *           validator.data,
- *           validator.rules,
- *           validator.messages,
- *           validator.errors
- *       ));
- *
- *********
- * 3. All life cycle hooks Are FORGOTTEN
- **************
- *    A: After execution callbacks/hooks are forgotten
- *    B: This is to prevent "accidentally" adding hooks over and over again (Especially in reactive frameworks)
- *
- ***
-
-
-/**
- * Extend Validation In Real Time Using Prepare LIfe Cycle Hook
- ********
- * validator with additional rule and message by hooking into the prepare life cycle hook*
- ***/
-
-validation.prepare(validator => {
-    validator.extend({
-       uppercase: [
-            ':attribute must be uppercase',
-            ({ value, validator, parameters }) => value === value.toUpperCase()
-       ],
-    });
-});
-
-/* "Passed Validation Example"
-/*********************************
-* ~ "Only submit form data when it passes validation
-**/
-
-validation.passed(
-    validator => axios.post('/login', validator.data).then(response =>
-    {
-        this.$router.to('/home');
-    });
-);
-
-
-/* "Failed Validation Example"
-/********************************
-* ~ "Flash" Error Messages, but only when validation fails
-**/
-
-const VueComponent = this;
-
-validation.failed(validator => {
-    /** Pass errors to vue component data property to display */
-    VueComponent.errors = validator.getErrors();
-
-    /** Set timeout, reset "Component" errors to empty array, removing errors from user display */
-    window.setTimeout(() => {  VueComponent.errors = []; }, 5000)
-});
-
-
-/** "Validate"
-/*******************
-* ~ "Validate"
-*      1. Prepares for validation
-*      2. Validates the form data
-*      3. Populares the validation.errors object
-*      4. Determines whether to trigger the "passed" callbacks or the "failed" callbacks
-**/
-validation.validate()
 
 ```
 
 
-#### Extend Validators
-
-## `extend Validator`
-
-> Simple set up to add your own Validation Rules
-
-```js bash
-import validator from 'vuejs-validators';
-
-let input = {};
-let rules = {};
-let messages = {};
-let validation = validator(input, rules, messages)
-```
-
-#### Extend Option 1: Single Rule/Message Pair
-```js
-validation.extend('uppercase', [
-    ':attribute must be uppercase',
-    ({ value, validator, parameters }) => value === value.toUpperCase(),
-]);
-```
-
-**TIP: Console.Log Context Validation**
---------
-> _For more advanced fields (Ex: "Required If", "Same As Fields")_
-> _you may need the entire validation "context" object._
-> _To see the entirety of our provided validation context, hook into_
-> _a rule validator method, pass through a single; non-deconstructed parameter,_
-> _and console.log it (Checkout the example directly below)_
-
-
-**Console Log The Validation Context**
--------
-> _Cool Tip Example: Log The Validation Context Object To Your Console_
-``` js
-validation.extend('uppercase', [
-    ':attribute must be uppercase',
-    // context
-    context => {
-        // console.log it to check it out
-        console.log({ context });
-
-        return context.value === context.value.toUpperCase(),
-    }
-]);
-```
-
-
-### Extend Option Two: Add Multiple Rules And Messages
-``` js
-validation.extend({
-    uppercase: [
-       ':attribute must be uppercase',
-        ({ value }) => value === value.toUpperCase(),
-    ],
-    notuppercase: [
-        ':attribute must not be uppercase',
-        ({ value }) => value !== value.toUpperCase()
-    ],
-    required_without: [
-        ':attribute is only required when form is missing :required_without field',
-        ({ validator, parameters }) => !Object.keys(validator.data).includes(parameters[0])
-    ],
-    required_with: [
-        ':attribute is required with the :required_with field',
-        ({ validator, parameters }) => Object.keys(validator.data).includes(parameters[0])
-    ],
-});
-```
 
 
 ### Contribute
