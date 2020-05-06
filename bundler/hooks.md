@@ -1,4 +1,4 @@
-# Life Cycle Hooks
+# Validator Life Cycle Hooks
 
 > `Hook into validation life cycle and add custom functionality`
 

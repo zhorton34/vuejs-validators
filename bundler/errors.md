@@ -206,7 +206,9 @@ let rules = { name: 'required|min:3'};
 let validation = validator(data, rules);
 
 validation.validate();
-validation.errors().list('name'); // ['name is a required field', 'name must be longer than 3 characters']
+validation.errors().add('name', 'four failures in a row. Two more failures before your locked out');
+validation.errors().list('name');
+// ['name is a required field', 'name must be longer than 3 characters', 'four failures in a row. Two more failures before your locked out']
 ```
 
 
@@ -241,11 +243,14 @@ validation.errors().forget('name');
 ```js
 let data = { name: '' };
 let rules = { name: 'required' };
-let validation = validator(data, rules);
+let validation = validator(data, rules).validate();
 
-validation.validate();
-validation.errors().list('name'); // ['name is a required field']
+ // ['name is a required field']
+validation.errors().list('name');
+
+// Forget
 validation.errors().forget('name');
 
-validation.errors().list('name'); // []
+// []
+validation.errors().list('name');
 ```

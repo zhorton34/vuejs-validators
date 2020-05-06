@@ -18,6 +18,7 @@ const Validator = function () {
 	this.passedValidationCallbacks = [];
 };
 
+
 Validator.prototype.parseData = require('./methods/parseData');
 
 Validator.prototype.errors = function() {
@@ -25,22 +26,12 @@ Validator.prototype.errors = function() {
 };
 
 /**
- * Register Validator (Alias of make)
+ * Register (Alias of make)
  *
- * @param data
- * @param rules
- * @param messages
- * @param translator
+ * @param parameters
  * @returns {Validator}
  */
-Validator.prototype.register = function (data = {}, rules = {}, messages = {}, translator = {}) {
-	this.parseRules = rules;
-	this.translator = translator;
-	this.customMessages = messages;
-	this.data = this.parseData(data);
-
-	return this;
-};
+Validator.prototype.register = Validator.prototype.make;
 
 /**
  * Make Validator
@@ -89,6 +80,7 @@ Validator.prototype.addData = function(field, value) {
 
 	return this;
 };
+
 /**
  * Set Data Being Validated
  *
@@ -120,7 +112,7 @@ Validator.prototype.setRules = function (rules = {}) {
  * @returns {Validator}
  */
 Validator.prototype.setMessages = function (messages = {}) {
-	this.messages = messages;
+	this.customMessages = messages;
 
 	return this;
 };
@@ -247,7 +239,7 @@ Validator.prototype.validate = function () {
 Validator.prototype.afterValidation = function () {
 	this.afterValidationCallbacks.forEach(callback => callback(this));
 
-	if (this.errors().exist()) {
+	if (this.errors().any()) {
 		this.failedValidationCallbacks.forEach(callback => callback(this));
 
 		this.failedValidationCallbacks = [];

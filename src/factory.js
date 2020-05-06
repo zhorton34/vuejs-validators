@@ -7,24 +7,8 @@ const Factory = function (
 	rules = {},
 	messages = {},
 	translator = {}
-) {};
-
-Factory.prototype.make = function (
-	data = {},
-	rules = {},
-	messages = {},
-	translator = {}
 ) {
-	return (new Validator()).make(data, rules, messages, translator);
-};
-
-Factory.prototype.register = function (
-	data = {},
-	rules = {},
-	messages = {},
-	translator = {}
-) {
-	return (new Validator()).make(data, rules, messages, translator);
+	return ((new Validator()).make(data, rules, messages, translator))
 };
 
 module.exports = Factory;

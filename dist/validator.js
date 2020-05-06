@@ -48,7 +48,14 @@ var Validator = function Validator() {
   this.beforeValidationCallbacks = [];
   this.failedValidationCallbacks = [];
   this.passedValidationCallbacks = [];
-};
+}; // errors
+// register, make,
+// addMessage, addRule, addData
+// setData, setRules, setMessages
+// extend
+// validate
+// before, after, failed, passed,
+
 
 Validator.prototype.parseData = require('./methods/parseData');
 
@@ -56,27 +63,14 @@ Validator.prototype.errors = function () {
   return this.errorBag;
 };
 /**
- * Register Validator (Alias of make)
+ * Register (Alias of make)
  *
- * @param data
- * @param rules
- * @param messages
- * @param translator
+ * @param parameters
  * @returns {Validator}
  */
 
 
-Validator.prototype.register = function () {
-  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var rules = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var messages = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  var translator = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-  this.parseRules = rules;
-  this.translator = translator;
-  this.customMessages = messages;
-  this.data = this.parseData(data);
-  return this;
-};
+Validator.prototype.register = Validator.prototype.make;
 /**
  * Make Validator
  *
@@ -86,7 +80,6 @@ Validator.prototype.register = function () {
  * @param translator
  * @returns {Validator}
  */
-
 
 Validator.prototype.make = function () {
   var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -165,7 +158,7 @@ Validator.prototype.setRules = function () {
 
 Validator.prototype.setMessages = function () {
   var messages = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  this.messages = messages;
+  this.customMessages = messages;
   return this;
 };
 /**
@@ -309,7 +302,7 @@ Validator.prototype.afterValidation = function () {
     return callback(_this3);
   });
 
-  if (this.errors().exist()) {
+  if (this.errors().any()) {
     this.failedValidationCallbacks.forEach(function (callback) {
       return callback(_this3);
     });

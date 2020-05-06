@@ -1,8 +1,6 @@
-const rules = require('../../src/rules');
-const messages = require('../../src/messages');
+'use strict';
 
-module.exports = (it, expect, {  }) => {
-
+module.exports = (it, expect, { rules, messages }) => {
 	it('should have the same message keys as rules keys', () =>
 	{
 		expect(Object.keys(rules)).to.eql(Object.keys(messages));

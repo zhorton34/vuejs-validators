@@ -7,7 +7,7 @@ const validator = (
 	rules = {},
 	messages = {},
 	translator = {},
-) => (new Factory(data, rules, messages, translator)).make();
+) => (new Factory(data, rules, messages, translator));
 
 module.exports = validator;
 module.exports.Validator = Factory;

@@ -11,7 +11,7 @@ module.exports = function (validator) {
 	 * Determine if there are any error messages.
 	 */
 	this.any = function () {
-		return !isEmpty(this.messages);
+		return !isEmpty(this.list());
 	};
 
 	/**
@@ -34,14 +34,12 @@ module.exports = function (validator) {
 	/**
 	 * Array of messages for every field
 	 */
-	this.list = function (field) {
-		if (typeof field === 'undefined') {
-			return Array.isArray(this.messages)
-				? this.messages.flat()
-				: [];
-		} else {
-			return this.messages[field] ? this.messages[field] : [];
-		}
+	this.list = function (field = false) {
+		return field
+			? this.messages[field]
+			: Object.keys(this.messages)
+				.map(field => this.messages[field])
+				.reduce((list, messages) => [ ...list,  ...messages ], []);
 	};
 
 	/**
