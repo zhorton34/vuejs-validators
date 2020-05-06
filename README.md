@@ -8,6 +8,10 @@
 
 > Form Validation Simplified
 
+# Vuejs Validators
+
+> Form Validation Simplified
+
 
 # Use vuejs-validations Along Side vuejs-form
 (Created in parrallel, but seperate repos keeps validation & form logic decoupled. Both repos have zero non-dev dependencies)
@@ -28,15 +32,15 @@ https://github.com/zhorton34/vuejs-form
 </template>
 
 <script>
-    import form from 'vuejs-form' 
+    import form from 'vuejs-form'
     import validator from 'vuejs-validators'
 
     export default {
        data: () => ({
-            form: form({ 
-                name: '', 
-                email: '', 
-                password: '', 
+            form: form({
+                name: '',
+                email: '',
+                password: '',
                 confirm_password: ''
             }),
 
@@ -48,10 +52,10 @@ https://github.com/zhorton34/vuejs-form
             }),
        }),
 
-        created() {            
+        created() {
             this.validator.data = this.form.all();
         },
-        
+
         methods: {
             failed(validator) {
                 console.log('validator errors: ', validator.errors)
@@ -70,6 +74,7 @@ https://github.com/zhorton34/vuejs-form
     }
 </script>
 ```
+
 
 ### Installation
 
@@ -452,7 +457,7 @@ validator(form, rules).validate();
 import validator from 'vuejs-validators';
 
 let form = { pencil: '2a'};
-let rules = { pencil: 'not_within:notebook,pencil,marker,sharpie,whiteboard' };
+let rules = { pencil: 'not_within:notebook,pencil,2a,marker,sharpie,whiteboard' };
 
 validator(form, rules).validate();
 ```

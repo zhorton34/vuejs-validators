@@ -17,7 +17,7 @@ validator(form, rules).validate();
 import validator from 'vuejs-validators';
 
 let form = { pencil: '2a'};
-let rules = { pencil: 'not_within:notebook,pencil,marker,sharpie,whiteboard' };
+let rules = { pencil: 'not_within:notebook,pencil,2a,marker,sharpie,whiteboard' };
 
 validator(form, rules).validate();
 ```
