@@ -1,4 +1,5 @@
 const RULES = require('./rules');
+const Errors = require('./errors');
 const MESSAGES = require('./messages');
 const ParseRule = require('./parseRule');
 const variadic = require('./helpers/variadic');
@@ -7,8 +8,8 @@ const Validator = function () {
 	this.translator = {};
 
 	this.data = {};
-	this.errors = {};
 	this.rules = { ...RULES };
+	this.errors = new Errors();
 	this.messages = { ...MESSAGES };
 
 	this.beforeValidationCallbacks = [];
@@ -100,6 +101,7 @@ Validator.prototype.prepareToValidate = function () {
 	[]);
 
 	this.beforeValidationCallbacks.forEach(callback => callback(this));
+	this.beforeValidationCallbacks = [];
 };
 
 /**
@@ -112,14 +114,16 @@ Validator.prototype.prepareToValidate = function () {
 Validator.prototype.validate = function () {
 	this.prepareToValidate();
 
-	this.errors = this.checks.reduce(
-		(errors, check) => ({
-			...errors,
-			[check.attribute]: check.rule(check)
-				? [...(errors[check.attribute] || [])]
-				: [...(errors[check.attribute] || []), check.message()],
-		}),
-	{});
+	this.errors.set(
+		this.checks.reduce(
+			(errors, check) => ({
+				...errors,
+				[check.attribute]: check.rule(check)
+					? [...(errors[check.attribute] || [])]
+					: [...(errors[check.attribute] || []), check.message()],
+			}),
+		{})
+	);
 
 	this.afterValidation();
 
@@ -132,7 +136,7 @@ Validator.prototype.validate = function () {
  * @returns {Validator}
  */
 Validator.prototype.afterValidation = function () {
-	if (this.hasErrors()) {
+	if (this.errors.exist()) {
 		this.failedValidationCallbacks.forEach(callback => callback(this));
 
 		this.failedValidationCallbacks = [];
@@ -141,36 +145,6 @@ Validator.prototype.afterValidation = function () {
 
 		this.passedValidationCallbacks = [];
 	}
-};
-
-/**
- * Determine if the validator currently has errors
- *
- * @returns {boolean}
- */
-Validator.prototype.hasErrors = function () {
-	return Object.keys(this.errors).length > 0;
-};
-
-/**
- * Object of error messages
- * {
- * 	   name: ['name must be less than 8 characters', 'name is required'],
- *     email: ['email is a required field', 'email must be of type email'],
- * }
- * @returns {}
- */
-Validator.prototype.getErrors = function () {
-	return this.errors;
-};
-
-/**
- * Flat array of error messages
- *
- * @returns {any[]}
- */
-Validator.prototype.getErrorsList = function () {
-	return Object.values(this.errors).flat();
 };
 
 module.exports = Validator;

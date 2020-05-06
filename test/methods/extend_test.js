@@ -29,7 +29,7 @@ module.exports = (it, expect, { validator }) => {
 	.validate();
 
 	it('should fail the test and return the proper message for "must be uppercase"', () => {
-		expect(validation.getErrors()).to.eql({
+		expect(validation.errors.all()).to.eql({
 			name: ["name must be uppercase"],
 			email: [],
 			confirm_password: [],

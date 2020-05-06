@@ -30,6 +30,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var RULES = require('./rules');
 
+var Errors = require('./errors');
+
 var MESSAGES = require('./messages');
 
 var ParseRule = require('./parseRule');
@@ -39,8 +41,8 @@ var variadic = require('./helpers/variadic');
 var Validator = function Validator() {
   this.translator = {};
   this.data = {};
-  this.errors = {};
   this.rules = _objectSpread({}, RULES);
+  this.errors = new Errors();
   this.messages = _objectSpread({}, MESSAGES);
   this.beforeValidationCallbacks = [];
   this.failedValidationCallbacks = [];
@@ -155,6 +157,7 @@ Validator.prototype.prepareToValidate = function () {
   this.beforeValidationCallbacks.forEach(function (callback) {
     return callback(_this2);
   });
+  this.beforeValidationCallbacks = [];
 };
 /**
  * Validate Hook
@@ -167,9 +170,9 @@ Validator.prototype.prepareToValidate = function () {
 
 Validator.prototype.validate = function () {
   this.prepareToValidate();
-  this.errors = this.checks.reduce(function (errors, check) {
+  this.errors.set(this.checks.reduce(function (errors, check) {
     return _objectSpread(_objectSpread({}, errors), {}, _defineProperty({}, check.attribute, check.rule(check) ? _toConsumableArray(errors[check.attribute] || []) : [].concat(_toConsumableArray(errors[check.attribute] || []), [check.message()])));
-  }, {});
+  }, {}));
   this.afterValidation();
   return this;
 };
@@ -183,7 +186,7 @@ Validator.prototype.validate = function () {
 Validator.prototype.afterValidation = function () {
   var _this3 = this;
 
-  if (this.hasErrors()) {
+  if (this.errors.exist()) {
     this.failedValidationCallbacks.forEach(function (callback) {
       return callback(_this3);
     });
@@ -194,39 +197,6 @@ Validator.prototype.afterValidation = function () {
     });
     this.passedValidationCallbacks = [];
   }
-};
-/**
- * Determine if the validator currently has errors
- *
- * @returns {boolean}
- */
-
-
-Validator.prototype.hasErrors = function () {
-  return Object.keys(this.errors).length > 0;
-};
-/**
- * Object of error messages
- * {
- * 	   name: ['name must be less than 8 characters', 'name is required'],
- *     email: ['email is a required field', 'email must be of type email'],
- * }
- * @returns {}
- */
-
-
-Validator.prototype.getErrors = function () {
-  return this.errors;
-};
-/**
- * Flat array of error messages
- *
- * @returns {any[]}
- */
-
-
-Validator.prototype.getErrorsList = function () {
-  return Object.values(this.errors).flat();
 };
 
 module.exports = Validator;
