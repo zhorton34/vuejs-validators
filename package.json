@@ -1,6 +1,6 @@
 {
   "name": "vuejs-validators",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Vue js validators is clean, minimalistic validation package. Validation simplified!",
   "main": "dist/index.js",
   "scripts": {
