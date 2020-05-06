@@ -10,15 +10,17 @@
 
 ### Table Of Contents
 - [Install](#Installation)
-- [Available Validation Rules](#available-validation-rules)
-- [Error Messages Api](#error-messages-api)
-- [Life Cycle Hooks](#life-cycle-hooks)
-- [Add Custom Rules](#extending)
+- [Available Rules](#available-validation-rules)
+- [Validator Life Cycle Hooks](#validator-life-cycle-hooks)
+- [Validator Messages Api](#validator-error-messages-api)
+
 - [Extending](#extending)
-- [Custom Rules](#)
+- [Custom Messages](#extending)
+- [Custom Validation Rules](#extending-custom-rules)
+
 - [License](#license)
 - [Contribute](#contribute)
-- [Vuejs Form And Vuejs Validators](#vuejs-form-alongside-vuejs-validators)
+- [Pull in VueJS Form, Super powerful, lightweight combo](#vuejs-form-alongside-vuejs-validators)
 
 # Vuejs Form Alongside Vuejs Validators
 > `Recommended for good vibes & simplified development`
@@ -48,7 +50,12 @@
 
     export default {
        data: () => ({
-            validator: validator(),
+            validator: validator({}, {
+                name: 'required|min:5',
+                email: 'email|min:5|required',
+                password: 'required|same:confirm_password',
+                confirm_password: 'min:6',
+            }),
 
             form: form({
                 name: '',
@@ -58,29 +65,34 @@
             }),
        }),
 
-        created() {
-            this.validator.make(this.form, {
-                name: 'required|min:5',
-                email: 'email|min:5|required',
-                password: 'required|same:confirm_password',
-                confirm_password: 'min:6',
-          });
-        },
-
         methods: {
-            failed(validator) {
-                console.log('validator errors: ', validator.errors().all())
+            before(validation) {
+               validation.setData(this.form)
             },
-            passed(validator) {
-                console.log('passed: ', validator);
+
+            after(validation) {
+                console.log('after: ', validation);
+            },
+
+            failed(validation) {
+                console.log('failed validation, flash errors: ', validator.errors().all());
+            },
+
+            passed(validation) {
+                /**
+                 *   axios.post('/stuff', this.form.wrap('data'))
+                 *        .then(response => console.log)
+                 *        .catch(oops => console.error)
+                 */
+                console.log('passed, submit form data: ', this.form.all());
             },
 
             submit() {
-
-                this.validator.passed(validator => this.passed(validator))
-                this.validator.failed(validator => this.failed(validator))
-
-                this.validator.validate();
+                this.validator
+                    .before(validation => this.before(validation))
+                    .after(validation => this.after(validation)
+                    .passed(validation => this.passed(validation))
+                    .failed(validation => this.failed(validation))
             }
         }
     }
@@ -103,9 +115,7 @@ yarn add vuejs-validators --save
 ```
 
 
-### Available Validation Rules
-
-Below is a list of all available validation rules and their function:
+### Validator Api
 
 
 - [accepted](#accepted-rule)
@@ -926,7 +936,9 @@ let rules = { name: 'required|min:3'};
 let validation = validator(data, rules);
 
 validation.validate();
-validation.errors().list('name'); // ['name is a required field', 'name must be longer than 3 characters']
+validation.errors().add('name', 'four failures in a row. Two more failures before your locked out');
+validation.errors().list('name');
+// ['name is a required field', 'name must be longer than 3 characters', 'four failures in a row. Two more failures before your locked out']
 ```
 
 
@@ -961,17 +973,20 @@ validation.errors().forget('name');
 ```js
 let data = { name: '' };
 let rules = { name: 'required' };
-let validation = validator(data, rules);
+let validation = validator(data, rules).validate();
 
-validation.validate();
-validation.errors().list('name'); // ['name is a required field']
+ // ['name is a required field']
+validation.errors().list('name');
+
+// Forget
 validation.errors().forget('name');
 
-validation.errors().list('name'); // []
+// []
+validation.errors().list('name');
 ```
 
 
-# Life Cycle Hooks
+# Validator Life Cycle Hooks
 
 > `Hook into validation life cycle and add custom functionality`
 

@@ -48,14 +48,7 @@ var Validator = function Validator() {
   this.beforeValidationCallbacks = [];
   this.failedValidationCallbacks = [];
   this.passedValidationCallbacks = [];
-}; // errors
-// register, make,
-// addMessage, addRule, addData
-// setData, setRules, setMessages
-// extend
-// validate
-// before, after, failed, passed,
-
+};
 
 Validator.prototype.parseData = require('./methods/parseData');
 
