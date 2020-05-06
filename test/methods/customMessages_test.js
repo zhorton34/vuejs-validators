@@ -8,8 +8,8 @@ module.exports = (it, expect, { validator }) => {
 	)).validate();
 
 	it('should return the passed in rules', () => {
-		expect(validation.getErrors()).to.eql({
-			name: ["name is a custom 8 char minimum error message"]
-		});
+		expect(validation.errors.get('name')).to.eql(
+			"name is a custom 8 char minimum error message"
+		);
 	})
 };

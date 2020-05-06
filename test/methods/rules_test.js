@@ -8,7 +8,7 @@ module.exports = (it, expect, { validator }) => {
 
 	validation.validate();
 	it('should return the passed in rules', () => {
-		expect(validation.getErrors()).to.eql({
+		expect(validation.errors.all()).to.eql({
 			name: [
 				"name isn't allowed to be less than 8 characters"
 			]
