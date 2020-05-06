@@ -16,8 +16,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 var isEmpty = require('./helpers/isEmpty.js');
 
-module.exports = function (validator) {
+var Errors = function Errors(validator) {
   this.messages = {};
+  /**
+   * Get Validator
+   *
+   * @returns {*}
+   */
 
   this.getValidator = function () {
     return validator;
@@ -110,3 +115,10 @@ module.exports = function (validator) {
     }
   };
 };
+
+var makeErrorBag = function makeErrorBag() {
+  var validator = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  return new Errors(validator);
+};
+
+module.exports = makeErrorBag;

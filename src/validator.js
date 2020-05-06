@@ -1,7 +1,7 @@
 const RULES = require('./rules');
-const Errors = require('./errors');
 const MESSAGES = require('./messages');
 const ParseRule = require('./parseRule');
+const makeErrorBag = require('./errors');
 const variadic = require('./helpers/variadic');
 
 const Validator = function () {
@@ -9,7 +9,7 @@ const Validator = function () {
 
 	this.data = {};
 	this.rules = { ...RULES };
-	this.errorBag = new Errors(this);
+	this.errorBag = makeErrorBag(this);
 	this.messages = { ...MESSAGES };
 
 	this.afterValidationCallbacks = [];

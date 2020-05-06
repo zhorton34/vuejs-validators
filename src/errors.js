@@ -1,8 +1,13 @@
 const isEmpty = require('./helpers/isEmpty.js');
 
-module.exports = function (validator) {
+const Errors = function (validator) {
 	this.messages = {};
 
+	/**
+	 * Get Validator
+	 *
+	 * @returns {*}
+	 */
 	this.getValidator = function () {
 		return validator;
 	};
@@ -88,3 +93,6 @@ module.exports = function (validator) {
 		}
 	};
 };
+
+const makeErrorBag = (validator = {}) => new Errors(validator);
+module.exports = makeErrorBag;

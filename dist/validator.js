@@ -30,11 +30,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var RULES = require('./rules');
 
-var Errors = require('./errors');
-
 var MESSAGES = require('./messages');
 
 var ParseRule = require('./parseRule');
+
+var makeErrorBag = require('./errors');
 
 var variadic = require('./helpers/variadic');
 
@@ -42,7 +42,7 @@ var Validator = function Validator() {
   this.translator = {};
   this.data = {};
   this.rules = _objectSpread({}, RULES);
-  this.errorBag = new Errors(this);
+  this.errorBag = makeErrorBag(this);
   this.messages = _objectSpread({}, MESSAGES);
   this.afterValidationCallbacks = [];
   this.beforeValidationCallbacks = [];
