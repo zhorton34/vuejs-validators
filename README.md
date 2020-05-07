@@ -79,7 +79,7 @@
         
         computed: {
             errors() {
-                return this.form.getErrors()
+                return this.form.getErrors().list()
             }
         },
         methods: {
