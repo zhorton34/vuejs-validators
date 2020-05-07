@@ -94,5 +94,8 @@ const Errors = function (validator) {
 	};
 };
 
-const makeErrorBag = (validator = {}) => new Errors(validator);
+const makeErrorBag = function (validator = {}) {
+	return new Errors(validator);
+};
+
 module.exports = makeErrorBag;

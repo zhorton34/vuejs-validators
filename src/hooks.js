@@ -94,6 +94,8 @@ const Hooks = function (validator = {}) {
 	};
 };
 
-const makeHookBag = (validator = {}) => new Hooks(validator);
+const makeHookBag = function (validator = {}) {
+	return new Hooks(validator);
+};
 
 module.exports = makeHookBag;
