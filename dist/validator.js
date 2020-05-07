@@ -30,6 +30,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var RULES = require('./rules');
 
+var makeHookBag = require('./hooks');
+
 var MESSAGES = require('./messages');
 
 var ParseRule = require('./parseRule');
@@ -39,18 +41,31 @@ var makeErrorBag = require('./errors');
 var variadic = require('./helpers/variadic');
 
 var Validator = function Validator() {
-  this.translator = {};
   this.data = {};
+  this.translator = {};
   this.rules = _objectSpread({}, RULES);
-  this.errorBag = makeErrorBag(this);
   this.messages = _objectSpread({}, MESSAGES);
-  this.afterValidationCallbacks = [];
-  this.beforeValidationCallbacks = [];
-  this.failedValidationCallbacks = [];
-  this.passedValidationCallbacks = [];
+  this.hookBag = makeHookBag(this);
+  this.errorBag = makeErrorBag(this);
 };
 
 Validator.prototype.parseData = require('./methods/parseData');
+
+Validator.prototype.hooks = function () {
+  return this.hookBag;
+};
+
+Validator.prototype.hookInto = function (moment) {
+  var _this = this;
+
+  if (this.hooks().has(moment)) {
+    this.hooks().list(moment).forEach(function (event) {
+      return event(_this);
+    });
+  }
+
+  return this;
+};
 
 Validator.prototype.errors = function () {
   return this.errorBag;
@@ -162,7 +177,7 @@ Validator.prototype.setMessages = function () {
 
 
 Validator.prototype.extend = function () {
-  var _this = this;
+  var _this2 = this;
 
   for (var _len = arguments.length, parameters = new Array(_len), _key = 0; _key < _len; _key++) {
     parameters[_key] = arguments[_key];
@@ -187,8 +202,8 @@ Validator.prototype.extend = function () {
           message = _ref2$[0],
           rule = _ref2$[1];
 
-      _this.rules = _objectSpread(_objectSpread({}, _this.rules), {}, _defineProperty({}, key, rule));
-      _this.messages = _objectSpread(_objectSpread({}, _this.messages), {}, _defineProperty({}, key, message));
+      _this2.rules = _objectSpread(_objectSpread({}, _this2.rules), {}, _defineProperty({}, key, rule));
+      _this2.messages = _objectSpread(_objectSpread({}, _this2.messages), {}, _defineProperty({}, key, message));
     });
   }
 
@@ -203,7 +218,7 @@ Validator.prototype.extend = function () {
 
 
 Validator.prototype.before = function (callback) {
-  this.beforeValidationCallbacks.push(callback);
+  this.hooks().add('before', callback);
   return this;
 };
 /**
@@ -215,7 +230,7 @@ Validator.prototype.before = function (callback) {
 
 
 Validator.prototype.after = function (callback) {
-  this.afterValidationCallbacks.push(callback);
+  this.hooks().add('after', callback);
   return this;
 };
 /**
@@ -227,7 +242,7 @@ Validator.prototype.after = function (callback) {
 
 
 Validator.prototype.failed = function (callback) {
-  this.failedValidationCallbacks.push(callback);
+  this.hooks().add('failed', callback);
   return this;
 };
 /**
@@ -239,7 +254,7 @@ Validator.prototype.failed = function (callback) {
 
 
 Validator.prototype.passed = function (callback) {
-  this.passedValidationCallbacks.push(callback);
+  this.hooks().add('passed', callback);
   return this;
 };
 /**
@@ -250,19 +265,16 @@ Validator.prototype.passed = function (callback) {
 
 
 Validator.prototype.beforeValidation = function () {
-  var _this2 = this;
+  var _this3 = this;
 
   this.checks = Object.entries(this.parseRules).reduce(function (completed, _ref3) {
     var _ref4 = _slicedToArray(_ref3, 2),
         field = _ref4[0],
         rules = _ref4[1];
 
-    return [].concat(_toConsumableArray(completed), _toConsumableArray(ParseRule(_this2, field, rules)));
+    return [].concat(_toConsumableArray(completed), _toConsumableArray(ParseRule(_this3, field, rules)));
   }, []);
-  this.beforeValidationCallbacks.forEach(function (callback) {
-    return callback(_this2);
-  });
-  this.beforeValidationCallbacks = [];
+  return this;
 };
 /**
  * Validate Hook
@@ -274,38 +286,35 @@ Validator.prototype.beforeValidation = function () {
 
 
 Validator.prototype.validate = function () {
-  this.beforeValidation();
-  this.errors().set(this.checks.reduce(function (errors, check) {
-    return _objectSpread(_objectSpread({}, errors), {}, _defineProperty({}, check.attribute, check.rule(check) ? _toConsumableArray(errors[check.attribute] || []) : [].concat(_toConsumableArray(errors[check.attribute] || []), [check.message()])));
-  }, {}));
-  this.afterValidation();
-  return this;
+  return this.beforeValidation().hookInto('before').checkRulesAndFillErrorBag().hookInto('after').hookInto(this.errors().any() ? 'failed' : 'passed').forgetHooks();
 };
 /**
- * After validation hook
- *
+ * Validate, but don't execute life cycle hooks
+ */
+
+
+Validator.prototype.validateWithoutHooks = function () {
+  return this.beforeValidation().checkRulesAndFillErrorBag();
+};
+/**
+ * Execute validation rules and fill error bag
  * @returns {Validator}
  */
 
 
-Validator.prototype.afterValidation = function () {
-  var _this3 = this;
+Validator.prototype.checkRulesAndFillErrorBag = function () {
+  this.errors().set(this.checks.reduce(function (errors, check) {
+    return _objectSpread(_objectSpread({}, errors), {}, _defineProperty({}, check.attribute, check.rule(check) ? _toConsumableArray(errors[check.attribute] || []) : [].concat(_toConsumableArray(errors[check.attribute] || []), [check.message()])));
+  }, {}));
+  return this;
+};
 
-  this.afterValidationCallbacks.forEach(function (callback) {
-    return callback(_this3);
-  });
-
-  if (this.errors().any()) {
-    this.failedValidationCallbacks.forEach(function (callback) {
-      return callback(_this3);
-    });
-    this.failedValidationCallbacks = [];
-  } else {
-    this.passedValidationCallbacks.forEach(function (callback) {
-      return callback(_this3);
-    });
-    this.passedValidationCallbacks = [];
-  }
+Validator.prototype.forgetHooks = function () {
+  this.hooks().forget('before');
+  this.hooks().forget('after');
+  this.hooks().forget('passed');
+  this.hooks().forget('failed');
+  return this;
 };
 
 module.exports = Validator;

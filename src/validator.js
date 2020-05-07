@@ -1,25 +1,33 @@
 const RULES = require('./rules');
+const makeHookBag = require('./hooks');
 const MESSAGES = require('./messages');
 const ParseRule = require('./parseRule');
 const makeErrorBag = require('./errors');
 const variadic = require('./helpers/variadic');
 
 const Validator = function () {
-	this.translator = {};
-
 	this.data = {};
+	this.translator = {};
 	this.rules = { ...RULES };
-	this.errorBag = makeErrorBag(this);
 	this.messages = { ...MESSAGES };
-
-	this.afterValidationCallbacks = [];
-	this.beforeValidationCallbacks = [];
-	this.failedValidationCallbacks = [];
-	this.passedValidationCallbacks = [];
+	this.hookBag = makeHookBag(this);
+	this.errorBag = makeErrorBag(this);
 };
 
 
 Validator.prototype.parseData = require('./methods/parseData');
+
+Validator.prototype.hooks = function () {
+	return this.hookBag;
+};
+
+Validator.prototype.hookInto = function (moment) {
+	if (this.hooks().has(moment)) {
+		this.hooks().list(moment).forEach(event => event(this));
+	}
+
+	return this;
+};
 
 Validator.prototype.errors = function() {
 	return this.errorBag;
@@ -147,7 +155,7 @@ Validator.prototype.extend = function (...parameters) {
  * @returns {Validator}
  */
 Validator.prototype.before = function (callback) {
-	this.beforeValidationCallbacks.push(callback);
+	this.hooks().add('before', callback);
 
 	return this;
 };
@@ -159,7 +167,7 @@ Validator.prototype.before = function (callback) {
  * @returns {Validator}
  */
 Validator.prototype.after = function (callback) {
-	this.afterValidationCallbacks.push(callback);
+	this.hooks().add('after', callback);
 
 	return this;
 };
@@ -171,7 +179,7 @@ Validator.prototype.after = function (callback) {
  * @returns {Validator}
  */
 Validator.prototype.failed = function (callback) {
-	this.failedValidationCallbacks.push(callback);
+	this.hooks().add('failed', callback);
 
 	return this;
 };
@@ -183,7 +191,7 @@ Validator.prototype.failed = function (callback) {
  * @returns {Validator}
  */
 Validator.prototype.passed = function (callback) {
-	this.passedValidationCallbacks.push(callback);
+	this.hooks().add('passed', callback);
 
 	return this;
 };
@@ -201,8 +209,7 @@ Validator.prototype.beforeValidation = function () {
 		],
 	[]);
 
-	this.beforeValidationCallbacks.forEach(callback => callback(this));
-	this.beforeValidationCallbacks = [];
+	return this;
 };
 
 /**
@@ -213,8 +220,27 @@ Validator.prototype.beforeValidation = function () {
  * Trigger AfterValidation Hooks
  */
 Validator.prototype.validate = function () {
-	this.beforeValidation();
+	return this
+		.beforeValidation()
+		.hookInto('before')
+		.checkRulesAndFillErrorBag()
+		.hookInto('after')
+		.hookInto(this.errors().any() ? 'failed' : 'passed')
+		.forgetHooks();
+};
 
+/**
+ * Validate, but don't execute life cycle hooks
+ */
+Validator.prototype.validateWithoutHooks = function () {
+	return this.beforeValidation().checkRulesAndFillErrorBag();
+};
+
+/**
+ * Execute validation rules and fill error bag
+ * @returns {Validator}
+ */
+Validator.prototype.checkRulesAndFillErrorBag = function () {
 	this.errors().set(
 		this.checks.reduce(
 			(errors, check) => ({
@@ -226,28 +252,16 @@ Validator.prototype.validate = function () {
 		{})
 	);
 
-	this.afterValidation();
-
 	return this;
 };
 
-/**
- * After validation hook
- *
- * @returns {Validator}
- */
-Validator.prototype.afterValidation = function () {
-	this.afterValidationCallbacks.forEach(callback => callback(this));
+Validator.prototype.forgetHooks = function () {
+	this.hooks().forget('before');
+	this.hooks().forget('after');
+	this.hooks().forget('passed');
+	this.hooks().forget('failed');
 
-	if (this.errors().any()) {
-		this.failedValidationCallbacks.forEach(callback => callback(this));
-
-		this.failedValidationCallbacks = [];
-	} else {
-		this.passedValidationCallbacks.forEach(callback => callback(this));
-
-		this.passedValidationCallbacks = [];
-	}
+	return this;
 };
 
 module.exports = Validator;

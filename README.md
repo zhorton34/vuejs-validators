@@ -12,7 +12,7 @@
 - [Install](#Installation)
 - [Available Rules](#available-validation-rules)
 - [Validator Life Cycle Hooks](#validator-life-cycle-hooks)
-- [Validator Messages Api](#validator-error-messages-api)
+- [Validator Errors Api](#validator-error-api)
 
 - [Extending](#extending)
 - [Custom Messages](#extending)
