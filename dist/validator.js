@@ -71,15 +71,6 @@ Validator.prototype.errors = function () {
   return this.errorBag;
 };
 /**
- * Register (Alias of make)
- *
- * @param parameters
- * @returns {Validator}
- */
-
-
-Validator.prototype.register = Validator.prototype.make;
-/**
  * Make Validator
  *
  * @param data
@@ -88,6 +79,7 @@ Validator.prototype.register = Validator.prototype.make;
  * @param translator
  * @returns {Validator}
  */
+
 
 Validator.prototype.make = function () {
   var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -153,7 +145,7 @@ Validator.prototype.setData = function () {
 
 Validator.prototype.setRules = function () {
   var rules = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  this.rules = rules;
+  this.parseRules = rules;
   return this;
 };
 /**

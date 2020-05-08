@@ -34,14 +34,6 @@ Validator.prototype.errors = function() {
 };
 
 /**
- * Register (Alias of make)
- *
- * @param parameters
- * @returns {Validator}
- */
-Validator.prototype.register = Validator.prototype.make;
-
-/**
  * Make Validator
  *
  * @param data
@@ -108,7 +100,7 @@ Validator.prototype.setData = function (data = {}) {
  * @returns {Validator}
  */
 Validator.prototype.setRules = function (rules = {}) {
-	this.rules = rules;
+	this.parseRules = rules;
 
 	return this;
 };
