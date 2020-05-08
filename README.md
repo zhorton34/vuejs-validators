@@ -6,6 +6,105 @@
 [![npm version](https://img.shields.io/npm/v/vuejs-validators.svg?style=flat-square)](http://badge.fury.io/js/vuejs-validators)
 
 
+### Installation
+
+#### NPM
+
+```bash
+npm install --save-dev vuejs-validators
+```
+
+#### Yarn
+
+```bash
+yarn add vuejs-validators --save
+```
+
+
+### VueJS Form & VueJS Validators Together (Recommended for best development experience, but ultimately optional)
+- [(npm)](https://www.npmjs.com/package/vuejs-form)
+- [(github)](https://github.com/zhorton34/vuejs-form)
+- _Fast_ Setup
+- _Zero_ Dependencies
+- _Tested_ Thoroughly
+- _Simplified_ Syntax
+- _Extremely_ Lightweight
+- _Simplified_ Extendability
+_Did You Know? Individually, each package has ZERO Non-Dev Dependencies & can be used independently, but ultimately were built in parallel with each other._
+
+```js
+<template>
+    <div>
+        <div v-for="(message, key) in errors" :key="`${key}.error`">
+            {{ message }}
+        </div>
+
+        <input type='text' v-model='form.name' /> <br>
+        <input type='email' v-model='form.email' /> <br>
+        <input type='password' v-model='form.password' /> <br>
+        <input type='password' v-model='form.confirm_password' /> <br>
+        <hr>
+        <button :disabled='form.empty()' @click='submit'>
+            Complete
+        </button>
+    </div>
+</template>
+
+<script>
+    import form from 'vuejs-form'
+    import validatable from 'vuejs-validators'
+
+    export default {
+       data: () => ({
+            form: form(validatable, {
+                email: '', password: '', confirm_password: ''
+            })
+            .rules({
+                email: 'email|min:5|required',
+                password: 'same:confirm_password',
+                confirm_password: 'min:6|required',
+            })
+            .messages({
+                'password.same': 'Whoops, :attribute does not have the same value as your :same field',
+            }),
+       }),
+
+       computed: {
+           errors: $this => $this.form.getErrors().list(),
+       },
+
+       watch: {
+           /*--------------------------------------------------------------
+            * When Should Your Form "Validate", Providing Error Messages?
+            *--------------------------------------------------------------
+            * Form validates every time form data is updated. To
+            * display errors on form submit, remove watcher &
+            * move "this.form.validate()" over to submit()
+            *--------------------------------------------------------------
+            */
+            ['form.data']: {
+                deep: true,
+                handler: (data, old) { this.form.validate(); },
+            }
+       },
+
+
+        methods: {
+            submit() {
+                return this.form.getErrors().any() ? this.failed() : this.passed();
+            },
+            failed() {
+                console.log('failed: ', this.form.getErrors().all());
+            },
+            passed() {
+                console.log('passed: ', this.form.all());
+            },
+        }
+    }
+</script>
+```
+
+
 # Vuejs Validators
 
 > Form Validation Simplified
@@ -22,99 +121,6 @@
 
 - [License](#license)
 - [Contribute](#contribute)
-- [Pull in VueJS Form, Super powerful, lightweight combo](#vuejs-form-alongside-vuejs-validators)
-
-# Vuejs Form Alongside Vuejs Validators
-> `Recommended for good vibes & simplified development`
-- Created along side each other
-- Each repository has zero non-dev dependencies
-- Both completely separate form logic from the ui/representation of the data itself
-- Separated repositories allow for using vuejs-form's and vuejs-validations independent of each other
-[Recommended Vuejs Form Package](https://github.com/zhorton34/vuejs-form)
-
-```js
-<template>
-    <div>
-        <div v-for="(message, key) in errors" :key="`${key}.error`">
-            {{ message }}
-        </div>
-        
-        <input type='text' v-model='form.name' /> <br>
-        <input type='email' v-model='form.email' /> <br>
-        <input type='password' v-model='form.password' /> <br>
-        <input type='password' v-model='form.confirm_password' /> <br>
-        <hr>
-        <button :disabled='form.empty()' @click='submit'>
-            Complete
-        </button>
-    </div>
-</template>
-
-<script>
-    import form from 'vuejs-form' 
-    import validator from 'vuejs-validators'
-
-    export default {
-       data: () => ({
-            form: form({ 
-                name: '', 
-                email: '', 
-                password: '', 
-                confirm_password: ''
-            }).use(validator, {
-                name: 'required|min:5',
-                email: 'email|min:5|required',
-                password: 'required|same:confirm_password',
-                confirm_password: 'min:6',
-            }).messages({
-                'name.required': ':attribute is a required field and this is a custom message',
-            }),
-       }),
-
-       watch: {
-        'form.data': {
-            deep: true,
-            handler: 'input',
-            immediate: false,
-        }
-       },
-        
-        computed: {
-            errors() {
-                return this.form.getErrors().list()
-            }
-        },
-        methods: {
-            input(current, was) {
-                this.form.validate();
-            },
-            failed() {
-                console.log('form errors: ', this.form.getErrors.all())
-            },
-            passed() {
-                console.log('form passed: ', this.form.all());
-            },
-            submit() {
-                return this.form.getErrors().any() ? this.failed() : this.passed();
-            }
-        }
-    }
-</script>
-```
-
-### Installation
-
-#### NPM
-
-```bash
-npm install --save-dev vuejs-validators
-```
-
-#### Yarn
-
-```bash
-yarn add vuejs-validators --save
-```
 
 
 ### Validator Api
