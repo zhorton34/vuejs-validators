@@ -142,7 +142,14 @@ export default {
 - [array](#array-rule)
 - [between](#between-rule)
 - [boolean](#boolean-rule)
+- [confirmed](#confirmed-rule)
+- [different](#different-rule)
+- [digits](#digits-rule)
+- [digits_between](#digits_between-rule)
+- [distinct](#distinct-rule)
 - [email](#email-rule)
+- [ends_with](#ends_with-rule)
+- [integer](#integer-rule)
 - [json](#json-rule)
 - [max](#max-rule)
 - [min](#min-rule)
@@ -154,6 +161,7 @@ export default {
 - [regex](#regex-rule)
 - [required](#required-rule)
 - [same](#same-rule)
+- [starts_with](#starts_with-rule)
 - [string](#string-rule)
 - [url](#url-rule)
 - [within](#within-rule)
@@ -354,6 +362,130 @@ validator(form, rules).validate();
 ```
 
 
+### Confirmed Validation Rule
+
+> The field under validation must have a matching field of foo_confirmation. For example, if the field under validation is password, a matching password_confirmation field must be present in the input.
+
+> `Passing Confirmed Rule`
+```js bash
+import validator from 'vuejs-validators';
+
+let form = { password: 'secret', password_confirmation: 'secret' }
+let rules = { password: 'confirmed' }
+
+validator(form, rules).validate();
+```
+
+> `Failing Confirmed Rule`
+```js bash
+import validator from 'vuejs-validators';
+
+// Rule Fails When No {attribute}_confirmation field exists
+let form = { password: 'secret' };
+let rules = { password: 'confirmed' };
+
+validator(form, rules).validate();
+
+// Rule Fails When {attribute} value does not match {attribute}_confirmation value
+let form = { password: 'secret', password_confirmation: 'not_secret' };
+let rules = { password: 'confirmed' };
+
+validator(form, rules).validate();
+```
+
+
+### Different Validation Rule
+
+> The given field value is different than another field value
+
+> `Passing Different Rule`
+```js bash
+import validator from 'vuejs-validators';
+
+let form = { password: 'asdfasdfasdf', confirm_password: 'secret' };
+let rules = { password: 'different:confirm_password' };
+
+validator(form, rules).validate();
+```
+
+> `Failing Different Rule`
+```js bash
+import validator from 'vuejs-validators';
+
+let form = { password: 'secret', confirm_password: 'secret' }
+let rules = { password: 'different:confirm_password' }
+
+validator(form, rules).validate();
+
+### Digits Rule
+
+> The field under validation must be numeric and must have an exact length of value.
+
+> `Passing Digits Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { amount: '10000' }
+let rules = { amount: 'digits:6' }
+
+validator(form, rules).validate();
+```
+
+> `Failing Digits Rule`
+```js
+import validator from 'vuejs-validator'
+
+let form = { amount: '10000' }
+let rules = { amount: 'digits:4' }
+
+validator(form, rules).validate();
+
+### Digits Between Rule
+
+> The field under validation must be numeric and have a length between the lower and upper limit defined.
+
+> `Passing Digits Between Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { amount: '10000' }
+let rules = { amount: 'digits_between:4,6' }
+
+validator(form, rules).validate();
+```
+
+> `Failing Digits Rule`
+```js
+import validator from 'vuejs-validator'
+
+let form = { amount: '10000' }
+let rules = { amount: 'digits_between:3,5' }
+
+validator(form, rules).validate();
+
+### Distinct Rule
+
+> The field under validation must be an array with no duplicate values.
+
+> `Passing Distinct Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { shopping_list: ['ham', 'eggs', 'milk', 'turkey'] }
+let rules = { shopping_list: 'distinct' }
+
+validator(form, rules).validate();
+```
+
+> `Failing Digits Rule`
+```js
+import validator from 'vuejs-validator'
+
+let form = { shopping_list: ['ham', 'ham', 'eggs', 'milk', 'turkey'] }
+let rules = { shopping_list: 'distinct' }
+
+validator(form, rules).validate();
+
 ### Email Rule
 
 > The given field value must be an email
@@ -374,6 +506,61 @@ import validator from 'vuejs-validators';
 
 let form = { email: 'asdfsdaf@.net'}
 let rules = { email: ['email'] }
+
+validator(form, rules).validate();
+```
+
+
+### Ends With Rule
+
+> The field under validation must end with one of the given values.
+
+> `Passing Ends With Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { name: 'sammie' };
+let rules = { name: 'ends_with:sl,ie,asx' };
+
+validator(form, rules).validate();
+```
+
+> `Failing String Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { name: 5 };
+let rules = { name: 'ends_with:sl,ie,asx' };
+
+validator(form, rules).validate();
+
+let form = { name: 'azure' };
+let rules = { name: 'ends_with:sl,ie,asx' };
+
+validator(form, rules).validate();
+```
+
+
+### Integer Rule
+
+> This validation rule does not verify that the input is of the "integer" variable type, only that the input is a string or numeric value that contains an integer.
+
+> `Passing Integer Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { students: 25 }
+let rules = { students: ['integer'] }
+
+validator(form, rules).validate();
+```
+
+> `Failing Integer Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { students: 'yes' }
+let rules = { students: ['integer'] }
 
 validator(form, rules).validate();
 ```
@@ -665,6 +852,36 @@ import validator from 'vuejs-validators';
 
 let form = { password: 'asdfasdfasdf', confirm_password: 'secret' };
 let rules = { password: 'same:confirm_password' };
+
+validator(form, rules).validate();
+```
+
+
+### Starts With Rule
+
+> The field under validation must start with one of the given values.
+
+> `Passing Starts With Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { name: 'sammie' };
+let rules = { name: 'starts_with:joe,sam,tom' };
+
+validator(form, rules).validate();
+```
+
+> `Failing Starts With Rule`
+```js
+import validator from 'vuejs-validators';
+
+let form = { name: 5 };
+let rules = { name: 'starts_with:sl,ie,asx' };
+
+validator(form, rules).validate();
+
+let form = { name: 'azure' };
+let rules = { name: 'starts_with:joe, sam, tom' };
 
 validator(form, rules).validate();
 ```
