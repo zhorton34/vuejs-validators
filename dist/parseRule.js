@@ -69,8 +69,12 @@ var resolveMessage = function resolveMessage(_ref3) {
    * "field_name must not be greater than 8 characters"
    */
 
+  var capitalize = function capitalize(string) {
+    return string[0].toUpperCase() + string.slice(1);
+  };
+
   return [attribute].concat(_toConsumableArray(parameters[0] ? parameters[0].split(',') : [])).reduce(function (message, replace) {
-    return message.replace(/:[a-z]{1,}/i, replace);
+    return capitalize(message.replace(/:[a-z]{1,}/i, replace.replace(/_/g, ' ')));
   }, custom["".concat(attribute, ".").concat(name)] ? custom["".concat(attribute, ".").concat(name)] : global[name]);
 };
 

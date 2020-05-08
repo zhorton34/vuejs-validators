@@ -11,8 +11,8 @@ module.exports = (it, expect, { validator }) => {
 
 	it('should properly "list" an array of all error messages', () => {
 		expect(errors.list().sort()).to.eql([
-			"email must be an email",
-			"name is a custom 8 char minimum error message"
+			"Email must be an email",
+			"Name is a custom 8 char minimum error message"
 		]);
 	});
 

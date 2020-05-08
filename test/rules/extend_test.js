@@ -30,10 +30,10 @@ module.exports = (it, expect, { validator }) => {
 
 	it('should fail the test and return the proper message for "must be uppercase"', () => {
 		expect(validation.errors().all()).to.eql({
-			name: ["name must be uppercase"],
+			name: ["Name must be uppercase"],
 			email: [],
 			confirm_password: [],
-			password: ["password must be the same as confirm_password field"]
+			password: ["Password must be the same as confirm password field"]
 		});
 	})
 };

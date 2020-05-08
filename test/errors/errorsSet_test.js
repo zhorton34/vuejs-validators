@@ -9,7 +9,7 @@ module.exports = (it, expect, { validator }) => {
 	it('should properly structure messages in preparation for testing errors "set"', () => {
 		expect(errors.messages).to.eql({
 			email: [],
-			name: ["name is a custom 8 char minimum error message"]
+			name: ["Name is a custom 8 char minimum error message"]
 		});
 	});
 
