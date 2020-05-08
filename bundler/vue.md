@@ -28,55 +28,59 @@ _Did You Know? Individually, each package has ZERO Non-Dev Dependencies & can be
 </template>
 
 <script>
-    import form from 'vuejs-form'
-    import validatable from 'vuejs-validators'
+import form from 'vuejs-form'
+import validatable from 'vuejs-validators'
 
-    export default {
-       data: () => ({
-            form: form(validatable, {
-                email: '', password: '', confirm_password: ''
-            })
-            .rules({
-                email: 'email|min:5|required',
-                password: 'same:confirm_password',
-                confirm_password: 'min:6|required',
-            })
-            .messages({
-                'password.same': 'Whoops, :attribute does not have the same value as your :same field',
-            }),
-       }),
+export default {
+    data: () => ({
+        form: form(validatable, {
+            email: '', password: '', confirm_password: ''
+        })
+        .rules({
+            email: 'email|min:5|required',
+            password: 'same:confirm_password',
+            confirm_password: 'min:6|required',
+        })
+        .messages({
+            'password.same': 'Whoops, :attribute does not match the :same field',
+        }),
+   }),
 
-       computed: {
-           errors: $this => $this.form.getErrors().list(),
-       },
+   computed: {
+       errors() {
+            return this.form.getErrors().list();
+        },
+   },
 
-       watch: {
-           /*--------------------------------------------------------------
-            * When Should Your Form "Validate", Providing Error Messages?
-            *--------------------------------------------------------------
-            * Form validates every time form data is updated. To
-            * display errors on form submit, remove watcher &
-            * move "this.form.validate()" over to submit()
-            *--------------------------------------------------------------
-            */
-            ['form.data']: {
-                deep: true,
-                handler: (data, old) { this.form.validate(); },
-            }
-       },
-
-
-        methods: {
-            submit() {
-                return this.form.getErrors().any() ? this.failed() : this.passed();
-            },
-            failed() {
-                console.log('failed: ', this.form.getErrors().all());
-            },
-            passed() {
-                console.log('passed: ', this.form.all());
+   watch: {
+       /*--------------------------------------------------------------
+        * When Should Your Form "Validate", Providing Error Messages?
+        *--------------------------------------------------------------
+        * Form validates every time form data is updated. To
+        * display errors on form submit, remove watcher &
+        * move "this.form.validate()" over to submit()
+        *--------------------------------------------------------------
+        */
+        ['form.data']: {
+            deep: true,
+            handler(data, old) {
+                this.form.validate();
             },
         }
+   },
+
+
+    methods: {
+        submit() {
+            return this.form.getErrors().any() ? this.failed() : this.passed();
+        },
+        failed() {
+            console.log('failed: ', this.form.getErrors().all());
+        },
+        passed() {
+            console.log('passed: ', this.form.all());
+        },
     }
+}
 </script>
 ```
