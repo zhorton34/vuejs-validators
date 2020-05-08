@@ -1,4 +1,6 @@
+
 'use strict';
+
 module.exports = (it, expect, { rules }) => {
 	const { min } = rules;
 

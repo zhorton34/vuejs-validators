@@ -59,82 +59,120 @@ module.exports = {
     var value = _ref4.value;
     return isTruthy(value);
   },
-  same: function same(_ref5) {
+  ends_with: function ends_with(_ref5) {
     var value = _ref5.value,
-        parameters = _ref5.parameters,
-        validator = _ref5.validator;
+        _ref5$parameters = _slicedToArray(_ref5.parameters, 1),
+        list = _ref5$parameters[0];
+
+    return isString(value) && list.split(',').some(function (check) {
+      return value.endsWith(check);
+    });
+  },
+  starts_with: function starts_with(_ref6) {
+    var value = _ref6.value,
+        _ref6$parameters = _slicedToArray(_ref6.parameters, 1),
+        list = _ref6$parameters[0];
+
+    return isString(value) && list.split(',').some(function (check) {
+      return value.startsWith(check);
+    });
+  },
+  same: function same(_ref7) {
+    var value = _ref7.value,
+        parameters = _ref7.parameters,
+        validator = _ref7.validator;
     return value === validator.data[parameters[0]];
   },
-  min: function min(_ref6) {
-    var value = _ref6.value,
-        parameters = _ref6.parameters;
-    return value.length >= parameters[0];
-  },
-  max: function max(_ref7) {
-    var value = _ref7.value,
-        parameters = _ref7.parameters;
-    return value.length <= parameters[0];
-  },
-  within: function within(_ref8) {
+  min: function min(_ref8) {
     var value = _ref8.value,
         parameters = _ref8.parameters;
-    return parameters[0].split(',').includes(value);
+    return value.length >= parameters[0];
   },
-  not_within: function not_within(_ref9) {
+  max: function max(_ref9) {
     var value = _ref9.value,
         parameters = _ref9.parameters;
+    return value.length <= parameters[0];
+  },
+  within: function within(_ref10) {
+    var value = _ref10.value,
+        parameters = _ref10.parameters;
+    return parameters[0].split(',').includes(value);
+  },
+  not_within: function not_within(_ref11) {
+    var value = _ref11.value,
+        parameters = _ref11.parameters;
     return !parameters[0].split(',').includes(value);
   },
-  email: function email(_ref10) {
-    var value = _ref10.value;
+  email: function email(_ref12) {
+    var value = _ref12.value;
     return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,8})+$/.test(value);
   },
-  phone: function phone(_ref11) {
-    var value = _ref11.value;
+  phone: function phone(_ref13) {
+    var value = _ref13.value;
     return /^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,3})|(\(?\d{2,3}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$/.test(value);
   },
-  required: function required(_ref12) {
-    var value = _ref12.value;
+  required: function required(_ref14) {
+    var value = _ref14.value;
     return true === (isNotNull(value) && isNotUndefined(value) && isNotEmpty(value));
   },
-  regex: function regex(_ref13) {
-    var value = _ref13.value,
-        parameters = _ref13.parameters;
+  regex: function regex(_ref15) {
+    var value = _ref15.value,
+        parameters = _ref15.parameters;
     return parameters[0].test(value);
   },
-  not_regex: function not_regex(_ref14) {
-    var value = _ref14.value,
-        parameters = _ref14.parameters;
+  not_regex: function not_regex(_ref16) {
+    var value = _ref16.value,
+        parameters = _ref16.parameters;
     return !parameters[0].test(value);
   },
-  url: function url(_ref15) {
-    var value = _ref15.value;
+  url: function url(_ref17) {
+    var value = _ref17.value;
     return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)/.test(value);
   },
-  alpha: function alpha(_ref16) {
-    var value = _ref16.value;
+  alpha: function alpha(_ref18) {
+    var value = _ref18.value;
     return /^[a-zA-Z]*$/.test(value);
   },
-  alpha_dash: function alpha_dash(_ref17) {
-    var value = _ref17.value;
+  alpha_dash: function alpha_dash(_ref19) {
+    var value = _ref19.value;
     return /^[a-zA-Z0-9-_]+$/.test(value);
   },
-  alpha_num: function alpha_num(_ref18) {
-    var value = _ref18.value;
+  alpha_num: function alpha_num(_ref20) {
+    var value = _ref20.value;
     return /^[a-zA-Z0-9]*$/.test(value);
   },
-  array: function array(_ref19) {
-    var value = _ref19.value;
+  array: function array(_ref21) {
+    var value = _ref21.value;
     return Array.isArray(value);
   },
-  string: function string(_ref20) {
-    var value = _ref20.value;
+  string: function string(_ref22) {
+    var value = _ref22.value;
     return isString(value);
   },
-  between: function between(_ref21) {
-    var value = _ref21.value,
-        _ref21$parameters = _slicedToArray(_ref21.parameters, 1),
-        _between = _ref21$parameters[0];
+  distinct: function distinct(_ref23) {
+    var value = _ref23.value;
+    return Array.isArray(value) && new Set(value).size === value.length;
+  },
+  integer: function integer(_ref24) {
+    var value = _ref24.value;
+    return !isNaN(Number(value)) && isNumeric(value) && Number.isInteger(Number(value));
+  },
+  different: function different(_ref25) {
+    var value = _ref25.value,
+        parameters = _ref25.parameters,
+        validator = _ref25.validator;
+    return value !== validator.data[parameters[0]];
+  },
+  confirmed: function confirmed(_ref26) {
+    var attribute = _ref26.attribute,
+        value = _ref26.value,
+        validator = _ref26.validator;
+    return Object.keys(validator.data).includes("".concat(attribute, "_confirmation")) && value === validator.data["".concat(attribute, "_confirmation")];
+  },
+  between: function between(_ref27) {
+    var value = _ref27.value,
+        _ref27$parameters = _slicedToArray(_ref27.parameters, 1),
+        _between = _ref27$parameters[0];
 
     var _between$split = _between.split(','),
         _between$split2 = _slicedToArray(_between$split, 2),
@@ -143,8 +181,8 @@ module.exports = {
 
     return Boolean(Number(lower) < Number(value) && Number(upper) > Number(value));
   },
-  json: function json(_ref22) {
-    var value = _ref22.value;
+  json: function json(_ref28) {
+    var value = _ref28.value;
     value = typeof value !== "string" ? JSON.stringify(value) : value;
 
     try {
@@ -154,5 +192,26 @@ module.exports = {
     }
 
     return _typeof(value) === "object" && value !== null;
+  },
+  digits: function digits(_ref29) {
+    var value = _ref29.value,
+        _ref29$parameters = _slicedToArray(_ref29.parameters, 1),
+        length = _ref29$parameters[0];
+
+    return isNumeric(value) && String(value).length === Number(length) && !isNaN(Number(value));
+  },
+  digits_between: function digits_between(_ref30) {
+    var value = _ref30.value,
+        _ref30$parameters = _slicedToArray(_ref30.parameters, 1),
+        between = _ref30$parameters[0];
+
+    var _between$split3 = between.split(','),
+        _between$split4 = _slicedToArray(_between$split3, 2),
+        lower = _between$split4[0],
+        upper = _between$split4[1];
+
+    if (isNaN(Number(value)) || !isNumeric(value)) return false;
+    var check = Number(String(value).length);
+    return Boolean(Number(lower) < check && Number(upper) > check);
   }
 };

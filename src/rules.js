@@ -18,6 +18,8 @@ module.exports = {
 	number: ({ value }) => isNumber(value),
 	numeric: ({ value }) => isNumeric(value),
 	accepted: ({ value }) => isTruthy(value),
+	ends_with: ({ value, parameters: [list] }) => isString(value) && list.split(',').some(check => value.endsWith(check)),
+	starts_with: ({ value, parameters: [list] }) => isString(value) && list.split(',').some(check => value.startsWith(check)),
 	same: ({ value, parameters, validator }) => value === validator.data[parameters[0]],
 	min: ({ value, parameters }) => value.length >= parameters[0],
 	max: ({ value, parameters }) => value.length <= parameters[0],
@@ -34,6 +36,10 @@ module.exports = {
 	alpha_num: ({ value }) => /^[a-zA-Z0-9]*$/.test(value),
 	array: ({ value }) => Array.isArray(value),
 	string: ({ value }) => isString(value),
+	distinct: ({ value }) => Array.isArray(value) && (new Set(value)).size === value.length,
+	integer: ({ value }) => !isNaN(Number(value)) && isNumeric(value) && Number.isInteger(Number(value)),
+	different: ({ value, parameters, validator }) => value !== validator.data[parameters[0]],
+	confirmed: ({ attribute, value, validator }) => Object.keys(validator.data).includes(`${attribute}_confirmation`) && value === validator.data[`${attribute}_confirmation`],
 	between: ({ value, parameters: [between] }) => {
 		const [lower, upper] = between.split(',');
 
@@ -45,5 +51,15 @@ module.exports = {
 		try { value = JSON.parse(value); } catch (e) { return false }
 
 		return typeof value === "object" && value !== null;
+	},
+	digits: ({ value, parameters: [length] }) => isNumeric(value) && String(value).length === Number(length) && !isNaN(Number(value)),
+	digits_between: ({ value, parameters: [between] }) => {
+		const [lower, upper] = between.split(',');
+
+		if (isNaN(Number(value)) || !isNumeric(value)) return false;
+
+		const check = Number(String(value).length);
+
+		return Boolean(Number(lower) < check && Number(upper) > check);
 	},
 };

@@ -7,5 +7,5 @@ const isBigInt = require('./isBigInt');
  * @returns boolean
  */
 module.exports = function (value) {
-	return isNumber(value) || typeof Number(value) === 'number' || isBigInt(value);
+	return (isNumber(value) || typeof Number(value) === 'number' || isBigInt(value));
 };
