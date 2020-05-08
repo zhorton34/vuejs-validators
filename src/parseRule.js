@@ -36,11 +36,13 @@ const resolveMessage = ({ attribute, name, validator,  parameters }) => {
 	 * let replacers = ['field_name', '8']
 	 * "field_name must not be greater than 8 characters"
 	 */
+	const capitalize = string => string[0].toUpperCase() + string.slice(1);
+
 	return [
 		attribute,
 		...(parameters[0] ? parameters[0].split(',') : [])
 	].reduce(
-		(message, replace) => message.replace(/:[a-z]{1,}/i, replace),
+		(message, replace) => capitalize(message.replace(/:[a-z]{1,}/i, replace.replace(/_/g, ' '))),
 		custom[`${attribute}.${name}`] ? custom[`${attribute}.${name}`] : global[name]
 	);
 };

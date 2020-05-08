@@ -11,6 +11,6 @@ module.exports = (it, expect, { validator }) => {
 				.validate()
 				.errors()
 				.get('name')
-		).to.eql("name is a custom 8 char minimum error message");
+		).to.eql("Name is a custom 8 char minimum error message");
 	})
 };

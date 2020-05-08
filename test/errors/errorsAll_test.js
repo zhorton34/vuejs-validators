@@ -11,8 +11,8 @@ module.exports = (it, expect, { validator }) => {
 
 	it('should retrieve "all" field messages as object of fields as keys and arrays of messages as values', () => {
 		expect(errors.all()).to.eql({
-			email: ["email is not email"],
-			name: ["name is a custom 8 char minimum error message"]
+			email: ["Email is not email"],
+			name: ["Name is a custom 8 char minimum error message"]
 		});
 
 		expect(errors.all()).to.eql(errors.messages);
