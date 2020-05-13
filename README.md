@@ -1513,7 +1513,7 @@ MIT © [Zachary Horton (Clean Code Studio)](https://github.com/zhorton34/vuejs-v
 
 #### Change Log
 
-### v.1.1.2
+### v.1.1.3
 
 - Added ip rule
 - Added ipv4 rule
