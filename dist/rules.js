@@ -169,10 +169,22 @@ module.exports = {
         validator = _ref26.validator;
     return Object.keys(validator.data).includes("".concat(attribute, "_confirmation")) && value === validator.data["".concat(attribute, "_confirmation")];
   },
-  between: function between(_ref27) {
-    var value = _ref27.value,
-        _ref27$parameters = _slicedToArray(_ref27.parameters, 1),
-        _between = _ref27$parameters[0];
+  ip: function ip(_ref27) {
+    var value = _ref27.value;
+    return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(value) || /^((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*::((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*|((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4})){7}$/.test(value);
+  },
+  ipv4: function ipv4(_ref28) {
+    var value = _ref28.value;
+    return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(value);
+  },
+  ipv6: function ipv6(_ref29) {
+    var value = _ref29.value;
+    return /^((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*::((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*|((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4})){7}$/.test(value);
+  },
+  between: function between(_ref30) {
+    var value = _ref30.value,
+        _ref30$parameters = _slicedToArray(_ref30.parameters, 1),
+        _between = _ref30$parameters[0];
 
     var _between$split = _between.split(','),
         _between$split2 = _slicedToArray(_between$split, 2),
@@ -181,8 +193,8 @@ module.exports = {
 
     return Boolean(Number(lower) < Number(value) && Number(upper) > Number(value));
   },
-  json: function json(_ref28) {
-    var value = _ref28.value;
+  json: function json(_ref31) {
+    var value = _ref31.value;
     value = typeof value !== "string" ? JSON.stringify(value) : value;
 
     try {
@@ -193,17 +205,17 @@ module.exports = {
 
     return _typeof(value) === "object" && value !== null;
   },
-  digits: function digits(_ref29) {
-    var value = _ref29.value,
-        _ref29$parameters = _slicedToArray(_ref29.parameters, 1),
-        length = _ref29$parameters[0];
+  digits: function digits(_ref32) {
+    var value = _ref32.value,
+        _ref32$parameters = _slicedToArray(_ref32.parameters, 1),
+        length = _ref32$parameters[0];
 
     return isNumeric(value) && String(value).length === Number(length) && !isNaN(Number(value));
   },
-  digits_between: function digits_between(_ref30) {
-    var value = _ref30.value,
-        _ref30$parameters = _slicedToArray(_ref30.parameters, 1),
-        between = _ref30$parameters[0];
+  digits_between: function digits_between(_ref33) {
+    var value = _ref33.value,
+        _ref33$parameters = _slicedToArray(_ref33.parameters, 1),
+        between = _ref33$parameters[0];
 
     var _between$split3 = between.split(','),
         _between$split4 = _slicedToArray(_between$split3, 2),

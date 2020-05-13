@@ -150,6 +150,9 @@ export default {
 - [email](#email-rule)
 - [ends_with](#ends_with-rule)
 - [integer](#integer-rule)
+- [ip](#ip-rule)
+- [ipv4](#ipv4-rule)
+- [ipv6](#ipv6-rule)
 - [json](#json-rule)
 - [max](#max-rule)
 - [min](#min-rule)
@@ -564,6 +567,66 @@ let rules = { students: ['integer'] }
 
 validator(form, rules).validate();
 ```
+
+
+### IP Rule
+
+> This validation rule confirms that value is an IP address.
+
+> `Passing IP Rule`
+- "115.42.150.37"
+- "192.168.0.1"
+- "110.234.52.124"
+- "2001:0db8:85a3:0000:0000:8a2e:0370:7334" (Ipv6)
+
+> `Failing IP Rule`
+- "210.110" – must have 4 octets
+- "255" – must have 4 octets
+- "y.y.y.y" – the only digit has allowed
+- "255.0.0.y" – the only digit has allowed
+- "666.10.10.20" – digit must between [0-255]
+- "4444.11.11.11" – digit must between [0-255]
+- "33.3333.33.3" – digit must between [0-255]
+
+
+### IPv4 Rule
+
+> This validation rule confirms that value is an IPv4 address.
+
+> `Passing IPv4 Rule`
+- "115.42.150.37"
+- "192.168.0.1"
+- "110.234.52.124"
+
+> `Failing IPv4 Rule`
+- "210.110" – must have 4 octets
+- "255" – must have 4 octets
+- "y.y.y.y" – the only digit has allowed
+- "255.0.0.y" – the only digit has allowed
+- "666.10.10.20" – digit must between [0-255]
+- "4444.11.11.11" – digit must between [0-255]
+- "33.3333.33.3" – digit must between [0-255]
+- "2001:0db8:85a3:0000:0000:8a2e:0370:7334" (Ipv6)
+
+
+### IPv6 Rule
+
+> This validation rule confirms that value is an IPv6 address.
+
+> `Passing IPv6 Rule`
+- "2001:0db8:85a3:0000:0000:8a2e:0370:7334" (Ipv6)
+
+> `Failing IPv6 Rule`
+- "210.110" – must have 4 octets
+- "255" – must have 4 octets
+- "y.y.y.y" – the only digit has allowed
+- "255.0.0.y" – the only digit has allowed
+- "666.10.10.20" – digit must between [0-255]
+- "4444.11.11.11" – digit must between [0-255]
+- "33.3333.33.3" – digit must between [0-255]
+- "110.234.52.124"
+- "192.168.0.1"
+- "115.42.150.37"
 
 
 ### Json Rule
@@ -1446,3 +1509,12 @@ functionality or improve the docs please feel free to submit a PR.
 ### License
 
 MIT © [Zachary Horton (Clean Code Studio)](https://github.com/zhorton34/vuejs-validators#README)
+
+
+#### Change Log
+
+### v.1.1.2
+
+- Added ip rule
+- Added ipv4 rule
+- Added ipv6 rule

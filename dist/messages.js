@@ -30,5 +30,8 @@ module.exports = {
   distinct: ':attribute must have distinct set of values, there should be no duplicates',
   integer: ':attribute must be an integer',
   ends_with: ':attribute must end with :ends_with or any other defined options',
-  starts_with: ':attribute must start with :starts_with or any other of the defined options'
+  starts_with: ':attribute must start with :starts_with or any other of the defined options',
+  ip: ':attribute is not a valid ip4 or ip6 address',
+  ipv4: ':attribute is not a valid ip4 address',
+  ipv6: ':attribute is not a valid ip6 address'
 };
