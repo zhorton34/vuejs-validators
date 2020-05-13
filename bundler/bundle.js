@@ -12,6 +12,7 @@ const extend = readFileSync('bundler/extend.md', 'utf-8');
 const hooks = readFileSync('bundler/hooks.md', 'utf-8');
 const errors = readFileSync('bundler/errors.md', 'utf-8');
 const vue = readFileSync('bundler/vue.md', 'utf-8');
+const changelog = readFileSync('bundler/change_log.md', 'utf-8');
 
 // const strictnessAndComparisons = readFileSync('bundler/strictness_and_comparisons.md', 'utf-8');
 // const notImplemented = readFileSync('bundler/not_implemented.md', 'utf-8');
@@ -60,5 +61,6 @@ writeFileSync(
 		utilization,
 		contribute,
 		license,
+		changelog,
 	].join('\n\n'),
 );

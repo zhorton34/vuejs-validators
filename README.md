@@ -1509,3 +1509,12 @@ functionality or improve the docs please feel free to submit a PR.
 ### License
 
 MIT © [Zachary Horton (Clean Code Studio)](https://github.com/zhorton34/vuejs-validators#README)
+
+
+#### Change Log
+
+### v.1.1.2
+
+- Added ip rule
+- Added ipv4 rule
+- Added ipv6 rule
