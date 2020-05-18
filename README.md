@@ -1175,20 +1175,143 @@ validator(form, rules).validate();
 ```
 
 
-### Error Messages Api
-Error Messages Api Allows Easy Access, Display, Checks, And Overall Interaction Of Field Error Messages That Fail Validation Rules 
+- [add](#add)
+- [all](#all)
+- [any](#any)
+- [forget](#forget)
+- [get](#get)
+- [has](#has)
+- [list](#list)
+- [macro](#macro)
+- [macroForce](#macroforce)
+- [set](#set)
+
+## Add
 
 ```js
-let validation = validator(data, rules)
-    
-validation.validate();
-    
-validation.errors();
+errors().add('company', 'Your company is important to us, add the proper information so others can learn about it to!'); 
 ```
 
-And simply use the following for all examples:
+``` 
+# errors.list('company')
+
+[
+   'Company field is required',
+   'Company field must have no more than 15 characters',
+   'Your company is important to us, add the proper information so others can learn about it to!'
+]
+```
+
+
+
+## All
+Return "all" error messages as object of fields with list of their error messages  
+
+```js 
+errors().all(); 
+```
+
+``` 
+{
+    name: ['Name field is required', 'Name field must have at lest 3 characters'],
+    email: ['Email field must be an email', 'Email field must have at least 3 characters']
+}
+```
+
+
+
+## Any
+Determine if there are currently "any" error messages within error bag 
+
 ```js
-errors(); 
+errors().any(); 
+```
+
+``` 
+true: If there are any error messages
+false: If there are NOT any error messages
+```
+
+
+
+## Forget
+Forget error messages on all fields or optionally on a specific field
+
+```js
+errors.forget(); // Forget errors messages for all fields
+
+errors.forget('name'); // only forget the error messages for a specific field
+```
+
+
+## Get
+Get first available error message on a given field
+
+```js
+errors.get('name');
+```
+
+
+## Has
+Check if a specific field "has" error messages 
+
+```js
+errors.has('name');
+```
+
+
+## List
+List all error messages or optionally list all array messages for a specific field 
+
+```js
+errors.list(); // ['Name is a required field']
+
+errors.list('name'); // ['Name is a required field']
+errors.list('email'); // ['Email field must be an email', 'Email is a required field']
+```
+
+
+## Macro
+Extend errors message bag instance using macros
+
+```js
+errors().macro('count', function () {
+    return this.list().length();
+});
+
+// errors().count() === errors().list().count();
+```
+
+
+## Force Macro
+Force macro acts the same as macro, with the option to forcefully override core functions and already existing macros.
+(Use with caution).
+
+```js
+errors().get('name'); 
+// Output: 'Name field is required'
+
+errors().forceMacro('get', function (field) {
+    return this.list(field).join(', ');
+});
+
+errors().get('name'); 
+// Output: 'Name field is required, Name field can not be greater than 3 characters, Name field must be a string'
+```
+
+
+## Set
+Set all error messages, or optionally set given fields error messages
+ 
+```js
+// Set all fields error messages
+errors().set({
+    name: ['Name field is off, check it out and try again', 'Name field is in wrong language'],
+    formula: ['Formula is not incorrect according to the laws of physics']
+});
+
+// Set specific field error messages
+errors().set('name', ['Name field is off, check it out and try again', 'Name field is in wrong language']);
 ```
 
 
@@ -1420,10 +1543,32 @@ functionality or improve the docs please feel free to submit a PR.
 MIT © [Zachary Horton (Clean Code Studio)](https://github.com/zhorton34/vuejs-validators#README)
 
 
-#### Change Log
+## Change Log
 
-### v.1.1.3
+---
 
+### Release 1.1.5
+
+---
+- Error messages "macro" method (Add custom method)
+- Error messages "forceMacro" method (Override core functions)
+- Error messages documentation refactored according to updates
+- "passing" method, returns a success message bag, but it is not officially documented nor officially supported as of yet.
+- MessageBag & MessageBagFactory (Error messages api is an implementation of the message bag prototype) are exported and optional imports
+
+---
+
+### Release 1.1.4
+
+---
+- Changes to adapt package to vuejs-form implementation
+
+
+---
+
+### Release 1.1.3
+
+---
 - Added ip rule
 - Added ipv4 rule
 - Added ipv6 rule

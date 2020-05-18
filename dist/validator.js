@@ -53,7 +53,6 @@ var Validator = function Validator() {
   this.data = {};
   this.translator = {};
   this.rules = _objectSpread({}, RULES);
-  this.parseRules = {};
   this.messages = _objectSpread({}, MESSAGES);
   this.eventHooksBag = MessageBagFactory(this);
 

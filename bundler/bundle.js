@@ -22,7 +22,7 @@ const license = readFileSync('bundler/license.md', 'utf-8');
 // Get all API docs
 const methods = readdirSync('docs/api', 'utf-8');
 
-// Build table of contents
+// build table of contents
 const tableOfContents = methods.map((file) => {
 	const methodName = file.replace('.md', '');
 
@@ -32,6 +32,30 @@ const tableOfContents = methods.map((file) => {
 // Build methods "readme"
 const methodDocumentation = methods.map((file) => {
 	let content = readFileSync(`docs/api/${file}`, 'utf-8');
+
+	const lines = content.split('\n');
+
+	lines[0] = `#${lines[0]}`;
+	lines.pop();
+	lines.pop();
+
+	content = lines.join('\n');
+	content = content.replace(/(\r\n|\r|\n){2,}/g, '$1\n');
+
+	return content;
+}).join('\n\n');
+
+
+const errorMessages = readdirSync('docs/errors', 'utf-8');
+const errorMessagesTableOfContents = errorMessages.map((file) => {
+	const errorMessageMethod = file.replace('.md', '');
+
+	return `- [${errorMessageMethod}](#${errorMessageMethod.toLowerCase()})`;
+}).join('\n');
+
+// Build methods "readme"
+const errorMessagesDocumentation = errorMessages.map((file) => {
+	let content = readFileSync(`docs/errors/${file}`, 'utf-8');
 
 	const lines = content.split('\n');
 
@@ -55,7 +79,8 @@ writeFileSync(
 		api,
 		tableOfContents,
 		methodDocumentation,
-		errors,
+		errorMessagesTableOfContents,
+		errorMessagesDocumentation,
 		hooks,
 		extend,
 		utilization,
