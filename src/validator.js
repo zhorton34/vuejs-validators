@@ -311,10 +311,10 @@ Validator.prototype.setMessages = function (messages = {}) {
  * @returns {Validator}
  */
 Validator.prototype.make = function (data = {}, rules = {}, messages = {}, translator = {}) {
+	this.data = data;
 	this.parseRules = rules;
 	this.translator = translator;
 	this.customMessages = messages;
-	this.data = this.parseData(data);
 
 	return this;
 };
@@ -353,7 +353,7 @@ Validator.prototype.extend = function (...parameters) {
 Validator.prototype.parseData = function (data = {}) {
 	let newData = {};
 
-	Object.entries(data).forEachkey, value]) => {
+	Object.entries(data).forEach(([key, value]) => {
 		if (typeof value === 'object') {
 			value = this.parseData(value);
 		}

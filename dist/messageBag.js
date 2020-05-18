@@ -1,10 +1,12 @@
-
 'use strict';
 
-const MessageBag = function (validator = {}) {
-	this.messages = {};
+var MessageBag = function MessageBag() {
+  var validator = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  this.messages = {};
 
-	this.getValidator = function () { return validator; };
+  this.getValidator = function () {
+    return validator;
+  };
 };
 
 MessageBag.prototype.add = require('./messages/add.js');
@@ -18,11 +20,12 @@ MessageBag.prototype.macro = require('./messages/macro.js');
 MessageBag.prototype.forget = require('./messages/forget.js');
 MessageBag.prototype.forceMacro = require('./messages/macro.js');
 
-const MessageBagFactory = function (validator = {}) {
-	return new MessageBag(validator);
+var MessageBagFactory = function MessageBagFactory() {
+  var validator = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  return new MessageBag(validator);
 };
 
 module.exports = MessageBagFactory;
 module.exports.MessageBag = MessageBag;
-module.exports.default = MessageBagFactory;
+module.exports["default"] = MessageBagFactory;
 module.exports.MessageBagFactory = MessageBagFactory;

@@ -2,7 +2,9 @@
 
 var Factory = require('./factory');
 
-var makeErrorBag = require('./errors');
+var _require = require('./messageBag.js'),
+    MessageBag = _require.MessageBag,
+    MessageBagFactory = _require.MessageBagFactory;
 
 var validator = function validator() {
   var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -13,7 +15,8 @@ var validator = function validator() {
 };
 
 module.exports = validator;
-module.exports.Validator = Factory;
 module.exports["default"] = validator;
+module.exports.Validator = Factory;
 module.exports.validator = validator;
-module.exports.makeErrorBag = makeErrorBag;
+module.exports.MessageBag = MessageBag;
+module.exports.MessageBagFactory = MessageBagFactory;
