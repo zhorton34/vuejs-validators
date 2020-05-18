@@ -1,9 +1,18 @@
 const RULES = require('./rules');
-const makeHookBag = require('./hooks');
 const MESSAGES = require('./messages');
 const ParseRule = require('./parseRule');
 const variadic = require('./helpers/variadic');
 const { MessageBagFactory } = require('./messageBag.js');
+
+/*-----------------------------------
+ | Message Bag/Relationship Methods
+ |-----------------------------------
+ |
+ |  hooks
+ |  errors
+ |  passing
+ |
+ */
 
 const Validator = function () {
 	this.data = {};
@@ -11,25 +20,116 @@ const Validator = function () {
 	this.rules = { ...RULES };
 	this.messages = { ...MESSAGES };
 
-	this.hookBag = makeHookBag(this);
+	this.eventHooksBag = MessageBagFactory(this);
 	this.hooks = function () {
-		return this.hookBag;
+		return this.eventHooksBag;
 	};
 
-	this.errorMessagesBag = MessageBagFactory(this);
+	this.errorMessageBag = MessageBagFactory(this);
 	this.errors = function () {
-		return this.errorMessagesBag;
+		return this.errorMessageBag;
 	};
 
-	this.successMessagesBag = MessageBagFactory(this);
-	this.success = function () {
-		return this.successMessagesBag;
+	this.passingMessageBag = MessageBagFactory(this);
+	this.passing = function () {
+		return this.passingMessageBag;
 	};
 };
 
+/*----------------------------------------------------------------------------
+ | Run Validation (Parse Rules, Fill Message Bags, Trigger Life Cycle Hooks)
+ |----------------------------------------------------------------------------
+ |
+ |  validate
+ |  validateWithoutHooks
+ |  resolveFieldRules
+ |  resolveErrorMessages
+ |
+ */
 
-Validator.prototype.parseData = require('./validator/parseData.js');
+/**
+ * Trigger validation on current data, rules, & messages (Calling registered life cycle hooks)
+ *
+ * @returns {Validator}
+ */
+Validator.prototype.validate = function () {
+	this.resolveFieldRules().hookInto('before');
+	this.resolveErrorMessages().hookInto('after').hookInto(this.errors().any() ? 'failed' : 'passed');
 
+	this.hooks().forget();
+
+	return this;
+};
+
+/**
+ * Trigger validation on current data, rules, & messages (Not calling registered life cycle hooks)
+ *
+ * @returns {Validator}
+ */
+Validator.prototype.validateWithoutHooks = function () {
+	this.resolveFieldRules();
+	this.resolveErrorMessages();
+
+	return this;
+};
+
+/**
+ * Setup Checks To Validate Field Data Against Associated Rules
+ * Using Data, Field Attribute, Associated Rule, & The Failed Rule Message Name
+ *
+ * @returns {Validator}
+ */
+Validator.prototype.resolveFieldRules = function () {
+	this.checks = Object.entries(this.parseRules).reduce(
+		(completed, [field, rules]) => [
+			...completed,
+			...ParseRule(this, field, rules)
+		],
+		[]);
+
+	return this;
+};
+
+/**
+ * Resolve Error Messages resolved field rules,
+ * then populate error messages bag
+ *
+ * @returns {Validator}
+ */
+Validator.prototype.resolveErrorMessages = function () {
+	this.errors().set(
+		this.checks.reduce(
+			(errors, check) => ({
+				...errors,
+				[check.attribute]: check.rule(check)
+					? [...(errors[check.attribute] || [])]
+					: [...(errors[check.attribute] || []), check.message()],
+			}),
+		{})
+	);
+
+	return this;
+};
+
+
+/*---------------------------
+ | Life Cycle Hooks
+ |---------------------------
+ |
+ |  hookInto
+ |  before
+ |  after
+ |  failed
+ |  passed
+ |
+ */
+
+/**
+ * Trigger Life Cycle Moment's (AKA Life Cycle Event's) Registered Functions
+ *
+ * @param moment
+ * @returns {Validator}
+ */
 Validator.prototype.hookInto = function (moment) {
 	if (this.hooks().has(moment)) {
 		this.hooks().list(moment).forEach(event => event(this));
@@ -39,23 +139,75 @@ Validator.prototype.hookInto = function (moment) {
 };
 
 /**
- * Make Validator
+ * Register callback triggered during the "before" event of our validation life cycle
  *
- * @param data
- * @param rules
- * @param messages
- * @param translator
+ * @param callback
  * @returns {Validator}
  */
-Validator.prototype.make = function (data = {}, rules = {}, messages = {}, translator = {}) {
-	this.parseRules = rules;
-	this.translator = translator;
-	this.customMessages = messages;
-	this.data = this.parseData(data);
+Validator.prototype.before = function (callback) {
+	this.hooks().add('before', callback);
 
 	return this;
 };
 
+/**
+ * Register callback triggered during the "after" event of our validation life cycle
+ *
+ * @param callback
+ * @returns {Validator}
+ */
+Validator.prototype.after = function (callback) {
+	this.hooks().add('after', callback);
+
+	return this;
+};
+
+/**
+ * Register callback triggered during the "failed" event of our validation life cycle
+ *
+ * @param callback
+ * @returns {Validator}
+ */
+Validator.prototype.failed = function (callback) {
+	this.hooks().add('failed', callback);
+
+	return this;
+};
+
+/**
+ * Register callback triggered during the "passed" event of our validation life cycle
+ *
+ * @param callback
+ * @returns {Validator}
+ */
+Validator.prototype.passed = function (callback) {
+	this.hooks().add('passed', callback);
+
+	return this;
+};
+
+/*-------------------------------------------
+ | Add/Set/Update Configured "State" Data
+ |-------------------------------------------
+ |
+ |  addData
+ |  addRule
+ |  addMessage
+ |  setData
+ |  setRules
+ |  setMessages
+ |  setRules
+ |  setMessages
+ |
+ */
+
+/**
+ * Add message to validator customized messages
+ *
+ * @param field
+ * @param value
+ * @returns {Validator}
+ */
 Validator.prototype.addMessage = function(field, value) {
 	try {
 		this.customMessages[field] = value;
@@ -66,6 +218,13 @@ Validator.prototype.addMessage = function(field, value) {
 	return this;
 };
 
+/**
+ * Add validation rule to field
+ *
+ * @param field
+ * @param value
+ * @returns {Validator}
+ */
 Validator.prototype.addRule = function(field, value) {
 	try {
 		this.parseRules[field] = value;
@@ -76,6 +235,13 @@ Validator.prototype.addRule = function(field, value) {
 	return this;
 };
 
+/**
+ * Add data to be validated
+ *
+ * @param field
+ * @param value
+ * @returns {Validator}
+ */
 Validator.prototype.addData = function(field, value) {
 	try {
 		this.data[field] = value;
@@ -99,7 +265,7 @@ Validator.prototype.setData = function (data = {}) {
 };
 
 /**
- * Set Validation Rules
+ * Set Rules To Be Validated
  *
  * @param rules
  * @returns {Validator}
@@ -111,7 +277,7 @@ Validator.prototype.setRules = function (rules = {}) {
 };
 
 /**
- * Set Validation Messages
+ * Set customized error messages
  *
  * @param messages
  * @returns {Validator}
@@ -122,8 +288,41 @@ Validator.prototype.setMessages = function (messages = {}) {
 	return this;
 };
 
+
+
+/*---------------------------------
+ | Create Related Entity Method
+ |---------------------------------
+ |
+ |  make (Creates validator)
+ |  extend (Creates rules)
+ |  parseData (To handle wild cards and nested data)
+ |
+ */
+
+
+/**
+ * Make Validator
+ *
+ * @param data
+ * @param rules
+ * @param messages
+ * @param translator
+ * @returns {Validator}
+ */
+Validator.prototype.make = function (data = {}, rules = {}, messages = {}, translator = {}) {
+	this.parseRules = rules;
+	this.translator = translator;
+	this.customMessages = messages;
+	this.data = this.parseData(data);
+
+	return this;
+};
+
+
 /**
  * Extend Validator With Custom Rules
+ *
  * @param parameters
  * @returns {Validator}
  */
@@ -145,120 +344,26 @@ Validator.prototype.extend = function (...parameters) {
 	return this;
 };
 
+
 /**
- * Add before for validation hook/callback
+ * Parse data configuring it for proper nesting and wild card implementations
  *
- * @param callback
- * @returns {Validator}
+ * @param data
  */
-Validator.prototype.before = function (callback) {
-	this.hooks().add('before', callback);
+Validator.prototype.parseData = function (data = {}) {
+	let newData = {};
 
-	return this;
-};
+	Object.entries(data).forEachkey, value]) => {
+		if (typeof value === 'object') {
+			value = this.parseData(value);
+		}
 
-/**
- * Add after validation hook/callback
- *
- * @param callback
- * @returns {Validator}
- */
-Validator.prototype.after = function (callback) {
-	this.hooks().add('after', callback);
+		key = key.replace(/\*/g, '__asterisk__');
 
-	return this;
-};
+		newData[key] = value;
+	});
 
-/**
- * Add failed validation hook/callback
- *
- * @param callback
- * @returns {Validator}
- */
-Validator.prototype.failed = function (callback) {
-	this.hooks().add('failed', callback);
-
-	return this;
-};
-
-/**
- * Add passed validation hook/callback
- *
- * @param callback
- * @returns {Validator}
- */
-Validator.prototype.passed = function (callback) {
-	this.hooks().add('passed', callback);
-
-	return this;
-};
-
-/**
- * Prepare To Validate Hooks
- *
- * @returns {Validator}
- */
-Validator.prototype.beforeValidation = function () {
-	this.checks = Object.entries(this.parseRules).reduce(
-		(completed, [field, rules]) => [
-			...completed,
-			...ParseRule(this, field, rules)
-		],
-	[]);
-
-	return this;
-};
-
-/**
- * Validate Hook
- * ~~~~~~~~~~~~~~
- * Trigger prepareToValidate Hooks.
- * Trigger Validation Rules
- * Trigger AfterValidation Hooks
- */
-Validator.prototype.validate = function () {
-	return this
-		.beforeValidation()
-		.hookInto('before')
-		.checkRulesAndFillErrorBag()
-		.hookInto('after')
-		.hookInto(this.errors().any() ? 'failed' : 'passed')
-		.forgetHooks();
-};
-
-/**
- * Validate, but don't execute life cycle hooks
- */
-Validator.prototype.validateWithoutHooks = function () {
-	return this.beforeValidation().checkRulesAndFillErrorBag();
-};
-
-/**
- * Execute validation rules and fill error bag
- * @returns {Validator}
- */
-Validator.prototype.checkRulesAndFillErrorBag = function () {
-	this.errors().set(
-		this.checks.reduce(
-			(errors, check) => ({
-				...errors,
-				[check.attribute]: check.rule(check)
-					? [...(errors[check.attribute] || [])]
-					: [...(errors[check.attribute] || []), check.message()],
-			}),
-		{})
-	);
-
-	return this;
-};
-
-Validator.prototype.forgetHooks = function () {
-	this.hooks().forget('before');
-	this.hooks().forget('after');
-	this.hooks().forget('passed');
-	this.hooks().forget('failed');
-
-	return this;
+	return newData;
 };
 
 module.exports = Validator;
