@@ -2,24 +2,33 @@ const RULES = require('./rules');
 const makeHookBag = require('./hooks');
 const MESSAGES = require('./messages');
 const ParseRule = require('./parseRule');
-const makeErrorBag = require('./errors');
 const variadic = require('./helpers/variadic');
+const { MessageBagFactory } = require('./messageBag.js');
 
 const Validator = function () {
 	this.data = {};
 	this.translator = {};
 	this.rules = { ...RULES };
 	this.messages = { ...MESSAGES };
+
 	this.hookBag = makeHookBag(this);
-	this.errorBag = makeErrorBag(this);
+	this.hooks = function () {
+		return this.hookBag;
+	};
+
+	this.errorMessagesBag = MessageBagFactory(this);
+	this.errors = function () {
+		return this.errorMessagesBag;
+	};
+
+	this.successMessagesBag = MessageBagFactory(this);
+	this.success = function () {
+		return this.successMessagesBag;
+	};
 };
 
 
-Validator.prototype.parseData = require('./methods/parseData');
-
-Validator.prototype.hooks = function () {
-	return this.hookBag;
-};
+Validator.prototype.parseData = require('./validator/parseData.js');
 
 Validator.prototype.hookInto = function (moment) {
 	if (this.hooks().has(moment)) {
@@ -27,10 +36,6 @@ Validator.prototype.hookInto = function (moment) {
 	}
 
 	return this;
-};
-
-Validator.prototype.errors = function() {
-	return this.errorBag;
 };
 
 /**

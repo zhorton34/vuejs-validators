@@ -1,7 +1,6 @@
 'use strict';
 
 const Factory = require('./factory');
-const makeErrorBag = require('./errors');
 
 const validator = (
 	data = {},
@@ -9,6 +8,8 @@ const validator = (
 	messages = {},
 	translator = {},
 ) => (new Factory(data, rules, messages, translator));
+
+const { MessageBag, MessageBagFactory }= require('./messageBag.js');
 
 module.exports = validator;
 module.exports.Validator = Factory;
