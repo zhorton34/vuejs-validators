@@ -1,6 +1,12 @@
-const isArray = require('./helpers/isArray');
-const isObject = require('./helpers/isObject');
-
+/**
+ * Parse Rules & Messages On Given Validator
+ *
+ * @param validator
+ * @param field
+ * @param rules
+ *
+ * @returns {*}
+ */
 module.exports = function ParseRule (validator, field, rules) {
 
 	return pipe(field, validator, rules).into(([

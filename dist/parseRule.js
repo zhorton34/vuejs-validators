@@ -22,10 +22,15 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-var isArray = require('./helpers/isArray');
-
-var isObject = require('./helpers/isObject');
-
+/**
+ * Parse Rules & Messages On Given Validator
+ *
+ * @param validator
+ * @param field
+ * @param rules
+ *
+ * @returns {*}
+ */
 module.exports = function ParseRule(validator, field, rules) {
   return pipe(field, validator, rules).into(function (_ref) {
     var _ref2 = _slicedToArray(_ref, 5),

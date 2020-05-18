@@ -1175,261 +1175,143 @@ validator(form, rules).validate();
 ```
 
 
-# Validator Error Api
-> `Simplified Interaction With Rule Error Messages`
+- [add](#add)
+- [all](#all)
+- [any](#any)
+- [forget](#forget)
+- [get](#get)
+- [has](#has)
+- [list](#list)
+- [macro](#macro)
+- [macroForce](#macroforce)
+- [set](#set)
 
-- [any()](#any-errors)
-- [all()](#all-errors)
-- [list()](#list-errors)
-- [set(errors)](#set-errors)
-- [forget()](#forget-errors)
-- [has(field)](#has-error)
-- [get(field)](#get-error)
-- [list(field)](#list-error)
-- [add(field, message)](#add-error)
-- [set(field, messages)](#set-field-errors)
-- [forget(field)](#forget-field)
-- [getValidator()](#get-errors-validator)
+## Add
 
-### Validation Errors
-> _Access validation errors bag object_
 ```js
-let validation = validator(data, rules)
-
-validation.validate();
-
-validation.errors();
+errors().add('company', 'Your company is important to us, add the proper information so others can learn about it to!'); 
 ```
 
+``` 
+# errors.list('company')
 
-
-### Any Errors
-> `Determine if there are "any" errors (bool)`
-```js
-validation.errors().any(); // true
-```
-```js
-let data = { name: '' };
-let rules = { name: 'required'};
-let validation = validator(data, rules);
-
-validation.validate();
-validation.errors().any();
-```
-
-
-
-### All Errors
-> `Retrieve all errors within the errors object`
-```js
-validation.errors().all()
-/**
- * {
- *   name: ['name field is required' ],
- *   email: ['email must be an email', email field is required']
- *  }
- */
-```
-```js
-let data = { name: '', email: '' };
-let rules = { name: 'required', email: 'email|required' };
-let validation = validator(data, rules).validate();
-
-validation.errors().all();
-```
-```
-{
-    name: [
-        'name field is required'
-    ],
-    email: [
-        'email field must be an email address',
-        'email field is required'
-    ]
-}
-```
-
-
-
-### List Errors
-> `Retrieve all errors within the errors object`
-```js
-validation.errors().list()
-// ['name field is required', 'email field is required', 'email field must be an email']
-```
-```js
-let data = { name: '', email: '' };
-let rules = { name: 'required', email: 'email|required' };
-let validation = validator(data, rules);
-
-validation.validate()
-validation.errors().list();
-```
-```
 [
-    'name field is required',
-    'email field must be an email address',
-    'email field is required'
+   'Company field is required',
+   'Company field must have no more than 15 characters',
+   'Your company is important to us, add the proper information so others can learn about it to!'
 ]
 ```
 
 
 
-### Set Errors
-> `Set all errors`
-```js
-validation.errors().set({
-    name: ['this is an error message for name' ],
-    something: ['has an error']
-})
+## All
+Return "all" error messages as object of fields with list of their error messages  
+
+```js 
+errors().all(); 
 ```
+
+``` 
+{
+    name: ['Name field is required', 'Name field must have at lest 3 characters'],
+    email: ['Email field must be an email', 'Email field must have at least 3 characters']
+}
+```
+
+
+
+## Any
+Determine if there are currently "any" error messages within error bag 
+
 ```js
-let data = { name: '' };
-let rules = { name: 'required' };
-let validation = validator(data, rules);
+errors().any(); 
+```
 
-validation.validate();
-validation.errors().list(); // ['name is a required field']
+``` 
+true: If there are any error messages
+false: If there are NOT any error messages
+```
 
-validation.errors().set({
-    notice: ['set this random error message']
+
+
+## Forget
+Forget error messages on all fields or optionally on a specific field
+
+```js
+errors.forget(); // Forget errors messages for all fields
+
+errors.forget('name'); // only forget the error messages for a specific field
+```
+
+
+## Get
+Get first available error message on a given field
+
+```js
+errors.get('name');
+```
+
+
+## Has
+Check if a specific field "has" error messages 
+
+```js
+errors.has('name');
+```
+
+
+## List
+List all error messages or optionally list all array messages for a specific field 
+
+```js
+errors.list(); // ['Name is a required field']
+
+errors.list('name'); // ['Name is a required field']
+errors.list('email'); // ['Email field must be an email', 'Email is a required field']
+```
+
+
+## Macro
+Extend errors message bag instance using macros
+
+```js
+errors().macro('count', function () {
+    return this.list().length();
 });
 
-validation.errors().list(); // ['set this random error message']
+// errors().count() === errors().list().count();
 ```
 
 
+## Force Macro
+Force macro acts the same as macro, with the option to forcefully override core functions and already existing macros.
+(Use with caution).
 
-### Forget Errors
-> `Forget errors and reset them to empty`
 ```js
-validation.errors().forget()
-```
-```js
-let data = { name: '' };
-let rules = { name: 'required' };
-let validation = validator(data, rules);
+errors().get('name'); 
+// Output: 'Name field is required'
 
-validation.validate();
-validation.errors().list(); // ['name is a required field']
+errors().forceMacro('get', function (field) {
+    return this.list(field).join(', ');
+});
 
-validation.errors().forget();
-validation.errors().list() // []
+errors().get('name'); 
+// Output: 'Name field is required, Name field can not be greater than 3 characters, Name field must be a string'
 ```
 
 
-
-### Has Error
-> `Determine if a specific field has error messages`
+## Set
+Set all error messages, or optionally set given fields error messages
+ 
 ```js
-validator.errors().has('name') // true
-validator.errors().has('email') // false
-validator.errors().has('something_else') // false
-```
-```js
-let data = { name: '', email: 'example@gmail.com' };
-let rules = { name: 'required', email: 'email|required' };
-let validation = validator(data, rules);
+// Set all fields error messages
+errors().set({
+    name: ['Name field is off, check it out and try again', 'Name field is in wrong language'],
+    formula: ['Formula is not incorrect according to the laws of physics']
+});
 
-validation.validate();
-validation.errors().has('name'); // true
-validation.errors().has('email'); // false
-validation.errors().has('something_else'); // false
-```
-
-
-
-### Get Error
-> `Get _first_ error message for a specific field`
-```js
-validation.errors().get('name');
-// "name is a required field"
-```
-
-```js
-let data = { name: '' };
-let rules = { name: 'required|min:3'};
-let validation = validator(data, rules);
-
-validation.validate();
-validation.errors().get('name'); // 'name is a required field'
-```
-
-
-### List Error
-> `List errors for a specific field`
-```js
-validation.errors().list('name');
-// ["name is a required field", "name must be longer than 3 characters"]
-```
-```js
-let data = { name: '' };
-let rules = { name: 'required|min:3'};
-let validation = validator(data, rules);
-
-validation.validate();
-validation.errors().list('name'); // ['name is a required field', 'name must be longer than 3 characters']
-```
-
-
-### Add Error
-> `Add error message for a specific field`
-```js
-validation.errors().add('name', 'four failures in a row. Two more failures before your locked out');
-```
-```js
-let data = { name: '' };
-let rules = { name: 'required|min:3'};
-let validation = validator(data, rules);
-
-validation.validate();
-validation.errors().add('name', 'four failures in a row. Two more failures before your locked out');
-validation.errors().list('name');
-// ['name is a required field', 'name must be longer than 3 characters', 'four failures in a row. Two more failures before your locked out']
-```
-
-
-### Set Error
-> `Set error messages for a specific field`
-```js
-validation.errors().set('name', ['random messages', 'set on', 'the name field']);
-```
-
-```js
-let data = { name: '' };
-let rules = { name: 'required' };
-let validation = validator(data, rules);
-
-validation.validate();
-validation.errors().list('name'); // ['name is a required field']
-
-validation.errors().set('name', [
-    'random messages', 'set on', 'the name field'
-]);
-validation.errors().list('name'); // ['random messages', 'set on', 'the name field']
-```
-
-
-
-### Forget Error
-> `Forget error messages for a specific field`
-```js
-validation.errors().forget('name');
-```
-
-```js
-let data = { name: '' };
-let rules = { name: 'required' };
-let validation = validator(data, rules).validate();
-
- // ['name is a required field']
-validation.errors().list('name');
-
-// Forget
-validation.errors().forget('name');
-
-// []
-validation.errors().list('name');
+// Set specific field error messages
+errors().set('name', ['Name field is off, check it out and try again', 'Name field is in wrong language']);
 ```
 
 
@@ -1661,10 +1543,32 @@ functionality or improve the docs please feel free to submit a PR.
 MIT © [Zachary Horton (Clean Code Studio)](https://github.com/zhorton34/vuejs-validators#README)
 
 
-#### Change Log
+## Change Log
 
-### v.1.1.3
+---
 
+### Release 1.1.5
+
+---
+- Error messages "macro" method (Add custom method)
+- Error messages "forceMacro" method (Override core functions)
+- Error messages documentation refactored according to updates
+- "passing" method, returns a success message bag, but it is not officially documented nor officially supported as of yet.
+- MessageBag & MessageBagFactory (Error messages api is an implementation of the message bag prototype) are exported and optional imports
+
+---
+
+### Release 1.1.4
+
+---
+- Changes to adapt package to vuejs-form implementation
+
+
+---
+
+### Release 1.1.3
+
+---
 - Added ip rule
 - Added ipv4 rule
 - Added ipv6 rule
