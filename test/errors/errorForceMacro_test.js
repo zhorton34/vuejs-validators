@@ -3,42 +3,47 @@
 
 const { validator } = require('../../dist/index.js');
 
-// errors force macro test
+// errors macro test
 module.exports = (it, expect) => {
-	let example = validator({ name: 'sam' }, { name: 'required' });
+	let example = validator({ name: '' }, { name: 'required' });
 
-	it('should extend Errors Api using "forceMacro"', () => {
-		expect(typeof example.errors().example_force_macro_method === 'undefined').to.eql(true);
+	it('should be able to extend Errors Api globally using "forceMacro"', () => {
+		expect(typeof example.errors().force_macro_method === 'undefined').to.eql(true);
 
-		example.errors().forceMacro('example_force_macro_method', function () {
+		example.errors().forceMacro('force_macro_method', function () {
 			return 'hello world';
 		});
 
-		expect(typeof example.errors().example_force_macro_method === 'undefined').to.eql(false);
-		expect(example.errors().example_force_macro_method()).to.eql('hello world');
+		expect(typeof example.errors().force_macro_method === 'undefined').to.eql(false);
+		expect(example.errors().force_macro_method()).to.eql('hello world');
+		expect(validator().errors().force_macro_method()).to.eql('hello world');
 	});
 
-	it('should overwrite Error Messages Api default behavior using "forceMacro"', () => {
+	it('should overwrite base Error Messages Api behavior globally using "forceMacro"', () => {
+		let example = validator({});
+
 		example.errors().set('prop', ['a', 'b', 'c', 'd']);
 
 		expect(example.errors().get('prop')).to.eql('a');
 
 		example.errors().forceMacro('get', function (field) {
-			if (this.has(field)) {
-				return this.list(field).join(', ');
-			}
+			return this.list(field).join(', ');
 		});
 
 		expect(example.errors().get('prop')).to.eql('a, b, c, d');
-	});
 
-	it('should overwrite Error Messages Api macros already defined when using "forceMacro"', () => {
-		example.errors().macro('inspire', () => 'hello world');
+		let two = validator({});
 
-		expect(example.errors().inspire()).to.eql('hello world');
+		two.errors().set('prop', ['a', 'b', 'c', 'd']);
 
-		example.errors().forceMacro('inspire', () => 'we believe in you');
+		expect(two.errors().get('prop')).to.eql('a, b, c, d');
 
-		expect(example.errors().inspire()).to.eql('we believe in you');
+		two.errors().forceMacro('get', function (field) {
+			if (this.has(field)) {
+				return this.list(field)[0];
+			}
+		});
+
+		expect(two.errors().get('prop')).to.eql('a');
 	});
 };

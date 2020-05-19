@@ -14,7 +14,7 @@ module.exports = (it, expect) => {
 			return 'hello world';
 		});
 
-		// expect(typeof example.errors().example_macro_method === 'undefined').to.eql(false);
+		expect(typeof example.errors().example_macro_method === 'undefined').to.eql(false);
 	});
 
 	it('should not overwrite base Error Messages Api behavior using "macro"', () => {

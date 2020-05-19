@@ -1,5 +1,6 @@
 # Macro
 Extend errors message bag instance using macros
+_Note See localMacro to only apply the method on a specific instance instead of globally on the prototype constructor_
 
 ```js
 errors().macro('count', function () {

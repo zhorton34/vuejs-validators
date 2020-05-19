@@ -1,55 +1,44 @@
 
 'use strict';
 
-// validator force macro test
-module.exports = (it, expect, { validator }) => {
-	/* it('should be able to extend the base form prototype using "forceMacro"', () => {
-		expect(Object.keys(form).includes('example_force_macro_method')).to.eql(false);
+const { validator } = require('../../dist/index.js');
 
-		form().forceMacro('example_force_macro_method', function () {
+// errors force macro test
+module.exports = (it, expect) => {
+	let example = validator({ name: 'sam' }, { name: 'required' });
+
+	it('should extend Errors Api using "forceMacro"', () => {
+		expect(typeof example.example_force_macro_method === 'undefined').to.eql(true);
+
+		example.forceMacro('example_force_macro_method', function () {
 			return 'hello world';
-		});
+		}, false);
 
-		expect(form().example_force_macro_method()).to.eql('hello world');
+		expect(typeof example.example_force_macro_method === 'undefined').to.eql(false);
+		expect(example.example_force_macro_method()).to.eql('hello world');
 	});
 
-	it('should be able to forcibly overwrite a base form prototype function using "forceMacro"', () => {
+	it('should overwrite Validator Api default behavior using "forceMacro"', () => {
+		expect(example.errors()).to.eql(example.errorMessageBag);
 
-		expect(form({ name: 'sam' }).all()).to.eql({ name: 'sam' });
+		example.forceMacro('errors', function () {
+			return 'dummy error bag';
+		}, false);
 
-		form().forceMacro('all', function () {
+		expect(example.errors()).to.eql('dummy error bag');
+	});
+
+	it('should overwrite Validator api macros already defined when using "forceMacro"', () => {
+		example.macro('inspire', function () {
 			return 'hello world';
-		});
+		}, false);
 
-		expect(form({ name: 'sam' }).all()).to.eql('hello world');
+		expect(example.inspire()).to.eql('hello world');
 
-		form().forceMacro('all', function () {
-			return this.data;
-		});
+		example.forceMacro('inspire', function () {
+			return 'we believe in you';
+		}, false);
 
-		expect(form({ name: 'sam' }).all()).to.eql({ name: 'sam' });
+		expect(example.inspire()).to.eql('we believe in you');
 	});
-
-	it('should be able to forcibly overwrite a previously defined "macro"', () => {
-		let example = form({ name: 'sam' });
-
-		form().macro('inspire', function () {
-			return `We believe in you ${this.data.name}`;
-		});
-
-		expect(example.inspire()).to.eql("We believe in you sam");
-
-		form().forceMacro('inspire', function () {
-			return `We have faith in you sarah`
-		});
-
-		expect(example.inspire()).to.eql("We have faith in you sarah");
-
-	});
-
-	form().forceMacro('all', function () {
-		return this.data;
-	});
-
-	*/
 };

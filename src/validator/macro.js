@@ -2,7 +2,7 @@
 'use strict';
 
 /**
- * Extend Message Bag Prototype With Custom Function Using "Macro's"
+ * Extend Validator Prototype With Custom Function Using "Macro's"
  * (See Laravel Macros For In Depth Explanation)
  *
  * @param name
@@ -12,7 +12,7 @@
  */
 module.exports = function (name, fn) {
 	if (typeof this.constructor.prototype[name] !== 'undefined') {
-		console.error("Cant extend message bag with ".concat(name, " macro, it already exists"));
+		console.error("Cant extend validator with ".concat(name, " macro, it already exists"));
 	} else {
 		this[name] = fn;
 		this.constructor.prototype[name] = fn;
