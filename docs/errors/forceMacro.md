@@ -2,6 +2,8 @@
 Force macro acts the same as macro, with the option to forcefully override core functions and already existing macros.
 (Use with caution).
 
+_Note See forceLocalMacro to only apply the method on a specific instance instead of globally on the prototype constructor_
+
 ```js
 errors().get('name'); 
 // Output: 'Name field is required'

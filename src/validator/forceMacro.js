@@ -7,15 +7,16 @@
  *
  * @param name
  * @param fn
-  *
+ *
  * @return void
  */
 module.exports = function (name, fn) {
 	console.warn(`
 		Forcing macro to implement ${name} method -- Move forward with caution.
 		We recommend using "macro" in place of "forceMacro" method if you do not 
-		need to override pre-existing or base Message Bag Prototype behavior.
+		need to override pre-existing or base Validator Prototype behavior.
 	`);
+
 
 	this[name] = fn;
 	this.constructor.prototype[name] = fn;

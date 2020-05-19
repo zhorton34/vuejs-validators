@@ -72,6 +72,11 @@ var Validator = function Validator() {
     return this.passingMessageBag;
   };
 };
+
+Validator.prototype.macro = require('./validator/macro.js');
+Validator.prototype.localMacro = require('./validator/localMacro.js');
+Validator.prototype.forceMacro = require('./validator/forceMacro.js');
+Validator.prototype.forceLocalMacro = require('./validator/forceLocalMacro.js');
 /*----------------------------------------------------------------------------
  | Run Validation (Parse Rules, Fill Message Bags, Trigger Life Cycle Hooks)
  |----------------------------------------------------------------------------
@@ -88,7 +93,6 @@ var Validator = function Validator() {
  *
  * @returns {Validator}
  */
-
 
 Validator.prototype.validate = function () {
   this.resolveFieldRules().hookInto('before');
