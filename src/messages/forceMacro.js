@@ -15,7 +15,9 @@ module.exports = function (name, fn) {
 		Forcing macro to implement ${name} method -- Move forward with caution.
 		We recommend using "macro" in place of "forceMacro" method if you do not 
 		need to override pre-existing or base Message Bag Prototype behavior.
-	 `);
+	`);
 
+	this[name] = fn;
+	this.prototype[name] = fn;
 	this.constructor.prototype[name] = fn;
 };
