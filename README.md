@@ -1552,10 +1552,16 @@ MIT © [Zachary Horton (Clean Code Studio)](https://github.com/zhorton34/vuejs-v
 
 ---
 
+### 1.1.6
+
+---
+- macro, localMacro, forceMacro, and forceLocalMacro methods added on validators and Error Messages Api
+- macro, localMacro, forceMacro, and forceLocalMacro methods testing added with associated docs in vueform-js repo
+---
+
 ### Release 1.1.5
 
 ---
-- Error messages "macro" method (Add custom method)
 - Error messages "forceMacro" method (Override core functions)
 - Error messages documentation refactored according to updates
 - "passing" method, returns a success message bag, but it is not officially documented nor officially supported as of yet.
