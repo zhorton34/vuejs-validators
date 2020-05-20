@@ -286,13 +286,19 @@ export default {
 
 
 - [accepted](#accepted-rule)
+- [after](#after-rule)
+- [after_or_equal](#after_or_equal-rule)
 - [alpha](#alpha-rule)
 - [alpha_dash](#alpha_dash-rule)
 - [alpha_num](#alpha_num-rule)
 - [array](#array-rule)
+- [before](#before-rule)
+- [before_or_equal](#before_or_equal-rule)
 - [between](#between-rule)
 - [boolean](#boolean-rule)
 - [confirmed](#confirmed-rule)
+- [date](#date-rule)
+- [date_equals](#date_equals-rule)
 - [different](#different-rule)
 - [digits](#digits-rule)
 - [digits_between](#digits_between-rule)
@@ -343,6 +349,65 @@ let rules = { terms_of_service: 'accepted' }
 validator(form, rules).validate();
 ```
 
+
+### After Rule
+(Date)
+
+The Field under evaluation must be after the compared date
+
+> Passes After (Date) Rule
+```
+let form = { 
+    one: '4-22-1997', 
+    two: '2-2-1997' 
+}
+
+let rules = {
+  one: 'after:4-23-1997',
+  two: 'after:2-3-1996',
+}
+```
+
+> Fails After (Date) Rule
+```
+let form = { 
+    one: '4-22-1997', 
+    two: '2-12-1997' 
+}
+
+let rules = {
+  one: 'after:4-22-1998',
+  two: 'after:1-11-1996',
+}
+
+### After Or Equal Rule
+(Date)
+The field under validation must be after or equal to the compared date.
+
+> Passes After Or Equal (Date) Rule
+```
+let form = { 
+    one: '4-22-1997',
+    two: '1-11-2013', 
+}
+
+let rules = {
+  one: 'after_or_equal:4-22-1997',
+  two: 'after_or_equal:2-12-2014',
+}
+```
+
+> Fails After Or Equal (Date) Rule
+```
+let form = { 
+    one: '4-22-1997',
+    two: '2-12-1997' 
+}
+
+let rules = {
+  one: 'after_or_equal:4-23-1997',
+  two: 'after_or_equal:2-3-1996',
+}
 
 ### Alpha Rule
 
@@ -443,6 +508,65 @@ let rules = { options: 'array' }
 validator(form, rules).validate();
 ```
 
+
+### Before Rule
+(Date)
+
+The Field under evaluation must be before the compared date
+
+> Passes Before (Date) Rule
+```
+let form = { 
+    one: '4-22-1997', 
+    two: '2-12-1997' 
+}
+
+let rules = {
+  one: 'before:4-22-1998',
+  two: 'before:2-12-1997',
+}
+```
+
+> Fails Before (Date) Rule
+```
+let form = { 
+    one: '4-22-1997', 
+    two: '3-12-1997' 
+}
+
+let rules = {
+  one: 'before:4-22-1997',
+  two: 'before:2-3-1996',
+}
+
+### Before Or Equal Rule
+(Date)
+The field under validation must be before or equal to the compared date.
+
+> Passes Before Or Equal (Date) Rule
+```
+let form = { 
+    one: '4-22-1997', 
+    two: '2-12-1997' 
+}
+
+let rules = {
+  one: 'before_or_equal:3-21-1998',
+  two: 'before_or_equal:2-12-1997',
+}
+```
+
+> Fails Before Or Equal (Date) Rule
+```
+let form = { 
+    one: '4-22-1997', 
+    two: '2-3-1997' 
+}
+
+let rules = {
+  one: 'before_or_equal:4-23-1997',
+  two: 'before_or_equal:2-3-1996',
+}
 
 ### Email Rule
 
@@ -546,6 +670,38 @@ let rules = { password: 'confirmed' };
 validator(form, rules).validate();
 ```
 
+
+### Date Rule
+(Date)
+The field under validation must be a valid, non-relative date according to the new Date js constructor.
+
+> Passes Date Rule
+- 4.22.1997 
+- 4-22-1997
+- 4/22/1997
+- April 22 1997
+- Tuesday April 22 1997
+
+> Fails Date Rule
+- asdfweadf
+- 23423423
+- []
+
+### Date Equals Rule
+(Date)
+The field under validation must be a valid, non-relative date according to the new Date js constructor.
+
+> Passes Date Rule
+- 4.22.1997 And 4.22.1997
+- 4-22-1997 And 4-22-1997
+- 4/22/1997 And 4/22/1997
+- April 22 1997 And April 22 1997
+- Tuesday April 22 1997 And Tuesday April 22 1997
+
+> Fails Date Rule
+- asdfweadf and 3.22.1323
+- 23423423 and 1234234
+- [] and []
 
 ### Different Validation Rule
 

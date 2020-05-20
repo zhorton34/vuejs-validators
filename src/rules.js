@@ -14,6 +14,12 @@ const isNotNumeric = require('./helpers/isNotNumeric');
 const isNotUndefined = require('./helpers/isNotUndefined');
 
 module.exports = {
+	date: ({ value }) => new Date(value) != 'Invalid Date',
+	date_equals: ({ value, parameters }) => Date.parse(value) === Date.parse(parameters[0]),
+	before: ({ value, parameters }) => Date.parse(value) < Date.parse(parameters[0]),
+	after: ({ value, parameters }) => Date.parse(value) > Date.parse(parameters[0]),
+	before_or_equal: ({ value, parameters }) => Date.parse(value) <= Date.parse(parameters[0]),
+	after_or_equal: ({ value, parameters }) => Date.parse(value) >= Date.parse(parameters[0]),
 	boolean: ({ value }) => isBooly(value),
 	number: ({ value }) => isNumber(value),
 	numeric: ({ value }) => isNumeric(value),

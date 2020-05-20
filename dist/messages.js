@@ -1,6 +1,12 @@
 'use strict';
 
 module.exports = {
+  date: ':attribute must be a date',
+  after: ':attribute must be after :after date',
+  after_or_equal: ':attribute must be after or equal to :after date',
+  before: ':attribute must be before :before date',
+  before_or_equal: ':attribute must be before or equal to :before date',
+  date_equals: ':attribute must be the same date as :date',
   "boolean": ':attribute must be a boolean',
   number: ':attribute must be a number',
   numeric: ':attribute must be numeric',
