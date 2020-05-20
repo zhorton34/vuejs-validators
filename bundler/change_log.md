@@ -2,6 +2,23 @@
 
 ---
 
+### 1.1.7
+
+---
+- date rule
+- date equals rule
+- before (date) rule
+- before_or_equal (date) rule
+- after (date) rule
+- after_or_equal (date) rule
+- less_than (numeric) rule
+- greater_than (numeric) rule
+- lte (less than or equal numeric) rule
+- gte (greater than or equal numeric) rule
+---
+
+---
+
 ### 1.1.6
 
 ---

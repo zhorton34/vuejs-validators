@@ -1,6 +1,10 @@
 'use strict';
 
 module.exports = {
+	less_than: ':number must be greater than :number',
+	greater_than: ':attribute must be greater than :number',
+	lte: ':attribute must be less than or equal to :number',
+	gte: ':attribute must be less than or equal to :number',
 	date: ':attribute must be a date',
 	after: ':attribute must be after :after date',
 	after_or_equal: ':attribute must be after or equal to :after date',

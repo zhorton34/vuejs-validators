@@ -3,7 +3,7 @@
 The field under validation must be after or equal to the compared date.
 
 > Passes After Or Equal (Date) Rule
-```
+```js
 let form = { 
     one: '4-22-1997',
     two: '1-11-2013', 
@@ -16,7 +16,7 @@ let rules = {
 ```
 
 > Fails After Or Equal (Date) Rule
-```
+```js
 let form = { 
     one: '4-22-1997',
     two: '2-12-1997' 
