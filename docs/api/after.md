@@ -4,7 +4,7 @@
 The Field under evaluation must be after the compared date
 
 > Passes After (Date) Rule
-```
+```js
 let form = { 
     one: '4-22-1997', 
     two: '2-2-1997' 
@@ -17,7 +17,7 @@ let rules = {
 ```
 
 > Fails After (Date) Rule
-```
+```js
 let form = { 
     one: '4-22-1997', 
     two: '2-12-1997' 

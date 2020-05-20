@@ -1,16 +1,29 @@
 ## Date Equals Rule
 (Date)
-The field under validation must be a valid, non-relative date according to the new Date js constructor.
+The field under validation must be the same date as the rules date
 
-> Passes Date Rule
-- 4.22.1997 And 4.22.1997
-- 4-22-1997 And 4-22-1997
-- 4/22/1997 And 4/22/1997
-- April 22 1997 And April 22 1997
-- Tuesday April 22 1997 And Tuesday April 22 1997
+> Passes Date Equals Rule
+```js
+let form = { 
+    one: '4-22-1997',
+    two: 'April 22 2025' 
+}
 
-> Fails Date Rule
-- asdfweadf and 3.22.1323
-- 23423423 and 1234234
-- [] and []
-- {} and {}
+let rules = {
+  one: 'date_equals:4-22-1997',
+  two: 'date_equals:April 22 2025',
+}
+```
+
+> Fails Date Equals Rule
+```js
+let form = { 
+    one: '4-22-1997',
+    two: '2-12-1997' 
+}
+
+let rules = {
+  one: 'date_equals:4-24-1998',
+  two: 'date_equals:1-11-1996',
+}
+```

@@ -305,11 +305,15 @@ export default {
 - [distinct](#distinct-rule)
 - [email](#email-rule)
 - [ends_with](#ends_with-rule)
+- [greater_than](#greater_than-rule)
+- [gte](#gte-rule)
 - [integer](#integer-rule)
 - [ip](#ip-rule)
 - [ipv4](#ipv4-rule)
 - [ipv6](#ipv6-rule)
 - [json](#json-rule)
+- [less_than](#less_than-rule)
+- [lte](#lte-rule)
 - [max](#max-rule)
 - [min](#min-rule)
 - [not_regex](#not_regex-rule)
@@ -356,7 +360,7 @@ validator(form, rules).validate();
 The Field under evaluation must be after the compared date
 
 > Passes After (Date) Rule
-```
+```js
 let form = { 
     one: '4-22-1997', 
     two: '2-2-1997' 
@@ -369,7 +373,7 @@ let rules = {
 ```
 
 > Fails After (Date) Rule
-```
+```js
 let form = { 
     one: '4-22-1997', 
     two: '2-12-1997' 
@@ -385,7 +389,7 @@ let rules = {
 The field under validation must be after or equal to the compared date.
 
 > Passes After Or Equal (Date) Rule
-```
+```js
 let form = { 
     one: '4-22-1997',
     two: '1-11-2013', 
@@ -398,7 +402,7 @@ let rules = {
 ```
 
 > Fails After Or Equal (Date) Rule
-```
+```js
 let form = { 
     one: '4-22-1997',
     two: '2-12-1997' 
@@ -689,19 +693,32 @@ The field under validation must be a valid, non-relative date according to the n
 
 ### Date Equals Rule
 (Date)
-The field under validation must be a valid, non-relative date according to the new Date js constructor.
+The field under validation must be the same date as the rules date
 
-> Passes Date Rule
-- 4.22.1997 And 4.22.1997
-- 4-22-1997 And 4-22-1997
-- 4/22/1997 And 4/22/1997
-- April 22 1997 And April 22 1997
-- Tuesday April 22 1997 And Tuesday April 22 1997
+> Passes Date Equals Rule
+```js
+let form = { 
+    one: '4-22-1997',
+    two: 'April 22 2025' 
+}
 
-> Fails Date Rule
-- asdfweadf and 3.22.1323
-- 23423423 and 1234234
-- [] and []
+let rules = {
+  one: 'date_equals:4-22-1997',
+  two: 'date_equals:April 22 2025',
+}
+```
+
+> Fails Date Equals Rule
+```js
+let form = { 
+    one: '4-22-1997',
+    two: '2-12-1997' 
+}
+
+let rules = {
+  one: 'date_equals:4-24-1998',
+  two: 'date_equals:1-11-1996',
+}
 
 ### Different Validation Rule
 
@@ -850,6 +867,76 @@ validator(form, rules).validate();
 ```
 
 
+### Greater Than Rule
+(Numeric)
+
+Number must be greater than compared value
+
+> Passing greater than rule
+```js
+
+let form = {
+    age: 24,
+    members: 19,
+    percentage: 0.4,
+};
+
+let rules = {
+    age: 'greater_than:13',
+    members: 'greater_than:10',
+    percentage: 'greater_than:0.35',
+};
+```
+
+> Failing greater than rule
+```js
+ let form = {
+     age: 24,
+     members: 19,
+     percentage: 0.4,
+ };
+ 
+ let rules = {
+     age: 'greater_than:24',
+     members: 'greater_than:100',
+     percentage: 'greater_than:0.9',
+ };
+
+### Gte Rule
+(Greater Than Or Equal - Numeric)
+Number must be greater than or equal to compared value
+
+> Passing greater than or equal rule (gte)
+```js
+
+let form = {
+    age: 24,
+    members: 19,
+    percentage: 0.4,
+};
+
+let rules = {
+    age: 'gte:24',
+    members: 'gte:10',
+    percentage: 'gte:0.35',
+};
+```
+
+> Failing greater than or equal rule (gte)
+```js
+ 
+ let form = {
+     age: 24,
+     members: 19,
+     percentage: 0.4,
+ };
+ 
+ let rules = {
+     age: 'greater_than:25',
+     members: 'greater_than:100',
+     percentage: 'greater_than:0.9',
+ };
+
 ### Integer Rule
 
 > This validation rule does not verify that the input is of the "integer" variable type, only that the input is a string or numeric value that contains an integer.
@@ -957,6 +1044,76 @@ let form = { content: 'fasdf' }
 let rules = { content: 'json' }
 
 validator(form, rules).validate();
+
+### Less Than Rule
+(Numeric)
+
+Number must be less than compared value
+
+> Passing less than rule
+```js
+
+let form = {
+    age: 24,
+    members: 19,
+    percentage: 0.4,
+} ;
+
+let rules = {
+    age: 'less_than:25',
+    members: 'less_than:20',
+    percentage: 'less_than:0.8',
+}
+```
+
+> Failing less than rule
+```js
+ let form = {
+     age: 24,
+     members: 19,
+     percentage: 0.4,
+ };
+ 
+ let rules = {
+     age: 'less_than:24',
+     members: 'less_than:10',
+     percentage: 'less_than:0.1',
+ }
+
+### Lte Rule
+(Less than or equal - Numeric)
+
+Number must be less than or equal to compared value
+
+> Passing Less than or equal (lte) rule
+```js
+
+let form = {
+    age: 24,
+    members: 19,
+    percentage: 0.4,
+} ;
+
+let rules = {
+    age: 'lte:24',
+    members: 'lte:20',
+    percentage: 'lte:0.8',
+}
+```
+
+> Failing less than or equal (lte) rule
+```js
+ let form = {
+     age: 24,
+     members: 19,
+     percentage: 0.4,
+ };
+ 
+ let rules = {
+     age: 'less_than:24',
+     members: 'less_than:10',
+     percentage: 'less_than:0.5',
+ }
 
 ### Max Rule
 
@@ -1705,6 +1862,23 @@ MIT © [Zachary Horton (Clean Code Studio)](https://github.com/zhorton34/vuejs-v
 
 
 ## Change Log
+
+---
+
+### 1.1.7
+
+---
+- date rule
+- date equals rule
+- before (date) rule
+- before_or_equal (date) rule
+- after (date) rule
+- after_or_equal (date) rule
+- less_than (numeric) rule
+- greater_than (numeric) rule
+- lte (less than or equal numeric) rule
+- gte (greater than or equal numeric) rule
+---
 
 ---
 
