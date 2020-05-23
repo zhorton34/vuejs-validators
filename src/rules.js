@@ -13,8 +13,42 @@ const isUndefined = require('./helpers/isUndefined');
 const isNotNumeric = require('./helpers/isNotNumeric');
 const isNotUndefined = require('./helpers/isNotUndefined');
 
-const isRequired = value => isNotNull(value) && isNotUndefined(value) && isNotEmpty(value);
 
+
+
+
+
+
+const requires = context => ({
+	if: (fn, inject = {}) => {
+		const isRequiredField = typeof fn === 'function'
+			? fn({
+				...inject,
+				...context,
+				form: context.validator.data,
+				rule: {
+					on: context.attribute,
+					raw: context.validator.parseRules[context.attribute],
+					...resolve(context.parameters)
+				},
+				fields: Object.keys(context.validator.data) })
+			: fn;
+
+		if (Boolean(isRequiredField) === false) {
+			return true;
+		} else {
+			const valuePassesRequiredFieldRule = Object.keys
+				(context.validator.data).includes(context.attribute)
+					&& isNotNull(context.value)
+					&& isNotUndefined(context.value)
+					&& isNotEmpty(context.value);
+
+			console.log('zak test: ', { valuePassesRequiredFieldRule });
+
+			return valuePassesRequiredFieldRule;
+		}
+	}
+});
 
 /*------------------------------------------------------------------
  |  Resolving Validation Rule Parameters
@@ -30,19 +64,27 @@ const isRequired = value => isNotNull(value) && isNotUndefined(value) && isNotEm
  |
  */
 const resolve = parameters => {
-	if (Array.isArray(parameters) && parameters[0].includes(',') || parameters[0].includes(':')) {
-		parameters = parameters[0];
-	}
+	let infinityProtector = 0;
 
-	if (!Array.isArray(parameters)) {
-		if (parameters.includes(':')) {
-			[rule, parameters] = parameters.split(':');
+	while((Array.isArray(parameters) || (parameters[0] ? Array.isArray(parameters[0]) : false)) && infinityProtector < 5) {
+		if (typeof parameters[0] === 'undefined') {
+			infinityProtector = 5;
+		} else {
+			parameters = parameters[0];
 		}
 
+		infinityProtector++;
+	}
+
+	if (parameters.includes(':')) {
+		parameters = parameters.split(':');
+	}
+
+	if (parameters.includes(',')) {
 		parameters = parameters.split(',');
 	}
 
-	return {
+	let parameterized = {
 		first: () => parameters[0],
 		second: () => parameters[1],
 		after: start => parameters.slice(start),
@@ -51,112 +93,85 @@ const resolve = parameters => {
 		last: () => parameters[parameters.length],
 		count: () => parameters.length,
 		list: () => parameters,
+		requireLength: (rule, count) => {
+			if (parameters.length < count) {
+				throw new Error(`Validation ${rule} $rule requires at least $count parameters.`);
+			}
+
+			return parameterized;
+		}
 	};
 };
 
-const fields = {
-	validator: {},
-
-	of(validator) {
-		this.validator = validator;
-
-		return this;
+let ValidatesAttributes = {
+	validateRequired(attribute, value)
+	{
+		if (isNull(value)) {
+			return false;
+		} else if (isString(value) && value.trim() === '') {
+			return false;
+		} else if ((Array.isArray(value) || typeof value.length !== 'undefined' && value.length < 1)) {
+			return false;
+		}
+		// @TODO add file type to required
+		// else if (value typeof file) { return file path !== '' }
+		return true;
 	},
 
-	check(params) {
-		const args = resolve(params);
-
-		console.log({ args, not: 'zak test' });
-		console.log(resolve(params));
-		let field = resolve(params).first();
-		let against = resolve(params).second();
-
-		return this.validator.data[field] ? this.validator.data[field] === against : false;
-	},
-
-
-	hasAll(params = []) {
-		return resolve(params).after(0).every(field => Object.keys(this.validator.data).includes(field))
-	},
-
-	hasAny(params = []) {
-		return resolve(params).after(0).some(field => Object.keys(this.validator.data).includes(field));
+	validateBail()
+	{
+		return true;
 	},
 };
 
 
-const requiring = (validator, value) => {
-	return {
-		when: (params) => fields.of(validator).check(params) ? isRequired(value) : true,
-		unless: (params) => fields.of(validator).check(params) ? true : isRequired(value),
-
-		whenAnyFound: (params) => fields.of(validator).hasAny(params) !== true || isRequired(value),
-		whenAnyNotFound: (params, value) => fields.of(validator).hasAny(params) === true || isRequired(value),
-
-		whenAllFound: (params, value) => fields.of(validator).hasAll(params) !== true || isRequired(value),
-		whenAllNotFound: (params, value) => fields.of(validator).hasAll(params) === true || isRequired(value),
-	}
-};
-
+/** @SEE https://github.com/laravel/framework/blob/7.x/src/Illuminate/Validation/Concerns/ValidatesAttributes.php */
 module.exports = {
-	required: ({ attribute, validator, value }) => (Object.keys(validator?.data).includes(attribute) || false) && isRequired(value),
+	/** Context Of Global Validation Is Needed
+	// bail
+	// sometimes
+	 */
+	required_unless: context => requires(context).if(({ form, rule: { first, second } }) => form[first()] != form[second()]),
+	required_with: context => requires(context).if(({ rule, fields }) => fields.some(field => rule.list().includes(field))),
+	required_without: context => requires(context).if(({ rule, fields }) => fields.some(field => !rule.list().includes(field))),
+	required_with_all: context => requires(context).if(({ rule, fields }) => fields.every(field => rule.list().includes(field))),
+	required_without_all: context => requires(context).if(({ rule, fields }) => fields.every(field => !rule.list().includes(field))),
+	required: context => requires(context).if(() => true),
+	required_if: context => requires(context).if(({ form, rule }) => {
+		console.log({ form, rule, zak: 'test' });
 
-	required_if: ({ value, validator, parameters }) => requiring(validator, value).when(parameters),
-	required_unless: ({ value, validator, parameters }) => requiring(validator, value).unless(parameters),
-	required_with: ({ value, validator, parameters }) => requiring(validator, value).whenAnyFound(parameters),
-	required_with_all: ({ value, validator, parameters }) => requiring(validator, value).whenAllFound(parameters),
-	required_without: ({ value, validator, parameters }) => requiring(validator, value).whenAnyNotFound(parameters),
-	required_without_all: ({ value, validator, parameters }) => requiring(validator, value).whenAllNotFound(parameters),
+		const condition = form[rule.first()] == form[rule.second()];
+		console.log({ condition });
+	}),
 
+	/** Another Form Field & Rule Parameters Are Needed **/
+	same: ({ value, parameters, validator }) => value === validator.data[parameters[0]],
+	different: ({ value, parameters, validator }) => value !== validator.data[parameters[0]],
+	confirmed: ({ attribute, value, validator }) => Object.keys(validator.data).includes(`${attribute}_confirmation`) && value === validator.data[`${attribute}_confirmation`],
+
+
+	/** Parameters Needed **/
+	regex: ({ value, parameters }) => parameters[0].test(value),
+	not_regex: ({ value, parameters }) => !parameters[0].test(value),
+	ends_with: ({ value, parameters: [list] }) => isString(value) && list.split(',').some(check => value.endsWith(check)),
+	starts_with: ({ value, parameters: [list] }) => isString(value) && list.split(',').some(check => value.startsWith(check)),
+	min: ({ value, parameters }) => value.length >= parameters[0],
+	max: ({ value, parameters }) => value.length <= parameters[0],
+	within: ({ value, parameters }) => parameters[0].split(',').includes(value),
+	not_within: ({ value, parameters }) => !parameters[0].split(',').includes(value),
 	lte: ({ value, parameters }) => isNumeric(value) && isNumeric(parameters[0]) && Number(value) <= Number(parameters[0]),
 	gte: ({ value, parameters }) => isNumeric(value) && isNumeric(parameters[0]) && Number(value) >= Number(parameters[0]),
 	less_than: ({ value, parameters }) => isNumeric(value) && isNumeric(parameters[0]) && Number(value) < Number(parameters[0]),
 	greater_than: ({ value, parameters }) => isNumeric(value) && isNumeric(parameters[0]) && Number(value) > Number(parameters[0]),
-	date: ({ value }) => new Date(value) != 'Invalid Date',
 	date_equals: ({ value, parameters }) => Date.parse(value) === Date.parse(parameters[0]),
 	before: ({ value, parameters }) => Date.parse(value) < Date.parse(parameters[0]),
 	after: ({ value, parameters }) => Date.parse(value) > Date.parse(parameters[0]),
 	before_or_equal: ({ value, parameters }) => Date.parse(value) <= Date.parse(parameters[0]),
 	after_or_equal: ({ value, parameters }) => Date.parse(value) >= Date.parse(parameters[0]),
-	boolean: ({ value }) => isBooly(value),
-	number: ({ value }) => isNumber(value),
-	numeric: ({ value }) => isNumeric(value),
-	accepted: ({ value }) => isTruthy(value),
-	ends_with: ({ value, parameters: [list] }) => isString(value) && list.split(',').some(check => value.endsWith(check)),
-	starts_with: ({ value, parameters: [list] }) => isString(value) && list.split(',').some(check => value.startsWith(check)),
-	same: ({ value, parameters, validator }) => value === validator.data[parameters[0]],
-	min: ({ value, parameters }) => value.length >= parameters[0],
-	max: ({ value, parameters }) => value.length <= parameters[0],
-	within: ({ value, parameters }) => parameters[0].split(',').includes(value),
-	not_within: ({ value, parameters }) => !parameters[0].split(',').includes(value),
-	email: ({ value }) => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,8})+$/.test(value)),
-	phone: ({ value }) => /^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,3})|(\(?\d{2,3}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$/.test(value),
-	regex: ({ value, parameters }) => parameters[0].test(value),
-	not_regex: ({ value, parameters }) => !parameters[0].test(value),
-	url: ({ value }) => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)/.test(value),
-	alpha: ({ value }) => /^[a-zA-Z]*$/.test(value),
-	alpha_dash: ({ value }) => /^[a-zA-Z0-9-_]+$/.test(value),
-	alpha_num: ({ value }) => /^[a-zA-Z0-9]*$/.test(value),
-	array: ({ value }) => Array.isArray(value),
-	string: ({ value }) => isString(value),
-	distinct: ({ value }) => Array.isArray(value) && (new Set(value)).size === value.length,
-	integer: ({ value }) => !isNaN(Number(value)) && isNumeric(value) && Number.isInteger(Number(value)),
-	different: ({ value, parameters, validator }) => value !== validator.data[parameters[0]],
-	confirmed: ({ attribute, value, validator }) => Object.keys(validator.data).includes(`${attribute}_confirmation`) && value === validator.data[`${attribute}_confirmation`],
-	ip: ({ value }) => /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(value) ||  /^((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*::((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*|((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4})){7}$/.test(value),
-	ipv4: ({ value }) => /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(value),
-	ipv6: ({ value }) => /^((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*::((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*|((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4})){7}$/.test(value),
 	between: ({ value, parameters: [between] }) => {
 		const [lower, upper] = between.split(',');
 
 		return Boolean(Number(lower) < Number(value) && Number(upper) > Number(value));
-	},
-	json: ({ value }) => {
-		value = typeof value !== "string" ? JSON.stringify(value) : value;
-
-		try { value = JSON.parse(value); } catch (e) { return false }
-
-		return typeof value === "object" && value !== null;
 	},
 	digits: ({ value, parameters: [length] }) => isNumeric(value) && String(value).length === Number(length) && !isNaN(Number(value)),
 	digits_between: ({ value, parameters: [between] }) => {
@@ -168,4 +183,29 @@ module.exports = {
 
 		return Boolean(Number(lower) < check && Number(upper) > check);
 	},
+	json: ({ value }) => {
+		value = typeof value !== "string" ? JSON.stringify(value) : value;
+
+		try { value = JSON.parse(value); } catch (e) { return false }
+
+		return typeof value === "object" && value !== null;
+	},
+	date: ({ value }) => new Date(value) != 'Invalid Date',
+	boolean: ({ value }) => isBooly(value),
+	number: ({ value }) => isNumber(value),
+	numeric: ({ value }) => isNumeric(value),
+	accepted: ({ value }) => isTruthy(value),
+	email: ({ value }) => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,8})+$/.test(value)),
+	phone: ({ value }) => /^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,3})|(\(?\d{2,3}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$/.test(value),
+	url: ({ value }) => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)/.test(value),
+	alpha: ({ value }) => /^[a-zA-Z]*$/.test(value),
+	alpha_dash: ({ value }) => /^[a-zA-Z0-9-_]+$/.test(value),
+	alpha_num: ({ value }) => /^[a-zA-Z0-9]*$/.test(value),
+	array: ({ value }) => Array.isArray(value),
+	string: ({ value }) => isString(value),
+	distinct: ({ value }) => Array.isArray(value) && (new Set(value)).size === value.length,
+	integer: ({ value }) => !isNaN(Number(value)) && isNumeric(value) && Number.isInteger(Number(value)),
+	ip: ({ value }) => /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(value) ||  /^((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*::((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*|((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4})){7}$/.test(value),
+	ipv4: ({ value }) => /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(value),
+	ipv6: ({ value }) => /^((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*::((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*|((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4})){7}$/.test(value),
 };

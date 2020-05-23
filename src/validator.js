@@ -34,6 +34,62 @@ const Validator = function () {
 	this.passing = function () {
 		return this.passingMessageBag;
 	};
+
+	this.failedRules = [];
+	this.settings = {
+		rules: {
+			file: [
+				// 'file',
+				// 'image',
+				// 'mimes',
+				// 'mimetypes',
+				// 'min',
+				// 'max',
+				// 'size',
+				// 'between',
+				// 'dimensions'
+			],
+			implicit: [
+				// 'present',
+				// 'filled',
+				'accepted',
+				'required',
+				'required_with',
+				'required_unless',
+				'required_without',
+				'required_with_all',
+				'required_without_all',
+			],
+
+			dependent: [
+				'same',
+				'after',
+				'unique',
+				'before',
+				'confirmed',
+				'different',
+				'required_with',
+				'after_or_equal',
+				'required_unless',
+				'before_or_equal',
+				'required_without',
+				'required_with_all',
+				'required_without_all',
+			],
+
+			size: [
+				'min',
+				'max',
+				// 'size',
+				'between',
+			],
+
+			numeric: [
+				'numeric',
+				'integer',
+			]
+		}
+	}
 };
 
 Validator.prototype.macro = require('./validator/macro.js');
@@ -98,13 +154,24 @@ Validator.prototype.validateWithoutHooks = function () {
 	return this;
 };
 
+const RuleCollector = require('./rule/index');
+
 /**
  * Setup Checks To Validate Field Data Against Associated Rules
  * Using Data, Field Attribute, Associated Rule, & The Failed Rule Message Name
  *
  * @returns {Validator}
  */
-Validator.prototype.resolveFieldRules = function () {
+Validator.prototype.resolveFieldRules = function ()
+{
+	let rules = Object.entries(this.parseRules);
+
+	rules.reduce((collected, [attribute, raw_field_rules]) => [
+			...collected,
+			RuleCollector({ attribute, raw_field_rules, validator: this, })
+		],
+	[]);
+
 	this.checks = Object.entries(this.parseRules).reduce(
 		(completed, [field, rules]) => [
 			...completed,
@@ -209,6 +276,27 @@ Validator.prototype.passed = function (callback) {
 	this.hooks().add('passed', callback);
 
 	return this;
+};
+/*-------------------------------------------
+ | Get "State"
+ |-------------------------------------------
+ |
+ |  . getData
+ |  . getRules
+ |  . getMessages
+ |
+ */
+
+Validator.prototype.getData = function () {
+	return this.data;
+};
+
+Validator.prototype.getRules = function () {
+	return this.parseRules;
+};
+
+Validator.prototype.getMessages = function () {
+
 };
 
 /*-------------------------------------------
