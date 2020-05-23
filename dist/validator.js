@@ -101,6 +101,26 @@ Validator.prototype.validate = function () {
   return this;
 };
 /**
+ * Determine if the Validator is currently failing validation
+ *
+ * @returns {boolean}
+ */
+
+
+Validator.prototype.failing = function () {
+  return this.errors().any();
+};
+/**
+ * Determine if the validator is currently passing validation
+ *
+ * @returns {boolean}
+ */
+
+
+Validator.prototype.passing = function () {
+  return this.errors().any() === false;
+};
+/**
  * Trigger validation on current data, rules, & messages (Not calling registered life cycle hooks)
  *
  * @returns {Validator}

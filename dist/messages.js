@@ -1,6 +1,13 @@
 'use strict';
 
 module.exports = {
+  required: ":attribute is required",
+  required_if: ":attribute is required if :if is :value",
+  required_unless: ":attribute is required unless :unless is :value",
+  required_with: ":attribute is required with :with",
+  required_without: ":attribute is required without :without",
+  required_with_all: ":attribute is required with all :with_all",
+  required_without_all: ":attribute is required without all :without_all",
   less_than: ':number must be greater than :number',
   greater_than: ':attribute must be greater than :number',
   lte: ':attribute must be less than or equal to :number',
@@ -24,7 +31,6 @@ module.exports = {
   not_within: ':attribute should not be value within :not_within',
   email: ":attribute must be an email",
   phone: ":attribute must be a phone number",
-  required: ":attribute is required",
   regex: ":attribute does not match proper pattern",
   not_regex: ":attribute should not match the given pattern pattern",
   url: ':attribute is not a valid url',
