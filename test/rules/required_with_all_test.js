@@ -2,8 +2,6 @@
 'use strict';
 
 module.exports = (it, expect, { validator }) => {
-	let form = {};
-	let rules = {};
 	let succeed = (data, checks) => it(
 		`should pass  \n ------------------------------- \n  FORM: (${JSON.stringify(data)}) \n RULES: ${JSON.stringify(checks)}`,
 		() => { expect(validator(data, checks).validate().errors().any()).to.eql(false) }
@@ -14,9 +12,9 @@ module.exports = (it, expect, { validator }) => {
 		() => { expect(validator(data, checks).validate().errors().any()).to.eql(true) }
 	);
 
-	succeed({ name: 'sam', email: 'example@gmail.com' }, { name: 'required', email: 'required_with_all:name' });
-	succeed({ id: 1, name: 'sam', email: 'example@gmail.com' }, { id: 'required', email: 'required_with_all:id,name' });
-	succeed({ id: 1, name: 'samuel', email: 'example@gmail.com' }, { id: 'required', name: 'required', email: 'required_with_all:id,name' });
+	succeed({ name: 'sam', email: 'example@gmail.com' }, { email: 'required_with_all:name' });
+	succeed({ id: 1, name: 'sam', email: 'example@gmail.com' }, { email: 'required_with_all:id,name' });
+	succeed({ id: 1, name: 'samuel', email: 'example@gmail.com' }, { email: 'required_with_all:id,name' });
 
 	failure({ name: 'sam', email: '' }, { email: 'required_with_all:name' });
 	failure({ name: '', id: 1, email: 'example@gmail.com' }, { email: 'required_with_all:id,name' });
