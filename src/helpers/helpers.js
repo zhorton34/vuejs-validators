@@ -44,6 +44,12 @@ if (! function_exists('object_get')) {
 	}
 }
 
+if (! function_exists('loose_json_parse')) {
+	function loose_json_parse(obj){
+		return Function('"use strict"; return (' + obj + ')')();
+	}
+}
+
 if (! function_exists('value')) {
 	/**
 	 * Return the default value of the given value.
@@ -77,47 +83,82 @@ if (! function_exists('data_set')) {
 	 * Set an item on an array or object using dot notation.
 	 *
 	 * @param  target
-	 * @param  key
+	 * @param  path
 	 * @param  value
-	 * @param  overwrite
+	 * @param  force
 	 * @return mixed
 	 */
-	function data_set(target, key, value, overwrite = true) {
-		key = Array.isArray(key) ? key : key.split('.');
+	function data_set(target, path, value, force = true) {
+		let segments = Array.isArray(path) ? path : path.split('.');
+		let [segment] = segments;
 
-		if (!key.includes('*')) {
-
-			let build = key.reduce((build, path, index, original) => {
-				return build[path]
-			}, target);
-
-			console.log(build);
+		if (segments.length === 0)
+		{
+			target = value;
 		}
-		else if (key.includes('*')) {
-			key.reduce((segments, segment, index, all_segments) => {
-				if (segment !== '*') {
-					return [...segments, segment]
-				}
-
-				if (segment === '*') {
-					let wildcard = all_segments[index];
-					let base_path = segments.slice(0, wildcard.length);
-					let relative_path = segments.slice(wildcard.length, all_segments.length);
-
-					let inner = data_get(target, base_path);
-
-					if (Array.isArray(target)) {
-
-						let innerConfig = inner.forEach((item, index) => data_set(item[index], relative_path, value, overwrite));
-						console.log(innerConfig);
-					}
-				}
-			}, []);
+		else if (segments.length === 1 && !segments.includes('*'))
+		{
+			target[segment] = force ? value : target[segment] || value;
 		}
 
-		return target;
+		else if (!segments.includes('*')) {
+			if (!target[segment]) {
+				target[segment] = {};
+
+				target = data_set(target[segment], segments.slice(1), value, force);
+			}
+
+			let inner = data_set(target[segment], segments.slice(1), value, force);
+
+			if (Array.isArray(target[segment])) {
+				if (force && target[segment].length) {
+					target[segment] = [ ...target[segment] ];
+				} else {
+					target[segment] = [ ...inner ];
+				}
+			} else {
+				target[segment] = force ? { ...target[segment], ...inner } : { ...inner, ...target[segment] };
+			}
+		}
+
+		// if (segments.includes('*')) {
+		// 	let build = key.reduce((build, path, index, original) => {
+		// 		return build[path]
+		// 	}, target);
+		//
+		// 	console.log(build);
+		// } else if (key.includes('*')) {
+		// 	key.reduce((segments, segment, index, all_segments) => {
+		// 		if (segment !== '*') {
+		// 			return [...segments, segment]
+		// 		}
+		//
+		// 		if (segment === '*') {
+		// 			let wildcard = all_segments[index];
+		// 			let base_path = segments.slice(0, wildcard.length);
+		// 			let relative_path = segments.slice(wildcard.length, all_segments.length);
+		//
+		// 			let inner = data_get(target, base_path);
+		//
+		// 			if (Array.isArray(target)) {
+		//
+		// 				let innerConfig = inner.forEach((item, index) => data_set(item[index], relative_path, value, overwrite));
+		// 				console.log(innerConfig);
+		// 			}
+		// 		}
+		// 	}, []);
+		// }
+
+
+		let isIndexed = typeof target === 'object' && Object.keys(target).every(index => index.match(/^(0|[1-9][0-9]*)$/));
+
+		let output = isIndexed ? Object.values(target) : target;
+
+		console.log({ output });
+		return output;
 	}
 }
+
 
 if (! function_exists('data_get')) {
 	/**

@@ -4,7 +4,7 @@ const { mt_rand } = require('locutus/php/math');
 const { strpos, explode } = require('locutus/php/strings');
 const { http_build_query } = require('locutus/php/url');
 const { data_get, value: util_value } = require('../helpers/helpers.js');
-const { is_null, is_object, is_string, is_callable, empty, is_array, isset } = require('locutus/php/var');
+const { is_null, is_object, is_string, empty, is_array, isset } = require('locutus/php/var');
 const { shuffle, ksort, sort, array_rand, array_unshift, array_intersect_key, array_flip, array_key_exists, count, array_reverse, end, array_shift, array_keys, array_values, array_merge } = require('locutus/php/array');
 
 
