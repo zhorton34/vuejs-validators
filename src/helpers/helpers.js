@@ -1,54 +1,14 @@
 
 const { Collection } = require('collect.js');
 const { Arr } = require('../support/Arr.js');
-const { explode, trim } = require('locutus/php/strings');
+const { explode } = require('locutus/php/strings');
 const { function_exists } = require('locutus/php/funchand');
 const { is_null, is_object, isset, is_array } = require('locutus/php/var');
-const { array_shift, in_array } = require('locutus/php/array');
-// object_get
+const { in_array } = require('locutus/php/array');
 // value
 // _with
 // data_set
 // data_get
-if (! function_exists('object_get')) {
-	/**
-	 * Get an item from an object using "dot" notation.
-	 *
-	 * @param  object
-	 * @param  key
-	 * @param  original
-	 * @return mixed
-	 */
-	function object_get(object, key, original = null)
-	{
-		if (is_null(key) || trim(key) == '') {
-			return object;
-		}
-
-		let resolved = false;
-		let segments = explode('.', key);
-
-		segments.forEach((segment) => {
-			if (resolved === false) {
-				if (!is_object(object) || !isset(object[segment])) {
-					resolved = value(original);
-				}
-
-				object = object[segment];
-			}
-		});
-
-		if (resolved !== false) return resolved;
-
-		return object;
-	}
-}
-
-if (! function_exists('loose_json_parse')) {
-	function loose_json_parse(obj){
-		return Function('"use strict"; return (' + obj + ')')();
-	}
-}
 
 if (! function_exists('value')) {
 	/**
@@ -63,18 +23,18 @@ if (! function_exists('value')) {
 	}
 }
 
-
-if (! function_exists('with')) {
+if (! function_exists('data_fill')) {
 	/**
-	 * Return the given value, optionally passed through the given callback.
+	 * Fill in data where it's missing.
 	 *
-	 * {mixed}  value
-	 * {callable|null}  callback
+	 * @param  target
+	 * @param  key
+	 * @param  value
 	 * @return mixed
 	 */
-	function _with(value, callback = null)
+	function data_fill(target, key, value)
 	{
-		return is_null(callback) ? value : callback(value);
+		return data_set(target, key, value, false);
 	}
 }
 
@@ -86,7 +46,7 @@ if (! function_exists('data_set')) {
 	 * @param  path
 	 * @param  value
 	 * @param  force
-	 * @return mixed
+	 * @return *
 	 */
 	function data_set(target, path, value, force = true) {
 		let segments = Array.isArray(path) ? path : path.split('.');
@@ -101,7 +61,7 @@ if (! function_exists('data_set')) {
 			target[segment] = force ? value : target[segment] || value;
 		}
 
-		else if (!segments.includes('*')) {
+		else if (segment !== '*') {
 			if (!target[segment]) {
 				target[segment] = {};
 
@@ -121,41 +81,56 @@ if (! function_exists('data_set')) {
 			}
 		}
 
-		// if (segments.includes('*')) {
-		// 	let build = key.reduce((build, path, index, original) => {
-		// 		return build[path]
-		// 	}, target);
-		//
-		// 	console.log(build);
-		// } else if (key.includes('*')) {
-		// 	key.reduce((segments, segment, index, all_segments) => {
-		// 		if (segment !== '*') {
-		// 			return [...segments, segment]
-		// 		}
-		//
-		// 		if (segment === '*') {
-		// 			let wildcard = all_segments[index];
-		// 			let base_path = segments.slice(0, wildcard.length);
-		// 			let relative_path = segments.slice(wildcard.length, all_segments.length);
-		//
-		// 			let inner = data_get(target, base_path);
-		//
-		// 			if (Array.isArray(target)) {
-		//
-		// 				let innerConfig = inner.forEach((item, index) => data_set(item[index], relative_path, value, overwrite));
-		// 				console.log(innerConfig);
-		// 			}
-		// 		}
-		// 	}, []);
-		// }
+		else if (segment === '*') {
+			const partial = segments.slice(path.indexOf('*') + 1, path.length);
+
+			if (typeof target === 'object') {
+				target = Object.keys(target).reduce((build, property) => ({
+						...build,
+						[property]: data_set(target[property], partial, value, force)
+					}),
+				{});
+			}
+			else {
+				target = data_set(target, partial, value, force);
+			}
+		}
 
 
-		let isIndexed = typeof target === 'object' && Object.keys(target).every(index => index.match(/^(0|[1-9][0-9]*)$/));
+		/*-----------------------------------------------------------------------------
+		 |   Arrayable Requirements
+		 *-----------------------------------------------------------------------------
+		 |
+		 |   . All arrays are converted to objects
+		 |   . For Example
+		 |      #Code
+		 |        Code -> data_set({ list: ['one', 'two', 'three'], 'list.*', 'update', true });
+		 |
+		 |      #Input
+		 |         Input -> { list: ['one', 'two', 'three'] }
+		 |
+		 |      #During We Convert Arrays To "Indexed Objects"
+		 |         During -> { list: { '1': 'one', '2': 'two', '3': 'three' } }
+		 |
+		 |      #Before Output we convert "Indexed Objects" Back To Arrays
+		 |         From -> { list: { '1': 'update', '2': 'update', '3': 'update' } }
+		 |         Into -> { list: ['update', 'update', 'update'] }
+		 |
+		 |   . Arrays convert into "Indexed Objects", allowing for wildcard (*) capabilities
+		 |   . "Indexed Objects" are converted back into arrays before returning the updated target
+		 |
+		 */
+		const arrayable = [
+			typeof target === 'object',
+			Object.keys(target).length,
+			Object.keys(target).every(index => index.match(/^(0|[1-9][0-9]*)$/))
+		];
 
-		let output = isIndexed ? Object.values(target) : target;
+		if (arrayable.every(requirement => requirement === true)) {
+			return Object.values(target);
+		}
 
-		console.log({ output });
-		return output;
+		return target;
 	}
 }
 
@@ -286,5 +261,5 @@ module.exports = {
 	value,
 	data_set,
 	data_get,
-	object_get,
+	data_fill,
 };
