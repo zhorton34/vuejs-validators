@@ -45,5 +45,4 @@ const pipe = (target = {}, line = [], inject = {}) => new Pipeline(target, line,
 module.exports = pipe;
 module.exports.pipe = pipe;
 module.exports.default = pipe;
-module.exports.pipeline = pipeline;
 module.exports.Pipeline = Pipeline;

@@ -56,6 +56,8 @@
     "benchmark": "^2.1.0",
     "chai": "^4.1.2",
     "collect.js": "^4.25.0",
+    "dot-wild-tiny": "^1.0.0",
+    "fs-extra": "^9.0.0",
     "hoax.js": "^1.0.0",
     "locutus": "^2.0.11",
     "mocha": "^3.5.2",

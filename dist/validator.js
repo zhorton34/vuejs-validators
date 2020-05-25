@@ -71,6 +71,29 @@ var Validator = function Validator() {
   this.passing = function () {
     return this.passingMessageBag;
   };
+
+  this.failedRules = [];
+  this.settings = {
+    rules: {
+      file: [// 'file',
+        // 'image',
+        // 'mimes',
+        // 'mimetypes',
+        // 'min',
+        // 'max',
+        // 'size',
+        // 'between',
+        // 'dimensions'
+      ],
+      implicit: [// 'present',
+      // 'filled',
+      'accepted', 'required', 'required_with', 'required_unless', 'required_without', 'required_with_all', 'required_without_all'],
+      dependent: ['same', 'after', 'unique', 'before', 'confirmed', 'different', 'required_with', 'after_or_equal', 'required_unless', 'before_or_equal', 'required_without', 'required_with_all', 'required_without_all'],
+      size: ['min', 'max', // 'size',
+      'between'],
+      numeric: ['numeric', 'integer']
+    }
+  };
 };
 
 Validator.prototype.macro = require('./validator/macro.js');
@@ -132,6 +155,8 @@ Validator.prototype.validateWithoutHooks = function () {
   this.resolveErrorMessages();
   return this;
 };
+
+var RuleCollector = require('./rule/index');
 /**
  * Setup Checks To Validate Field Data Against Associated Rules
  * Using Data, Field Attribute, Associated Rule, & The Failed Rule Message Name
@@ -143,10 +168,22 @@ Validator.prototype.validateWithoutHooks = function () {
 Validator.prototype.resolveFieldRules = function () {
   var _this = this;
 
-  this.checks = Object.entries(this.parseRules).reduce(function (completed, _ref) {
+  var rules = Object.entries(this.parseRules);
+  rules.reduce(function (collected, _ref) {
     var _ref2 = _slicedToArray(_ref, 2),
-        field = _ref2[0],
-        rules = _ref2[1];
+        attribute = _ref2[0],
+        raw_field_rules = _ref2[1];
+
+    return [].concat(_toConsumableArray(collected), [RuleCollector({
+      attribute: attribute,
+      raw_field_rules: raw_field_rules,
+      validator: _this
+    })]);
+  }, []);
+  this.checks = Object.entries(this.parseRules).reduce(function (completed, _ref3) {
+    var _ref4 = _slicedToArray(_ref3, 2),
+        field = _ref4[0],
+        rules = _ref4[1];
 
     return [].concat(_toConsumableArray(completed), _toConsumableArray(ParseRule(_this, field, rules)));
   }, []);
@@ -245,6 +282,26 @@ Validator.prototype.passed = function (callback) {
   this.hooks().add('passed', callback);
   return this;
 };
+/*-------------------------------------------
+ | Get "State"
+ |-------------------------------------------
+ |
+ |  . getData
+ |  . getRules
+ |  . getMessages
+ |
+ */
+
+
+Validator.prototype.getData = function () {
+  return this.data;
+};
+
+Validator.prototype.getRules = function () {
+  return this.parseRules;
+};
+
+Validator.prototype.getMessages = function () {};
 /*-------------------------------------------
  | Add/Set/Update Configured "State" Data
  |-------------------------------------------
@@ -412,12 +469,12 @@ Validator.prototype.extend = function () {
     this.rules = _objectSpread(_objectSpread({}, this.rules), {}, _defineProperty({}, key, rule));
     this.messages = _objectSpread(_objectSpread({}, this.messages), {}, _defineProperty({}, key, message));
   } else if (_typeof(parameters) === 'object') {
-    Object.entries(parameters).forEach(function (_ref3) {
-      var _ref4 = _slicedToArray(_ref3, 2),
-          key = _ref4[0],
-          _ref4$ = _slicedToArray(_ref4[1], 2),
-          message = _ref4$[0],
-          rule = _ref4$[1];
+    Object.entries(parameters).forEach(function (_ref5) {
+      var _ref6 = _slicedToArray(_ref5, 2),
+          key = _ref6[0],
+          _ref6$ = _slicedToArray(_ref6[1], 2),
+          message = _ref6$[0],
+          rule = _ref6$[1];
 
       _this3.rules = _objectSpread(_objectSpread({}, _this3.rules), {}, _defineProperty({}, key, rule));
       _this3.messages = _objectSpread(_objectSpread({}, _this3.messages), {}, _defineProperty({}, key, message));
@@ -438,10 +495,10 @@ Validator.prototype.parseData = function () {
 
   var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var newData = {};
-  Object.entries(data).forEach(function (_ref5) {
-    var _ref6 = _slicedToArray(_ref5, 2),
-        key = _ref6[0],
-        value = _ref6[1];
+  Object.entries(data).forEach(function (_ref7) {
+    var _ref8 = _slicedToArray(_ref7, 2),
+        key = _ref8[0],
+        value = _ref8[1];
 
     if (_typeof(value) === 'object') {
       value = _this4.parseData(value);

@@ -19,7 +19,8 @@ const pipe = require('./pipeline/index.js');
 const resolve = parameters => {
 	let infinityProtector = 0;
 
-	while((Array.isArray(parameters) || (parameters[0] ? Array.isArray(parameters[0]) : false)) && infinityProtector < 5) {
+	console.log(parameters);
+	while((Array.isArray(parameters) || (parameters?.[0] ? Array.isArray(parameters?.[0]) : false)) && infinityProtector < 5) {
 		if (typeof parameters[0] === 'undefined') {
 			infinityProtector = 5;
 		} else {
@@ -168,7 +169,7 @@ const FieldJudge  = function ({ attribute, validator, raw_field_rules}) {
 	this.count = () => this.toArray().length;
 };
 
-const RuleResolver = function (context) {
+const RuleApi = function (context) {
 	/**
 	 * Rule Level Data
 	 * ----------------

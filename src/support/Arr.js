@@ -12,7 +12,7 @@ class Arr
 {
 	static accessible(value)
 	{
-		return Array.isArray(value) || ['offsetExists', 'offsetGet', 'offsetSet', 'offsetUnset'].every(key => Object.keys(value).includes(key));
+		return Array.isArray(value) && ['offsetExists', 'offsetGet', 'offsetSet', 'offsetUnset'].every(key => Object.keys(value).includes(key));
 	}
 
 	/**
@@ -108,7 +108,7 @@ class Arr
 				if (is_array(value) && ! empty(value)) {
 					results = array_merge(results, Arr.dot(value, `${prepend[key]}.`));
 				} else {
-					results[prepend[key]] = value;
+					results[prepend][key] = value;
 				}
 			});
 

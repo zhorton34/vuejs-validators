@@ -83,56 +83,36 @@ if (! function_exists('data_set')) {
 	 * @return mixed
 	 */
 	function data_set(target, key, value, overwrite = true) {
-		let segment;
-		let segments = is_array(key) ? key : explode('.', key);
+		key = Array.isArray(key) ? key : key.split('.');
 
-		if ((segment = array_shift(segments)) === '*') {
-			if (!Arr.accessible(target)) {
-				target = [];
-			}
-			if (segments) {
-				let [inner] = target;
+		if (!key.includes('*')) {
 
-				target = target.reduce((inner) => {
-					inner = data_set(inner, segments, value, overwrite);
+			let build = key.reduce((build, path, index, original) => {
+				return build[path]
+			}, target);
 
-					return inner;
-				}, inner);
-			} else if (overwrite) {
-				let [inner] = target;
-
-				target = target.reduce((inner) => {
-					inner = value;
-
-					return inner;
-				}, inner);
-			}
-		} else if (Arr.accessible(target)) {
-			if (segments) {
-				if (!Arr.exists(target, segment)) {
-					target[segment] = [];
+			console.log(build);
+		}
+		else if (key.includes('*')) {
+			key.reduce((segments, segment, index, all_segments) => {
+				if (segment !== '*') {
+					return [...segments, segment]
 				}
 
-				target[segment] = data_set(target[segment], segments, value, overwrite);
-			} else if (overwrite || !Arr.exists(target, segment)) {
-				target[segment] = value;
-			}
-		} else if (is_object(target)) {
-			if (segments) {
-				if (!isset(target[segment])) {
-					target[segment] = {};
-				}
-			} else if (overwrite || !isset(target[segment])) {
-				target[segment] = value;
-			}
-		} else {
-			target = {};
+				if (segment === '*') {
+					let wildcard = all_segments[index];
+					let base_path = segments.slice(0, wildcard.length);
+					let relative_path = segments.slice(wildcard.length, all_segments.length);
 
-			if (segments) {
-				data_set(target[segment], segments, value, overwrite)
-			} else if (overwrite) {
-				target[segment] = value;
-			}
+					let inner = data_get(target, base_path);
+
+					if (Array.isArray(target)) {
+
+						let innerConfig = inner.forEach((item, index) => data_set(item[index], relative_path, value, overwrite));
+						console.log(innerConfig);
+					}
+				}
+			}, []);
 		}
 
 		return target;
@@ -171,8 +151,6 @@ if (! function_exists('data_get')) {
 			}
 
 			if (segment === '*') {
-
-				console.log(target, segment);
 				let result = [];
 
 				if (Array.isArray(target) && target[0] && typeof target[0] === 'object') {
@@ -185,7 +163,6 @@ if (! function_exists('data_get')) {
 						if (next === true) {
 							nextSegment = seg;
 
-							console.log({ nextSegment, iteration, seg, next });
 							iteration = index;
 
 							next = false;
@@ -208,7 +185,6 @@ if (! function_exists('data_get')) {
 
 						loop++;
 
-						console.log({ resolve, item, nextSegment, loop });
 						return resolve;
 					}, []).filter(value => typeof value !== 'undefined');
 
@@ -218,8 +194,6 @@ if (! function_exists('data_get')) {
 					} else {
 						return result;
 					}
-					// return data_get(result, key[iteration + 1]
-
 				}
 				else if (target instanceof Collection) {
 					target = target.all();
@@ -229,11 +203,8 @@ if (! function_exists('data_get')) {
 
 				else if (typeof target === 'object' && Array.isArray(target) === false) {
 					Array.from(target).forEach(([key, item]) => {
-						console.log({ key, item, segment });
 						result.push(data_get(target, key));
 					});
-
-					console.log({ array: Array.from(target), segment, result, target, key});
 				}
 
 				else if (is_array(target)) {
@@ -250,9 +221,6 @@ if (! function_exists('data_get')) {
 					else {
 						target.forEach((item) => {
 							result.push(data_get(item, key));
-
-							console.log({ target, result, item, key });
-
 						});
 					}
 				}
