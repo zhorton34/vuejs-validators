@@ -334,83 +334,128 @@ export default {
 > The field under validation must be yes, on, 1, or true. This is useful for validating "Terms of Service" acceptance.
 
 > `Passing Accepted Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { terms_of_service: 'no' }
+
 let rules = { terms_of_service: 'accepted' }
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Accepted Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { terms_of_service: null }
+
 let rules = { terms_of_service: 'accepted' }
 
 validator(form, rules).validate();
+
 ```
 
 
 ### After Rule
+
 (Date)
 
 The Field under evaluation must be after the compared date
 
 > Passes After (Date) Rule
+
 ```js
+
 let form = { 
+
     one: '4-22-1997', 
+
     two: '2-2-1997' 
+
 }
 
 let rules = {
+
   one: 'after:4-23-1997',
+
   two: 'after:2-3-1996',
+
 }
+
 ```
 
 > Fails After (Date) Rule
+
 ```js
+
 let form = { 
+
     one: '4-22-1997', 
+
     two: '2-12-1997' 
+
 }
 
 let rules = {
+
   one: 'after:4-22-1998',
+
   two: 'after:1-11-1996',
+
 }
 
 ### After Or Equal Rule
+
 (Date)
+
 The field under validation must be after or equal to the compared date.
 
 > Passes After Or Equal (Date) Rule
+
 ```js
+
 let form = { 
+
     one: '4-22-1997',
+
     two: '1-11-2013', 
+
 }
 
 let rules = {
+
   one: 'after_or_equal:4-22-1997',
+
   two: 'after_or_equal:2-12-2014',
+
 }
+
 ```
 
 > Fails After Or Equal (Date) Rule
+
 ```js
+
 let form = { 
+
     one: '4-22-1997',
+
     two: '2-12-1997' 
+
 }
 
 let rules = {
+
   one: 'after_or_equal:4-23-1997',
+
   two: 'after_or_equal:2-3-1996',
+
 }
 
 ### Alpha Rule
@@ -418,23 +463,31 @@ let rules = {
 > The field under validation must be entirely alphabetic characters.
 
 > `Passing Alpha Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { letters: 'asdeddadfjkkdjfasdf' };
+
 let rules = { letters: ['alpha'] };
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Alpha Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { letters: '5-@'}
+
 let rules = { letters: ['alpha'] }
 
 validator(form, rules).validate();
+
 ```
 
 
@@ -445,22 +498,29 @@ validator(form, rules).validate();
 > `Passing Alpha Dash Rule`
 
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { slug: 'user_name' };
+
 let rules = { slug: ['alpha_dash'] };
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Alpha Dash Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { words: 'hello world'}
+
 let rules = { words: ['alpha_dash'] }
 
 validator(form, rules).validate();
+
 ```
 
 ### Alpha Num Rule
@@ -470,22 +530,29 @@ validator(form, rules).validate();
 > `Passing Alpha Num Rule`
 
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { key: '4asdasdfe4d23545w634adf' };
+
 let rules = { key: ['alpha_num'] };
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Alpha Num Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { identifier: '1-asdf4adf_d_42'}
+
 let rules = { identifier: ['alpha_num'] }
 
 validator(form, rules).validate();
+
 ```
 
 ### Array Rule
@@ -493,83 +560,128 @@ validator(form, rules).validate();
 > The field under validation must be a JS array.
 
 > `Passing Array Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { list: ['banana', 'broccoli', 'carrot'] };
+
 let rules = { list: 'array' };
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Array Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { options: { name: 'hey world' } }
+
 let rules = { options: 'array' }
 
 validator(form, rules).validate();
+
 ```
 
 
 ### Before Rule
+
 (Date)
 
 The Field under evaluation must be before the compared date
 
 > Passes Before (Date) Rule
+
 ```
+
 let form = { 
+
     one: '4-22-1997', 
+
     two: '2-12-1997' 
+
 }
 
 let rules = {
+
   one: 'before:4-22-1998',
+
   two: 'before:2-12-1997',
+
 }
+
 ```
 
 > Fails Before (Date) Rule
+
 ```
+
 let form = { 
+
     one: '4-22-1997', 
+
     two: '3-12-1997' 
+
 }
 
 let rules = {
+
   one: 'before:4-22-1997',
+
   two: 'before:2-3-1996',
+
 }
 
 ### Before Or Equal Rule
+
 (Date)
+
 The field under validation must be before or equal to the compared date.
 
 > Passes Before Or Equal (Date) Rule
+
 ```
+
 let form = { 
+
     one: '4-22-1997', 
+
     two: '2-12-1997' 
+
 }
 
 let rules = {
+
   one: 'before_or_equal:3-21-1998',
+
   two: 'before_or_equal:2-12-1997',
+
 }
+
 ```
 
 > Fails Before Or Equal (Date) Rule
+
 ```
+
 let form = { 
+
     one: '4-22-1997', 
+
     two: '2-3-1997' 
+
 }
 
 let rules = {
+
   one: 'before_or_equal:4-23-1997',
+
   two: 'before_or_equal:2-3-1996',
+
 }
 
 ### Email Rule
@@ -577,69 +689,102 @@ let rules = {
 > The given field value must be an email
 
 > `Passing Email Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { email: 'example@cleancode.studio' };
+
 let rules = { email: ['email'] };
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Email Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { email: 'asdfsdaf@.net'}
+
 let rules = { email: ['email'] }
 
 validator(form, rules).validate();
+
 ```
 
 
 ### Boolean Rule
 
 > Boolish validation, not strict boolean check
+
 > Validates that field value is "truthy" or "falsy"
 
 > `Falsy Values`
+
 ```js
+
 let falsy = [
+
     0, '0',
+
     'no', 'No', 'NO',
+
     'off', 'Off', 'OFF',
+
     false, 'false', 'False', 'FALSE',
+
 ];
+
 ```
 
 > `Truthy values`
+
 ```js
+
 let truthy = [
+
     1, '1',
+
     'on', 'On', 'ON',
+
     'yes', 'Yes', 'YES',
+
     true, 'true', 'True', 'TRUE',
+
 ];
+
 ```
 
 > `Passing Boolean Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { selected: 'Yes' };
+
 let rules = { selected: ['boolean'] };
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Boolean Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 form = { selected: null };
+
 rules = { selected: ['boolean'] };
 
 validator(form, rules).validate();
+
 ```
 
 
@@ -648,76 +793,116 @@ validator(form, rules).validate();
 > The field under validation must have a matching field of foo_confirmation. For example, if the field under validation is password, a matching password_confirmation field must be present in the input.
 
 > `Passing Confirmed Rule`
+
 ```js bash
+
 import validator from 'vuejs-validators';
 
 let form = { password: 'secret', password_confirmation: 'secret' }
+
 let rules = { password: 'confirmed' }
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Confirmed Rule`
+
 ```js bash
+
 import validator from 'vuejs-validators';
 
 // Rule Fails When No {attribute}_confirmation field exists
+
 let form = { password: 'secret' };
+
 let rules = { password: 'confirmed' };
 
 validator(form, rules).validate();
 
 // Rule Fails When {attribute} value does not match {attribute}_confirmation value
+
 let form = { password: 'secret', password_confirmation: 'not_secret' };
+
 let rules = { password: 'confirmed' };
 
 validator(form, rules).validate();
+
 ```
 
 
 ### Date Rule
+
 (Date)
+
 The field under validation must be a valid, non-relative date according to the new Date js constructor.
 
 > Passes Date Rule
+
 - 4.22.1997 
+
 - 4-22-1997
+
 - 4/22/1997
+
 - April 22 1997
+
 - Tuesday April 22 1997
 
 > Fails Date Rule
+
 - asdfweadf
+
 - 23423423
+
 - []
 
 ### Date Equals Rule
+
 (Date)
+
 The field under validation must be the same date as the rules date
 
 > Passes Date Equals Rule
+
 ```js
+
 let form = { 
+
     one: '4-22-1997',
+
     two: 'April 22 2025' 
+
 }
 
 let rules = {
+
   one: 'date_equals:4-22-1997',
+
   two: 'date_equals:April 22 2025',
+
 }
+
 ```
 
 > Fails Date Equals Rule
+
 ```js
+
 let form = { 
+
     one: '4-22-1997',
+
     two: '2-12-1997' 
+
 }
 
 let rules = {
+
   one: 'date_equals:4-24-1998',
+
   two: 'date_equals:1-11-1996',
+
 }
 
 ### Different Validation Rule
@@ -725,20 +910,27 @@ let rules = {
 > The given field value is different than another field value
 
 > `Passing Different Rule`
+
 ```js bash
+
 import validator from 'vuejs-validators';
 
 let form = { password: 'asdfasdfasdf', confirm_password: 'secret' };
+
 let rules = { password: 'different:confirm_password' };
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Different Rule`
+
 ```js bash
+
 import validator from 'vuejs-validators';
 
 let form = { password: 'secret', confirm_password: 'secret' }
+
 let rules = { password: 'different:confirm_password' }
 
 validator(form, rules).validate();
@@ -748,20 +940,27 @@ validator(form, rules).validate();
 > The field under validation must be numeric and must have an exact length of value.
 
 > `Passing Digits Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { amount: '10000' }
+
 let rules = { amount: 'digits:6' }
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Digits Rule`
+
 ```js
+
 import validator from 'vuejs-validator'
 
 let form = { amount: '10000' }
+
 let rules = { amount: 'digits:4' }
 
 validator(form, rules).validate();
@@ -771,20 +970,27 @@ validator(form, rules).validate();
 > The field under validation must be numeric and have a length between the lower and upper limit defined.
 
 > `Passing Digits Between Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { amount: '10000' }
+
 let rules = { amount: 'digits_between:4,6' }
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Digits Rule`
+
 ```js
+
 import validator from 'vuejs-validator'
 
 let form = { amount: '10000' }
+
 let rules = { amount: 'digits_between:3,5' }
 
 validator(form, rules).validate();
@@ -794,20 +1000,27 @@ validator(form, rules).validate();
 > The field under validation must be an array with no duplicate values.
 
 > `Passing Distinct Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { shopping_list: ['ham', 'eggs', 'milk', 'turkey'] }
+
 let rules = { shopping_list: 'distinct' }
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Digits Rule`
+
 ```js
+
 import validator from 'vuejs-validator'
 
 let form = { shopping_list: ['ham', 'ham', 'eggs', 'milk', 'turkey'] }
+
 let rules = { shopping_list: 'distinct' }
 
 validator(form, rules).validate();
@@ -817,23 +1030,31 @@ validator(form, rules).validate();
 > The given field value must be an email
 
 > `Passing Email Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { email: 'example@cleancode.studio' };
+
 let rules = { email: ['email'] };
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Email Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { email: 'asdfsdaf@.net'}
+
 let rules = { email: ['email'] }
 
 validator(form, rules).validate();
+
 ```
 
 
@@ -842,99 +1063,156 @@ validator(form, rules).validate();
 > The field under validation must end with one of the given values.
 
 > `Passing Ends With Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { name: 'sammie' };
+
 let rules = { name: 'ends_with:sl,ie,asx' };
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing String Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { name: 5 };
+
 let rules = { name: 'ends_with:sl,ie,asx' };
 
 validator(form, rules).validate();
 
 let form = { name: 'azure' };
+
 let rules = { name: 'ends_with:sl,ie,asx' };
 
 validator(form, rules).validate();
+
 ```
 
 
 ### Greater Than Rule
+
 (Numeric)
 
 Number must be greater than compared value
 
 > Passing greater than rule
+
 ```js
 
 let form = {
+
     age: 24,
+
     members: 19,
+
     percentage: 0.4,
+
 };
 
 let rules = {
+
     age: 'greater_than:13',
+
     members: 'greater_than:10',
+
     percentage: 'greater_than:0.35',
+
 };
+
 ```
 
 > Failing greater than rule
+
 ```js
+
  let form = {
+
      age: 24,
+
      members: 19,
+
      percentage: 0.4,
+
  };
+
  
+
  let rules = {
+
      age: 'greater_than:24',
+
      members: 'greater_than:100',
+
      percentage: 'greater_than:0.9',
+
  };
 
 ### Gte Rule
+
 (Greater Than Or Equal - Numeric)
+
 Number must be greater than or equal to compared value
 
 > Passing greater than or equal rule (gte)
+
 ```js
 
 let form = {
+
     age: 24,
+
     members: 19,
+
     percentage: 0.4,
+
 };
 
 let rules = {
+
     age: 'gte:24',
+
     members: 'gte:10',
+
     percentage: 'gte:0.35',
+
 };
+
 ```
 
 > Failing greater than or equal rule (gte)
+
 ```js
+
  
+
  let form = {
+
      age: 24,
+
      members: 19,
+
      percentage: 0.4,
+
  };
+
  
+
  let rules = {
+
      age: 'greater_than:25',
+
      members: 'greater_than:100',
+
      percentage: 'greater_than:0.9',
+
  };
 
 ### Integer Rule
@@ -942,23 +1220,31 @@ let rules = {
 > This validation rule does not verify that the input is of the "integer" variable type, only that the input is a string or numeric value that contains an integer.
 
 > `Passing Integer Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { students: 25 }
+
 let rules = { students: ['integer'] }
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Integer Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { students: 'yes' }
+
 let rules = { students: ['integer'] }
 
 validator(form, rules).validate();
+
 ```
 
 
@@ -967,18 +1253,29 @@ validator(form, rules).validate();
 > This validation rule confirms that value is an IP address.
 
 > `Passing IP Rule`
+
 - "115.42.150.37"
+
 - "192.168.0.1"
+
 - "110.234.52.124"
+
 - "2001:0db8:85a3:0000:0000:8a2e:0370:7334" (Ipv6)
 
 > `Failing IP Rule`
+
 - "210.110" – must have 4 octets
+
 - "255" – must have 4 octets
+
 - "y.y.y.y" – the only digit has allowed
+
 - "255.0.0.y" – the only digit has allowed
+
 - "666.10.10.20" – digit must between [0-255]
+
 - "4444.11.11.11" – digit must between [0-255]
+
 - "33.3333.33.3" – digit must between [0-255]
 
 
@@ -987,18 +1284,29 @@ validator(form, rules).validate();
 > This validation rule confirms that value is an IPv4 address.
 
 > `Passing IPv4 Rule`
+
 - "115.42.150.37"
+
 - "192.168.0.1"
+
 - "110.234.52.124"
 
 > `Failing IPv4 Rule`
+
 - "210.110" – must have 4 octets
+
 - "255" – must have 4 octets
+
 - "y.y.y.y" – the only digit has allowed
+
 - "255.0.0.y" – the only digit has allowed
+
 - "666.10.10.20" – digit must between [0-255]
+
 - "4444.11.11.11" – digit must between [0-255]
+
 - "33.3333.33.3" – digit must between [0-255]
+
 - "2001:0db8:85a3:0000:0000:8a2e:0370:7334" (Ipv6)
 
 
@@ -1007,18 +1315,29 @@ validator(form, rules).validate();
 > This validation rule confirms that value is an IPv6 address.
 
 > `Passing IPv6 Rule`
+
 - "2001:0db8:85a3:0000:0000:8a2e:0370:7334" (Ipv6)
 
 > `Failing IPv6 Rule`
+
 - "210.110" – must have 4 octets
+
 - "255" – must have 4 octets
+
 - "y.y.y.y" – the only digit has allowed
+
 - "255.0.0.y" – the only digit has allowed
+
 - "666.10.10.20" – digit must between [0-255]
+
 - "4444.11.11.11" – digit must between [0-255]
+
 - "33.3333.33.3" – digit must between [0-255]
+
 - "110.234.52.124"
+
 - "192.168.0.1"
+
 - "115.42.150.37"
 
 
@@ -1027,92 +1346,145 @@ validator(form, rules).validate();
 > The given field value must be a Json String
 
 > `Passing Json Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { content: JSON.stringify({ inspire: 'love' }) };
+
 let rules = { content: 'json' };
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Json Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { content: 'fasdf' }
+
 let rules = { content: 'json' }
 
 validator(form, rules).validate();
 
 ### Less Than Rule
+
 (Numeric)
 
 Number must be less than compared value
 
 > Passing less than rule
+
 ```js
 
 let form = {
+
     age: 24,
+
     members: 19,
+
     percentage: 0.4,
+
 } ;
 
 let rules = {
+
     age: 'less_than:25',
+
     members: 'less_than:20',
+
     percentage: 'less_than:0.8',
+
 }
+
 ```
 
 > Failing less than rule
+
 ```js
+
  let form = {
+
      age: 24,
+
      members: 19,
+
      percentage: 0.4,
+
  };
+
  
+
  let rules = {
+
      age: 'less_than:24',
+
      members: 'less_than:10',
+
      percentage: 'less_than:0.1',
+
  }
 
 ### Lte Rule
+
 (Less than or equal - Numeric)
 
 Number must be less than or equal to compared value
 
 > Passing Less than or equal (lte) rule
+
 ```js
 
 let form = {
+
     age: 24,
+
     members: 19,
+
     percentage: 0.4,
+
 } ;
 
 let rules = {
+
     age: 'lte:24',
+
     members: 'lte:20',
+
     percentage: 'lte:0.8',
+
 }
+
 ```
 
 > Failing less than or equal (lte) rule
+
 ```js
+
  let form = {
+
      age: 24,
+
      members: 19,
+
      percentage: 0.4,
+
  };
+
  
+
  let rules = {
+
      age: 'less_than:24',
+
      members: 'less_than:10',
+
      percentage: 'less_than:0.5',
+
  }
 
 ### Max Rule
@@ -1120,23 +1492,31 @@ let rules = {
 > The given field must not be more than the defined maximum limit
 
 > `Passing Max Limit Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { password: 'secret' }
+
 let rules = { password: 'max:10' }
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Max Limit Rule`
+
 ```js
+
 import validator from 'vuejs-validator'
 
 let form = { password: 'secret'}
+
 let rules = { password: 'max:4' }
 
 validator(form, rules).validate();
+
 ```
 
 
@@ -1145,23 +1525,31 @@ validator(form, rules).validate();
 > The given field must not be less than the defined minimum limit
 
 > `Passing Min Limit Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { password: 'secret' }
+
 let rules = { password: 'min:6' }
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Min Limit Rule`
+
 ```js
+
 import validator from 'vuejs-validator'
 
 let form = { password: 'secret'}
+
 let rules = { password: 'min:8' }
 
 validator(form, rules).validate();
+
 ```
 
 
@@ -1170,23 +1558,31 @@ validator(form, rules).validate();
 > The given field value must NOT match the regular expression pattern
 
 > `Passing Not Regex Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { email: 'ex.-fn' };
+
 let rules = { email: ['regex:/^.+@.+$/i'] };
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Not Regex Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { email: 'example@gmail.com'}
+
 let rules = { email: ['regex:/^.+@.+$/i'] }
 
 validator(form, rules).validate();
+
 ```
 
 
@@ -1195,23 +1591,31 @@ validator(form, rules).validate();
 > The given field must NOT be "within" the comma delimited list of items
 
 > `Passing Not Within Rule`
+
 ```js bash
+
 import validator from 'vuejs-validators';
 
 let form = { language: 'PigLatin' }
+
 let rules = { language: 'not_within:German,Spanish,English,Latin' }
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Not Within Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { pencil: '2a'};
+
 let rules = { pencil: 'not_within:notebook,pencil,2a,marker,sharpie,whiteboard' };
 
 validator(form, rules).validate();
+
 ```
 
 
@@ -1220,23 +1624,31 @@ validator(form, rules).validate();
 > The given field must be a Number (Strict Typed Check). See Numeric For Looser Type Checking
 
 > `Passing Number Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { id: 15 };
+
 let rules = { id: ['number'] };
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Number Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { id: '15'}
+
 let rules = { id: ['number'] }
 
 validator(form, rules).validate();
+
 ```
 
 
@@ -1245,27 +1657,37 @@ validator(form, rules).validate();
 > Determine if a value is numeric, or is a string that can properly represent a numeric
 
 - Numerical value, not strict number check
+
 - Automatically attempts to cast value to numerical value.
+
 - Validates that field value an integer, decimal, or bigInt.
 
 > `Passing Numeric Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { members: '25' }
+
 let rules = { member: ['numeric'] }
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Numeric Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { members: 'yes' }
+
 let rules = { member: ['numeric'] }
 
 validator(form, rules).validate();
+
 ```
 
 
@@ -1274,35 +1696,55 @@ validator(form, rules).validate();
 > The given field value must be a phone number
 
 > `Passing Phone Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { send_sms: ['555-555-5555'] }
+
 let rules = { send_sms: ['phone'] }
+
 validator(form, rules).validate();
+
 ```
 
 > `Failing Phone Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { send_sms: '+(3) - 4 32'}
+
 let rules = { send_sms: ['phone'] }
 
 validator(form, rules).validate();
+
 ```
 
 > `Phone Number Formats Within Testing Coverage`
+
 - +61 1 2345 6789
+
 - +61 01 2345 6789
+
 - 01 2345 6789
+
 - 01-2345-6789
+
 - (01) 2345 6789
+
 - (01) 2345-6789
+
 - 5555555555
+
 - (555) 555 5555
+
 - 555 555 5555
+
 - +15555555555
+
 - 555-555-5555
 
 > _(Any contributions welcome for improving regex validation patterns for current rules as well as adding new rules)_
@@ -1313,23 +1755,31 @@ validator(form, rules).validate();
 > The given field value must match the regular expression pattern
 
 > `Passing Regex Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { email: 'example@gmail.com' };
+
 let rules = { email: ['regex:/^.+@.+$/i'] };
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Regex Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { email: 'ex.-fn'}
+
 let rules = { email: ['regex:/^.+@.+$/i'] }
 
 validator(form, rules).validate();
+
 ```
 
 
@@ -1338,23 +1788,31 @@ validator(form, rules).validate();
 > Validates that a given field exists and its value is set
 
 > `Passing Required Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { name: 'jules' };
+
 let rules = { name: ['required'] };
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Required Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = {};
+
 let rules = { name: ['required'] };
 
 validator(form, rules).validate();
+
 ```
 
 
@@ -1363,23 +1821,31 @@ validator(form, rules).validate();
 > The given field value is the same as another field value
 
 > `Passing Same Rule`
+
 ```js bash
+
 import validator from 'vuejs-validators';
 
 let form = { password: 'secret', confirm_password: 'secret' }
+
 let rules = { password: 'same:confirm_password' }
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Same Rule`
+
 ```js bash
+
 import validator from 'vuejs-validators';
 
 let form = { password: 'asdfasdfasdf', confirm_password: 'secret' };
+
 let rules = { password: 'same:confirm_password' };
 
 validator(form, rules).validate();
+
 ```
 
 
@@ -1388,28 +1854,37 @@ validator(form, rules).validate();
 > The field under validation must start with one of the given values.
 
 > `Passing Starts With Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { name: 'sammie' };
+
 let rules = { name: 'starts_with:joe,sam,tom' };
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Starts With Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { name: 5 };
+
 let rules = { name: 'starts_with:sl,ie,asx' };
 
 validator(form, rules).validate();
 
 let form = { name: 'azure' };
+
 let rules = { name: 'starts_with:joe, sam, tom' };
 
 validator(form, rules).validate();
+
 ```
 
 
@@ -1418,23 +1893,31 @@ validator(form, rules).validate();
 > The given field value must be a String
 
 > `Passing String Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { name: 'sammie' };
+
 let rules = { name: 'string' };
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing String Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { name: 54345  }
+
 let rules = { name: 'string' }
 
 validator(form, rules).validate();
+
 ```
 
 
@@ -1443,23 +1926,31 @@ validator(form, rules).validate();
 > The given field value must be an http(s) url
 
 > `Passing Url Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { link: 'https://cleancode.studio' };
+
 let rules = { link: 'url' };
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Url Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { link: 'httP/ope_type@.net'}
+
 let rules = { link: 'url' }
 
 validator(form, rules).validate();
+
 ```
 
 
@@ -1468,23 +1959,31 @@ validator(form, rules).validate();
 > The given field must be "within" the comma delimited list of items
 
 > `Passing Within Rule`
+
 ```js bash
+
 import validator from 'vuejs-validators';
 
 let form = { name: 'Sam' }
+
 let rules = { name: 'within:James,Boronica,Sam,Steve,Lenny' }
 
 validator(form, rules).validate();
+
 ```
 
 > `Failing Within Rule`
+
 ```js
+
 import validator from 'vuejs-validators';
 
 let form = { name: 'jake'};
+
 let rules = { name: 'within:patricia,veronica,samuel,jeviah' };
 
 validator(form, rules).validate();
+
 ```
 
 
@@ -1502,132 +2001,188 @@ validator(form, rules).validate();
 ## Add
 
 ```js
+
 errors().add('company', 'Your company is important to us, add the proper information so others can learn about it to!'); 
+
 ```
 
 ``` 
+
 # errors.list('company')
 
 [
-   'Company field is required',
-   'Company field must have no more than 15 characters',
-   'Your company is important to us, add the proper information so others can learn about it to!'
-]
-```
 
+   'Company field is required',
+
+   'Company field must have no more than 15 characters',
+
+   'Your company is important to us, add the proper information so others can learn about it to!'
+
+]
+
+```
 
 
 ## All
+
 Return "all" error messages as object of fields with list of their error messages  
 
 ```js 
+
 errors().all(); 
+
 ```
 
 ``` 
-{
-    name: ['Name field is required', 'Name field must have at lest 3 characters'],
-    email: ['Email field must be an email', 'Email field must have at least 3 characters']
-}
-```
 
+{
+
+    name: ['Name field is required', 'Name field must have at lest 3 characters'],
+
+    email: ['Email field must be an email', 'Email field must have at least 3 characters']
+
+}
+
+```
 
 
 ## Any
+
 Determine if there are currently "any" error messages within error bag 
 
 ```js
+
 errors().any(); 
+
 ```
 
 ``` 
+
 true: If there are any error messages
+
 false: If there are NOT any error messages
+
 ```
 
 
-
 ## Force Macro
+
 Force macro acts the same as macro, with the option to forcefully override core functions and already existing macros.
+
 (Use with caution).
 
 _Note See forceLocalMacro to only apply the method on a specific instance instead of globally on the prototype constructor_
 
 ```js
+
 errors().get('name'); 
+
 // Output: 'Name field is required'
 
 errors().forceMacro('get', function (field) {
+
     return this.list(field).join(', ');
+
 });
 
 errors().get('name'); 
+
 // Output: 'Name field is required, Name field can not be greater than 3 characters, Name field must be a string'
+
 ```
 
 
 ## Forget
+
 Forget error messages on all fields or optionally on a specific field
 
 ```js
+
 errors.forget(); // Forget errors messages for all fields
 
 errors.forget('name'); // only forget the error messages for a specific field
+
 ```
 
 
 ## Get
+
 Get first available error message on a given field
 
 ```js
+
 errors.get('name');
+
 ```
 
 
 ## Has
+
 Check if a specific field "has" error messages 
 
 ```js
+
 errors.has('name');
+
 ```
 
 
 ## List
+
 List all error messages or optionally list all array messages for a specific field 
 
 ```js
+
 errors.list(); // ['Name is a required field']
 
 errors.list('name'); // ['Name is a required field']
+
 errors.list('email'); // ['Email field must be an email', 'Email is a required field']
+
 ```
 
 
 ## Macro
+
 Extend errors message bag instance using macros
+
 _Note See localMacro to only apply the method on a specific instance instead of globally on the prototype constructor_
 
 ```js
+
 errors().macro('count', function () {
+
     return this.list().length();
+
 });
 
 // errors().count() === errors().list().count();
+
 ```
 
 
 ## Set
+
 Set all error messages, or optionally set given fields error messages
+
  
+
 ```js
+
 // Set all fields error messages
+
 errors().set({
+
     name: ['Name field is off, check it out and try again', 'Name field is in wrong language'],
+
     formula: ['Formula is not incorrect according to the laws of physics']
+
 });
 
 // Set specific field error messages
+
 errors().set('name', ['Name field is off, check it out and try again', 'Name field is in wrong language']);
+
 ```
 
 
@@ -1862,6 +2417,14 @@ MIT © [Zachary Horton (Clean Code Studio)](https://github.com/zhorton34/vuejs-v
 
 
 ## Change Log
+
+---
+
+### 1.1.8
+
+---
+- [Issue #27 (Regex Rule) Bug Fix](https://github.com/zhorton34/vuejs-validators/issues/27)
+---
 
 ---
 
