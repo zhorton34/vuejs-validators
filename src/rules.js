@@ -38,7 +38,7 @@ module.exports = {
 	email: ({ value }) => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,8})+$/.test(value)),
 	phone: ({ value }) => /^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,3})|(\(?\d{2,3}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$/.test(value),
 	required: ({ value }) => true === (isNotNull(value) && isNotUndefined(value) && isNotEmpty(value)),
-	regex: ({ value, parameters }) => parameters[0].test(value),
+	regex: ({ value, parameters }) => (new RegExp(parameters[0])).test(value),
 	not_regex: ({ value, parameters }) => !parameters[0].test(value),
 	url: ({ value }) => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)/.test(value),
 	alpha: ({ value }) => /^[a-zA-Z]*$/.test(value),

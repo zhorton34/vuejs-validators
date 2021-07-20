@@ -2,6 +2,14 @@
 
 ---
 
+### 1.1.8
+
+---
+- [Issue #27 (Regex Rule) Bug Fix](https://github.com/zhorton34/vuejs-validators/issues/27)
+---
+
+---
+
 ### 1.1.7
 
 ---
