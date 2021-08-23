@@ -1,3 +1,6 @@
+[![Twitter Follow](https://img.shields.io/twitter/follow/cleancodestudio.svg?style=social)](https://twitter.com/cleancodestudio) 
+
+
 [![Travis](https://img.shields.io/travis/zhorton34/vuejs-validators/master.svg?style=flat-square)](https://travis-ci.org/zhorton34/vuejs-validators/builds)
 [![npm downloads](https://img.shields.io/npm/dm/vuejs-validators.svg?style=flat-square)](http://badge.fury.io/js/vuejs-validators)
 [![npm license](https://img.shields.io/npm/l/vuejs-validators.svg?style=flat-square)](http://badge.fury.io/js/vuejs-validators)
